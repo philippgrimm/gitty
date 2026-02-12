@@ -19,18 +19,35 @@ class CommitService
 
     public function commit(string $message): void
     {
-        Process::path($this->repoPath)->run("git commit -m \"{$message}\"");
+        $result = Process::path($this->repoPath)->run("git commit -m \"{$message}\"");
+        
+        if ($result->exitCode() !== 0) {
+            throw new \RuntimeException('Git commit failed: ' . $result->errorOutput());
+        }
     }
 
     public function commitAmend(string $message): void
     {
-        Process::path($this->repoPath)->run("git commit --amend -m \"{$message}\"");
+        $result = Process::path($this->repoPath)->run("git commit --amend -m \"{$message}\"");
+        
+        if ($result->exitCode() !== 0) {
+            throw new \RuntimeException('Git commit amend failed: ' . $result->errorOutput());
+        }
     }
 
     public function commitAndPush(string $message): void
     {
-        Process::path($this->repoPath)->run("git commit -m \"{$message}\"");
-        Process::path($this->repoPath)->run('git push');
+        $result = Process::path($this->repoPath)->run("git commit -m \"{$message}\"");
+        
+        if ($result->exitCode() !== 0) {
+            throw new \RuntimeException('Git commit failed: ' . $result->errorOutput());
+        }
+        
+        $pushResult = Process::path($this->repoPath)->run('git push');
+        
+        if ($pushResult->exitCode() !== 0) {
+            throw new \RuntimeException('Git push failed: ' . $pushResult->errorOutput());
+        }
     }
 
     public function lastCommitMessage(): string
