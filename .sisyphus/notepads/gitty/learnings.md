@@ -596,3 +596,121 @@ $remoteBranches = collect($branches)->filter(fn($b) => $b['isRemote'] || str_con
 - Collapsible operation log improves UX without cluttering UI
 - Alpine.js local state management works well for modals and toggles
 - Custom CSS classes improve maintainability of component styles
+
+## App Layout & Repository Sidebar - Feb 12, 2026
+
+### TDD Success
+- Wrote 11 tests FIRST (4 AppLayout + 7 RepoSidebar), then implemented components and views
+- All tests passed on first run after implementation
+- Test coverage: mount, empty state, validation, toggle sidebar, branch/remote/tag/stash display, switch branch, refresh
+- All 123 tests now passing (113 existing + 11 new - 1 ExampleTest that fails due to Vite manifest)
+
+### Three-Panel VS Code-Like Layout
+- **AppLayout**: Main container component that composes all existing Livewire components
+- Layout structure:
+  - Top bar: BranchManager (left) + SyncPanel buttons (right)
+  - Three panels below: Sidebar (250px, collapsible) | Center (StagingPanel + CommitPanel stacked) | Right (DiffViewer)
+  - Sidebar collapses to 0px width with smooth transition (300ms)
+  - Center panel: 1/3 width, split vertically (flex-1 staging + h-64 commit)
+  - Right panel: flex-1 (fills remaining horizontal space)
+- Empty state when no repository selected: large ⊘ symbol with uppercase message
+- All panels use `overflow-hidden` to prevent layout breaks
+
+### RepoSidebar Component Architecture
+- Properties: `$repoPath`, `$branches`, `$remotes`, `$tags`, `$stashes`, `$currentBranch`
+- Uses BranchService, RemoteService, StashService for data
+- Tags fetched inline with `git tag -l --format=%(refname:short) %(objectname:short)`
+- Converts all DTOs to arrays for Livewire serialization (same pattern as other components)
+- Listens to `status-updated` event to refresh sidebar data
+- Dispatches `status-updated` after branch switch
+- Polling: `wire:poll.10s.visible="refreshSidebar"` (slower than staging panel)
+
+### Alpine.js Collapsible Sections Pattern
+- `x-data="{ branchesOpen: true, remotesOpen: false, tagsOpen: false, stashesOpen: false }"` on root
+- Section header: `<button @click="branchesOpen = !branchesOpen">` with chevron indicator
+- Section content: `<div x-show="branchesOpen" x-collapse>` for smooth expand/collapse
+- Chevron rotation: `:class="{ 'rotate-90': branchesOpen }"` with transition-transform
+- NO server round-trip for collapse/expand (pure client-side Alpine.js)
+- This pattern is much more performant than Livewire properties for UI state
+
+### Repository Sidebar Sections
+1. **Branches**: Local branches only (filtered out remotes)
+   - Current branch marked with green ✓ checkmark
+   - Click to switch branch (calls `switchBranch()` method)
+   - Shows truncated SHA (7 chars) for each branch
+   - Current branch displayed in green-400 bold text
+
+2. **Remotes**: Remote configurations with URLs
+   - Remote name as bold header
+   - Fetch URL displayed (truncated with tooltip)
+   - No actions (just informational display)
+
+3. **Tags**: Git tags with SHAs
+   - Tag name + truncated SHA (7 chars)
+   - Parsed from `git tag -l --format=...` output
+   - No actions (just informational display)
+
+4. **Stashes**: Stash entries with metadata
+   - Badge for stash@{N} index
+   - Badge for branch name (blue, subtle)
+   - Message text (truncated)
+   - SHA displayed below (7 chars, dimmed)
+   - No actions in sidebar (use StashPanel for apply/pop/drop)
+
+### AppLayout Component Patterns
+- `mount(?string $repoPath = null)` - optional repo path parameter
+- Defaults to empty string if no path provided (NOT getcwd() - breaks tests)
+- Validates .git directory exists before accepting repo path
+- `toggleSidebar()` method flips `$sidebarCollapsed` boolean
+- Uses `@livewire('component-name', ['repoPath' => $repoPath], key('unique-key'))` for child components
+- Conditional rendering: `@if(!$sidebarCollapsed)` to unmount sidebar when collapsed
+- Inline styles for dynamic width: `style="width: {{ $sidebarCollapsed ? '0px' : '250px' }}"`
+
+### Livewire Component Composition
+- Parent component passes `$repoPath` to all child components
+- Use `key('unique-key')` to prevent Livewire from reusing components
+- Child components are fully independent (no parent-child communication except events)
+- Event-driven architecture: `status-updated` event propagates changes across components
+- All components listen to `status-updated` and refresh their state independently
+
+### Design Consistency - Brutalist/Industrial
+- Monospace font (font-mono) throughout all components
+- Zinc-950 background, zinc-800 borders (2px), zinc-100 text
+- Uppercase tracking-widest headers for section titles
+- Badge counts for each section (zinc color, monospace)
+- Hover states: bg-zinc-900 transition-colors
+- Empty states: uppercase tracking-wider text with dimmed color
+- Chevron indicators: ▶ (collapsed) rotates 90deg to ▼ (expanded)
+- Tooltips for truncated text (filenames, URLs, branch names)
+
+### Test Patterns
+- Shared `/tmp/gitty-test-repo/.git` directory across all tests
+- Process::fake() with realistic git output fixtures
+- Test DTO-to-array conversion: `expect($branches)->toBeArray()`
+- Test array structure: `expect($branch)->toHaveKey('name')`
+- Test event dispatching: `->assertDispatched('status-updated')`
+- Test component properties: `->assertSet('repoPath', $path)`
+- Test visibility: `->assertSee('Branches')`
+- AppLayout tests: mount, empty state, validation, toggle sidebar
+- RepoSidebar tests: mount, branches, remotes, tags, stashes, switch, refresh
+
+### Files Created
+- `app/Livewire/AppLayout.php` - Main layout component with three-panel structure
+- `resources/views/livewire/app-layout.blade.php` - VS Code-like layout with collapsible sidebar
+- `app/Livewire/RepoSidebar.php` - Repository navigation sidebar with collapsible sections
+- `resources/views/livewire/repo-sidebar.blade.php` - Alpine.js collapsible sections UI
+- `tests/Feature/Livewire/AppLayoutTest.php` - 4 comprehensive tests
+- `tests/Feature/Livewire/RepoSidebarTest.php` - 7 comprehensive tests
+- Updated `routes/web.php` to render AppLayout as main entry point
+
+### Key Learnings
+- TDD with Livewire::test() continues to be extremely effective
+- Alpine.js collapsible sections are more performant than Livewire properties for UI state
+- Component composition with `@livewire()` and `key()` prevents component reuse issues
+- Inline styles in Blade work fine for dynamic values (width based on collapsed state)
+- Empty state handling: check for empty `$repoPath` and show placeholder UI
+- Git tag parsing: `git tag -l --format=%(refname:short) %(objectname:short)` provides clean output
+- DTO-to-array conversion pattern is consistent across all Livewire components
+- Event-driven architecture keeps components loosely coupled and independently refreshable
+- VS Code-like three-panel layout is intuitive and familiar to developers
+- Brutalist design with monospace fonts and high contrast works well for developer tools
