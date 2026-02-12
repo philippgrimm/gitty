@@ -255,7 +255,7 @@ Wave 6 (Final):
 
 ## TODOs
 
-- [ ] 1. Project Scaffolding + NativePHP Setup
+- [x] 1. Project Scaffolding + NativePHP Setup
 
   **What to do**:
   - Create new Laravel project: `laravel new gitty`
@@ -352,7 +352,7 @@ Wave 6 (Final):
 
 ---
 
-- [ ] 2. Test Infrastructure Setup (Pest + Fixtures)
+- [x] 2. Test Infrastructure Setup (Pest + Fixtures)
 
   **What to do**:
   - Install Pest: `composer require pestphp/pest --dev && php artisan pest:install`
@@ -460,7 +460,7 @@ Wave 6 (Final):
 
 ---
 
-- [ ] 3. GitService Foundation (Core Git Operations Layer)
+- [x] 3. GitService Foundation (Core Git Operations Layer)
 
   **What to do**:
   - Create `app/Services/Git/GitService.php` — main git operations service:
@@ -626,7 +626,7 @@ Wave 6 (Final):
 
 ---
 
-- [ ] 4. Staging Panel — File-Level (Livewire Component)
+- [x] 4. Staging Panel — File-Level (Livewire Component)
 
   **What to do**:
   - Create Livewire component `app/Livewire/StagingPanel.php`:
@@ -736,7 +736,7 @@ Wave 6 (Final):
 
 ---
 
-- [ ] 5. Diff Viewer with Shiki Syntax Highlighting
+- [x] 5. Diff Viewer with Shiki Syntax Highlighting
 
   **What to do**:
   - Create Livewire component `app/Livewire/DiffViewer.php`:
@@ -919,7 +919,7 @@ Wave 6 (Final):
 
 ---
 
-- [ ] 7. Commit Panel (Message Input + Commit Flow)
+- [x] 7. Commit Panel (Message Input + Commit Flow)
 
   **What to do**:
   - Create Livewire component `app/Livewire/CommitPanel.php`:
@@ -1012,7 +1012,7 @@ Wave 6 (Final):
 
 ---
 
-- [ ] 8. Branch Management (Service + UI)
+- [x] 8. Branch Management (Service + UI)
 
   **What to do**:
   - Create Livewire component `app/Livewire/BranchManager.php`:
@@ -1103,7 +1103,7 @@ Wave 6 (Final):
 
 ---
 
-- [ ] 9. Push/Pull/Fetch with Progress Indicators
+- [x] 9. Push/Pull/Fetch with Progress Indicators
 
   **What to do**:
   - Create Livewire component `app/Livewire/SyncPanel.php`:
@@ -1195,7 +1195,7 @@ Wave 6 (Final):
 
 ---
 
-- [ ] 10. Stash Management (Service + UI)
+- [x] 10. Stash Management (Service + UI)
 
   **What to do**:
   - Create Livewire component `app/Livewire/StashPanel.php`:
