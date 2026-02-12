@@ -19,13 +19,46 @@ class AppLayout extends Component
 
     public function mount(?string $repoPath = null): void
     {
-        $this->repoPath = $repoPath ?? '';
-        
-        if (!empty($this->repoPath) && !is_dir($this->repoPath . '/.git')) {
-            $this->repoPath = '';
+        if (! \App\Services\Git\GitConfigValidator::checkGitBinary()) {
+            $this->dispatch('show-error', message: 'Git is not installed', type: 'error', persistent: true);
+        }
+
+        if ($repoPath !== null) {
+            $this->repoPath = $repoPath;
+            
+            if (!empty($this->repoPath) && !is_dir($this->repoPath . '/.git')) {
+                $this->repoPath = $this->loadMostRecentRepo();
+            }
+        } else {
+            $repoManager = app(\App\Services\RepoManager::class);
+            $currentRepo = $repoManager->currentRepo();
+            
+            if ($currentRepo && is_dir($currentRepo->path . '/.git')) {
+                $this->repoPath = $currentRepo->path;
+            } else {
+                $this->repoPath = $this->loadMostRecentRepo();
+            }
         }
 
         $this->previousRepoPath = $this->repoPath;
+    }
+
+    private function loadMostRecentRepo(): string
+    {
+        $repoManager = app(\App\Services\RepoManager::class);
+        $recentRepos = $repoManager->recentRepos(1);
+        
+        if ($recentRepos->isEmpty()) {
+            return '';
+        }
+        
+        $mostRecent = $recentRepos->first();
+        
+        if (is_dir($mostRecent->path . '/.git')) {
+            return $mostRecent->path;
+        }
+        
+        return '';
     }
 
     public function toggleSidebar(): void

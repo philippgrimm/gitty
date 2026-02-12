@@ -6,6 +6,10 @@ use Native\Desktop\Facades\Window;
 use Native\Desktop\Facades\Menu;
 use Native\Desktop\Contracts\ProvidesPhpIni;
 
+/**
+ * Gitty v1.0.0 (com.gitty.app)
+ * A native Git client built with NativePHP
+ */
 class NativeAppServiceProvider implements ProvidesPhpIni
 {
     public function boot(): void

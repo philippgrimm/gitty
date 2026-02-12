@@ -7,6 +7,8 @@
     @keydown.window.meta.b.prevent="if (!$wire.repoPath) return; $wire.toggleSidebar()"
     @keydown.window.escape.prevent="$wire.$dispatch('keyboard-escape')"
 >
+    @livewire('error-banner', key('error-banner'))
+    
     <div class="border-b-2 border-zinc-800 bg-zinc-900 px-4 py-2">
         @livewire('repo-switcher', key('repo-switcher'))
     </div>
