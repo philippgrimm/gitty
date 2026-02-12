@@ -8,7 +8,7 @@
             @apply w-2 h-2 rounded-full;
         }
         .status-dot-active {
-            @apply bg-green-500;
+            @apply bg-amber-500;
         }
         .status-dot-paused {
             @apply bg-yellow-500;

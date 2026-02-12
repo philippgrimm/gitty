@@ -9,7 +9,7 @@
 
         <div class="space-y-6">
             <div class="space-y-4">
-                <div class="text-xs uppercase tracking-widest font-bold text-zinc-400 border-b border-zinc-800 pb-2">
+                <div class="text-xs uppercase tracking-wider font-medium text-zinc-400 border-b border-zinc-800 pb-2">
                     Git
                 </div>
                 
@@ -44,7 +44,7 @@
             </div>
 
             <div class="space-y-4">
-                <div class="text-xs uppercase tracking-widest font-bold text-zinc-400 border-b border-zinc-800 pb-2">
+                <div class="text-xs uppercase tracking-wider font-medium text-zinc-400 border-b border-zinc-800 pb-2">
                     Editor
                 </div>
                 
@@ -60,7 +60,7 @@
             </div>
 
             <div class="space-y-4">
-                <div class="text-xs uppercase tracking-widest font-bold text-zinc-400 border-b border-zinc-800 pb-2">
+                <div class="text-xs uppercase tracking-wider font-medium text-zinc-400 border-b border-zinc-800 pb-2">
                     Appearance
                 </div>
                 
@@ -73,7 +73,7 @@
             </div>
 
             <div class="space-y-4">
-                <div class="text-xs uppercase tracking-widest font-bold text-zinc-400 border-b border-zinc-800 pb-2">
+                <div class="text-xs uppercase tracking-wider font-medium text-zinc-400 border-b border-zinc-800 pb-2">
                     Confirmations
                 </div>
                 
@@ -89,7 +89,7 @@
             </div>
 
             <div class="space-y-4">
-                <div class="text-xs uppercase tracking-widest font-bold text-zinc-400 border-b border-zinc-800 pb-2">
+                <div class="text-xs uppercase tracking-wider font-medium text-zinc-400 border-b border-zinc-800 pb-2">
                     Display
                 </div>
                 
@@ -114,7 +114,7 @@
                 <flux:button 
                     variant="primary" 
                     wire:click="save"
-                    class="uppercase tracking-wider"
+                    class="uppercase tracking-wider !bg-amber-600 hover:!bg-amber-500 !text-white"
                 >
                     Save
                 </flux:button>

@@ -25,7 +25,7 @@
     style="display: none;"
 >
     <div class="flex items-center gap-3">
-        <span class="text-lg font-bold uppercase tracking-widest">
+        <span class="text-lg font-semibold uppercase tracking-wider">
             @if($type === 'error')
                 ERROR
             @elseif($type === 'warning')
@@ -39,7 +39,7 @@
     
     <button 
         wire:click="dismiss"
-        class="text-xl hover:opacity-70 transition-opacity"
+        class="text-lg font-semibold px-2 py-1 rounded hover:bg-white/10 transition-colors"
         aria-label="Dismiss"
     >
         ×

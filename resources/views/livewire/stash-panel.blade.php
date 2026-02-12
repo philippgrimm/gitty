@@ -4,20 +4,20 @@
     x-data="{ confirmDropIndex: null }"
 >
     @if($error)
-        <div class="bg-red-950 border-b border-red-800 text-red-200 px-4 py-3 text-xs uppercase tracking-wider font-bold">
+        <div class="bg-red-950 border-b border-red-800 text-red-200 px-4 py-3 text-xs uppercase tracking-wider font-semibold">
             {{ $error }}
         </div>
     @endif
 
     <div class="px-4 py-4 border-b border-zinc-800">
         <div class="flex items-center justify-between">
-            <div class="text-xs uppercase tracking-widest font-bold text-zinc-400">Stashes</div>
+            <div class="text-xs uppercase tracking-wider font-medium text-zinc-400">Stashes</div>
             <flux:button 
                 @click="$wire.showCreateModal = true"
                 variant="primary" 
                 size="sm"
                 icon="archive-box"
-                class="text-xs uppercase tracking-wider"
+                class="text-xs uppercase tracking-wider !bg-amber-600 hover:!bg-amber-500 !text-white"
             >
                 Stash
             </flux:button>
@@ -27,13 +27,13 @@
     <div class="flex-1 overflow-y-auto">
         @if(empty($stashes))
             <div class="flex flex-col items-center justify-center h-full text-zinc-400 space-y-4 px-4">
-                <div class="text-6xl">✓</div>
-                <div class="text-xs uppercase tracking-widest font-bold">No stashes</div>
+                <div class="w-16 h-16 mx-auto opacity-60">{!! file_get_contents(resource_path('svg/empty-states/no-changes.svg')) !!}</div>
+                <div class="text-xs uppercase tracking-wider font-medium">No stashes</div>
             </div>
         @else
             <div class="divide-y divide-zinc-800">
                 @foreach($stashes as $stash)
-                    <div class="group px-4 py-3 hover:bg-zinc-900 transition-colors">
+                    <div class="group px-4 py-3 hover:bg-zinc-800/30 transition-colors">
                         <div class="flex items-start justify-between gap-3">
                             <div class="flex-1 min-w-0 space-y-1.5">
                                 <div class="flex items-center gap-2">
@@ -119,7 +119,7 @@
                 variant="primary" 
                 wire:click="createStash"
                 :disabled="empty(trim($stashMessage))"
-                class="uppercase tracking-wider"
+                class="uppercase tracking-wider !bg-amber-600 hover:!bg-amber-500 !text-white"
             >
                 Create Stash
             </flux:button>
@@ -137,7 +137,7 @@
 
         <div class="bg-zinc-900 border border-zinc-800 rounded px-4 py-3">
             <div class="text-sm text-zinc-400 font-mono">
-                This will permanently delete <span class="text-zinc-100 font-bold">stash@{<span x-text="confirmDropIndex"></span>}</span>
+                This will permanently delete <span class="text-zinc-100 font-semibold">stash@{<span x-text="confirmDropIndex"></span>}</span>
             </div>
         </div>
 
