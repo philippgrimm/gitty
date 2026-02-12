@@ -1465,3 +1465,43 @@ Converted to a VS Code-inspired single-toolbar layout:
 - `resources/views/livewire/sync-panel.blade.php` - Complete redesign to icon buttons
 - `resources/views/livewire/app-layout.blade.php` - Merged toolbars into single bar
 
+
+## 2026-02-12: Contrast Improvements & CSS Extraction
+
+### Task
+Fixed contrast issues across all blade templates and extracted inline styles from diff-viewer.
+
+### Changes Made
+1. **CSS Extraction**: Moved inline `<style>` block from `diff-viewer.blade.php` to `resources/css/app.css`
+   - Improved maintainability and reduced duplication
+   - Also improved contrast in diff-viewer styles (text-zinc-600 → text-zinc-500 for line numbers)
+
+2. **Contrast Improvements** (text-zinc-500/600/700 → text-zinc-400, text-white → text-zinc-100):
+   - `app-layout.blade.php`: Empty state icons and labels
+   - `commit-panel.blade.php`: Character count, staged file count
+   - `staging-panel.blade.php`: Empty state, file hover states
+   - `repo-sidebar.blade.php`: All secondary text (SHAs, URLs, empty states), arrows, hover states
+   - `repo-switcher.blade.php`: All secondary text, empty states
+   - `stash-panel.blade.php`: Empty state, SHAs, modal text
+   - `branch-manager.blade.php`: Dropdown arrow, empty states, remote branches
+   - `auto-fetch-indicator.blade.php`: "Auto-Fetch Off" label
+   - `file-tree.blade.php`: Directory arrows, hover states
+
+### Patterns Learned
+- **Dark mode contrast hierarchy**:
+  - Primary text: `text-zinc-100` (not `text-white` - too harsh)
+  - Secondary text: `text-zinc-400` (readable labels, descriptions)
+  - Tertiary text: `text-zinc-500` (decorative elements, very subtle)
+  - Icons/symbols: `text-zinc-400` minimum for visibility
+  
+- **Hover states**: Always use `text-zinc-100` on hover (not `text-white`)
+
+- **Empty states**: Icons at `text-zinc-500`, labels at `text-zinc-400`
+
+- **LSP errors on inline styles**: Blade files with `style="..."` attributes trigger LSP errors - these are false positives and can be ignored
+
+### Verification
+- All 240 tests pass
+- `npm run build` successful
+- No PHP logic changes, only visual/CSS updates
+

@@ -26,7 +26,7 @@
 
     <div class="flex-1 overflow-y-auto">
         @if(empty($stashes))
-            <div class="flex flex-col items-center justify-center h-full text-zinc-600 space-y-4 px-4">
+            <div class="flex flex-col items-center justify-center h-full text-zinc-400 space-y-4 px-4">
                 <div class="text-6xl">✓</div>
                 <div class="text-xs uppercase tracking-widest font-bold">No stashes</div>
             </div>
@@ -50,7 +50,7 @@
                                     {{ $stash['message'] }}
                                 </div>
                                 @if(!empty($stash['sha']))
-                                    <div class="text-xs text-zinc-600 font-mono">
+                                    <div class="text-xs text-zinc-400 font-mono">
                                         {{ substr($stash['sha'], 0, 7) }}
                                     </div>
                                 @endif
@@ -137,7 +137,7 @@
 
         <div class="bg-zinc-900 border border-zinc-800 rounded px-4 py-3">
             <div class="text-sm text-zinc-400 font-mono">
-                This will permanently delete <span class="text-white font-bold">stash@{<span x-text="confirmDropIndex"></span>}</span>
+                This will permanently delete <span class="text-zinc-100 font-bold">stash@{<span x-text="confirmDropIndex"></span>}</span>
             </div>
         </div>
 

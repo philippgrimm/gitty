@@ -24,7 +24,7 @@
                 label="Amend previous commit"
                 class="text-zinc-400 font-mono"
             />
-            <div class="text-zinc-500 font-mono">
+            <div class="text-zinc-400 font-mono">
                 {{ strlen($message) }} characters
             </div>
         </div>
@@ -61,11 +61,11 @@
     </div>
 
     @if($stagedCount === 0)
-        <div class="text-xs text-zinc-600 uppercase tracking-wider text-center font-bold">
+        <div class="text-xs text-zinc-400 uppercase tracking-wider text-center font-bold">
             No staged files
         </div>
     @else
-        <div class="text-xs text-zinc-500 font-mono text-center">
+        <div class="text-xs text-zinc-400 font-mono text-center">
             {{ $stagedCount }} {{ Str::plural('file', $stagedCount) }} staged
         </div>
     @endif

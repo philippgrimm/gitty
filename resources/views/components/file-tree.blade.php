@@ -13,13 +13,13 @@
                     style="padding-left: {{ ($level * 16) + 16 }}px"
                 >
                     <div 
-                        class="text-zinc-500 transition-transform duration-200 text-xs"
+                        class="text-zinc-400 transition-transform duration-200 text-xs"
                         :class="expanded ? 'rotate-90' : ''"
                     >
                         ▶
                     </div>
                     <div class="text-zinc-400 text-sm">📁</div>
-                    <div class="text-sm font-medium text-zinc-300 group-hover:text-white transition-colors">
+                    <div class="text-sm font-medium text-zinc-300 group-hover:text-zinc-100 transition-colors">
                         {{ $node['name'] }}
                     </div>
                     <flux:badge variant="solid" color="zinc" class="font-mono text-xs ml-1">
@@ -54,7 +54,7 @@
                         {{ $statusConfig['icon'] }}
                     </flux:badge>
                     <flux:tooltip :content="$node['path']">
-                        <div class="text-sm truncate text-zinc-200 group-hover:text-white transition-colors">
+                        <div class="text-sm truncate text-zinc-200 group-hover:text-zinc-100 transition-colors">
                             {{ $node['name'] }}
                         </div>
                     </flux:tooltip>

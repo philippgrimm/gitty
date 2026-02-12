@@ -37,6 +37,6 @@
         <span class="text-xs text-zinc-400">{{ $lastFetchAt }}</span>
     @else
         <div class="status-dot status-dot-inactive"></div>
-        <span class="text-xs uppercase tracking-wider text-zinc-600">Auto-Fetch Off</span>
+        <span class="text-xs uppercase tracking-wider text-zinc-400">Auto-Fetch Off</span>
     @endif
 </div>

@@ -18,8 +18,8 @@
     @if($unstagedFiles->isEmpty() && $stagedFiles->isEmpty() && $untrackedFiles->isEmpty())
         <div class="flex-1 flex items-center justify-center">
             <div class="text-center space-y-3">
-                <div class="text-6xl text-zinc-700">✓</div>
-                <div class="text-zinc-500 uppercase tracking-widest text-xs font-bold">No changes</div>
+                <div class="text-6xl text-zinc-500">✓</div>
+                <div class="text-zinc-400 uppercase tracking-widest text-xs font-bold">No changes</div>
             </div>
         </div>
     @else
@@ -86,7 +86,7 @@
                                             {{ $statusConfig['icon'] }}
                                         </flux:badge>
                                         <flux:tooltip :content="$file['path']">
-                                            <div class="text-sm truncate text-zinc-200 group-hover:text-white transition-colors">
+                                            <div class="text-sm truncate text-zinc-200 group-hover:text-zinc-100 transition-colors">
                                                 {{ basename($file['path']) }}
                                             </div>
                                         </flux:tooltip>
@@ -159,7 +159,7 @@
                                             {{ $statusConfig['icon'] }}
                                         </flux:badge>
                                         <flux:tooltip :content="$file['path']">
-                                            <div class="text-sm truncate text-zinc-200 group-hover:text-white transition-colors">
+                                            <div class="text-sm truncate text-zinc-200 group-hover:text-zinc-100 transition-colors">
                                                 {{ basename($file['path']) }}
                                             </div>
                                         </flux:tooltip>

@@ -37,7 +37,7 @@
                         @endif
                     </div>
                 @endif
-                <span class="text-zinc-500">▼</span>
+                <span class="text-zinc-400">▼</span>
             </flux:button>
 
             <flux:menu class="w-96 max-h-[600px] overflow-hidden">
@@ -66,7 +66,7 @@
                                         <span class="text-green-400 text-sm">✓</span>
                                     @endif
                                 </div>
-                                <div class="text-sm truncate {{ $branch['isCurrent'] ? 'text-white font-bold' : 'text-zinc-300' }}">
+                                <div class="text-sm truncate {{ $branch['isCurrent'] ? 'text-zinc-100 font-bold' : 'text-zinc-300' }}">
                                     {{ $branch['name'] }}
                                 </div>
                             </div>
@@ -96,12 +96,12 @@
                             @endif
                         </div>
                     @empty
-                        <div class="px-3 py-4 text-center text-zinc-500 text-sm">No local branches found</div>
+                        <div class="px-3 py-4 text-center text-zinc-400 text-sm">No local branches found</div>
                     @endforelse
 
                     @if($this->filteredRemoteBranches->isNotEmpty())
                         <div class="px-3 py-2 bg-zinc-900 border-t-2 border-zinc-800 sticky top-0">
-                            <div class="text-xs uppercase tracking-widest font-bold text-zinc-500">Remote Branches</div>
+                            <div class="text-xs uppercase tracking-widest font-bold text-zinc-400">Remote Branches</div>
                         </div>
 
                         @foreach($this->filteredRemoteBranches as $branch)
@@ -111,7 +111,7 @@
                             <div class="px-3 py-2 hover:bg-zinc-900 transition-colors">
                                 <div class="flex items-center gap-3">
                                     <div class="w-4 h-4"></div>
-                                    <div class="text-sm truncate text-zinc-500 italic">
+                                    <div class="text-sm truncate text-zinc-400 italic">
                                         {{ $cleanName }}
                                     </div>
                                 </div>

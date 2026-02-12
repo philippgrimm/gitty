@@ -37,9 +37,9 @@
     @if(empty($repoPath))
         <div class="flex-1 flex items-center justify-center">
             <div class="text-center space-y-6">
-                <div class="text-8xl text-zinc-700">⊘</div>
-                <div class="text-zinc-500 uppercase tracking-widest text-sm font-bold">No Repository Selected</div>
-                <div class="text-zinc-600 text-xs">Open a git repository to get started</div>
+                <div class="text-8xl text-zinc-500">⊘</div>
+                <div class="text-zinc-400 uppercase tracking-widest text-sm font-bold">No Repository Selected</div>
+                <div class="text-zinc-400 text-xs">Open a git repository to get started</div>
             </div>
         </div>
     @else

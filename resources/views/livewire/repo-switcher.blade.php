@@ -15,7 +15,7 @@
             @if($currentRepoName)
                 <span class="font-bold">{{ $currentRepoName }}</span>
             @else
-                <span class="text-zinc-500">No repository open</span>
+                <span class="text-zinc-400">No repository open</span>
             @endif
         </flux:button>
 
@@ -24,7 +24,7 @@
                 <div class="px-4 py-3 bg-zinc-900 border-b border-zinc-800">
                     <div class="text-xs uppercase tracking-widest font-bold text-zinc-400 mb-1">Current Repository</div>
                     <div class="text-sm font-bold text-zinc-100 truncate">{{ $currentRepoName }}</div>
-                    <div class="text-xs text-zinc-500 font-mono truncate">{{ $currentRepoPath }}</div>
+                    <div class="text-xs text-zinc-400 font-mono truncate">{{ $currentRepoPath }}</div>
                 </div>
             @endif
 
@@ -46,9 +46,9 @@
                                         <span class="text-green-400 text-xs">✓</span>
                                     @endif
                                 </div>
-                                <div class="text-xs text-zinc-500 font-mono truncate">{{ $repo['path'] }}</div>
+                                <div class="text-xs text-zinc-400 font-mono truncate">{{ $repo['path'] }}</div>
                                 @if($repo['last_opened_at'])
-                                    <div class="text-xs text-zinc-600 mt-0.5">{{ $repo['last_opened_at'] }}</div>
+                                    <div class="text-xs text-zinc-400 mt-0.5">{{ $repo['last_opened_at'] }}</div>
                                 @endif
                             </div>
                             
@@ -65,8 +65,8 @@
             @else
                 @if(!$currentRepoName)
                     <div class="px-4 py-8 text-center">
-                        <div class="text-4xl text-zinc-700 mb-2">⊘</div>
-                        <div class="text-xs uppercase tracking-wider text-zinc-500">No repositories yet</div>
+                        <div class="text-4xl text-zinc-500 mb-2">⊘</div>
+                        <div class="text-xs uppercase tracking-wider text-zinc-400">No repositories yet</div>
                     </div>
                 @endif
             @endif
@@ -84,7 +84,7 @@
     </flux:dropdown>
 
     @if($currentRepoPath)
-        <div class="text-xs text-zinc-600 font-mono hidden lg:block">
+        <div class="text-xs text-zinc-400 font-mono hidden lg:block">
             {{ str_replace($currentRepoName, '', $currentRepoPath) }}
         </div>
     @endif
