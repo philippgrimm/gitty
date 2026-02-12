@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Livewire;
 
+use App\Helpers\FileTreeBuilder;
 use App\Services\Git\GitService;
 use App\Services\Git\StagingService;
 use Illuminate\Support\Collection;
@@ -18,6 +19,8 @@ class StagingPanel extends Component
     public Collection $stagedFiles;
 
     public Collection $untrackedFiles;
+
+    public bool $treeView = false;
 
     private bool $pausePolling = false;
 
@@ -119,9 +122,25 @@ class StagingPanel extends Component
         $this->dispatch('file-selected', file: $file, staged: $staged);
     }
 
+    public function toggleView(): void
+    {
+        $this->treeView = !$this->treeView;
+    }
+
     public function render()
     {
-        return view('livewire.staging-panel');
+        $stagedTree = $this->treeView && $this->stagedFiles->isNotEmpty()
+            ? FileTreeBuilder::buildTree($this->stagedFiles->toArray())
+            : [];
+
+        $unstagedTree = $this->treeView && ($this->unstagedFiles->isNotEmpty() || $this->untrackedFiles->isNotEmpty())
+            ? FileTreeBuilder::buildTree($this->unstagedFiles->concat($this->untrackedFiles)->toArray())
+            : [];
+
+        return view('livewire.staging-panel', [
+            'stagedTree' => $stagedTree,
+            'unstagedTree' => $unstagedTree,
+        ]);
     }
 
     private function pausePollingTemporarily(): void
