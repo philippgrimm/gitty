@@ -126,3 +126,84 @@ it('renders diff html with syntax highlighting', function () {
     
     $component->assertSee('Hello, Gitty!');
 });
+
+it('stores parsed diff data with hunks for staging operations', function () {
+    Process::fake([
+        'git diff -- README.md' => GitOutputFixtures::diffUnstaged(),
+    ]);
+
+    $component = Livewire::test(DiffViewer::class, ['repoPath' => $this->testRepoPath])
+        ->call('loadDiff', 'README.md', false);
+
+    $files = $component->get('files');
+    expect($files)->toBeArray();
+    expect($files)->toHaveCount(1);
+    expect($files[0])->toHaveKey('hunks');
+    expect($files[0]['hunks'])->toBeArray();
+    expect($files[0]['hunks'])->not->toBeEmpty();
+    expect($files[0]['hunks'][0])->toHaveKeys(['oldStart', 'oldCount', 'newStart', 'newCount', 'header', 'lines']);
+});
+
+it('stages a hunk from unstaged diff', function () {
+    Process::fake([
+        'git diff -- README.md' => GitOutputFixtures::diffUnstaged(),
+        'git apply --cached' => Process::result(),
+    ]);
+
+    Livewire::test(DiffViewer::class, ['repoPath' => $this->testRepoPath])
+        ->call('loadDiff', 'README.md', false)
+        ->call('stageHunk', 0, 0)
+        ->assertDispatched('status-updated');
+
+    Process::assertRan('git apply --cached');
+});
+
+it('unstages a hunk from staged diff', function () {
+    Process::fake([
+        'git diff --cached -- src/App.php' => GitOutputFixtures::diffStaged(),
+        'git apply --cached --reverse' => Process::result(),
+    ]);
+
+    Livewire::test(DiffViewer::class, ['repoPath' => $this->testRepoPath])
+        ->call('loadDiff', 'src/App.php', true)
+        ->call('unstageHunk', 0, 0)
+        ->assertDispatched('status-updated');
+
+    Process::assertRan('git apply --cached --reverse');
+});
+
+it('reloads diff after staging a hunk', function () {
+    Process::fake([
+        'git diff -- README.md' => GitOutputFixtures::diffUnstaged(),
+        'git apply --cached' => Process::result(),
+    ]);
+
+    $component = Livewire::test(DiffViewer::class, ['repoPath' => $this->testRepoPath])
+        ->call('loadDiff', 'README.md', false)
+        ->call('stageHunk', 0, 0);
+
+    // Should have called git diff twice: once for initial load, once after staging
+    Process::assertRan('git diff -- README.md', 2);
+});
+
+it('renders stage button for unstaged diff', function () {
+    Process::fake([
+        'git diff -- README.md' => GitOutputFixtures::diffUnstaged(),
+    ]);
+
+    Livewire::test(DiffViewer::class, ['repoPath' => $this->testRepoPath])
+        ->call('loadDiff', 'README.md', false)
+        ->assertSee('+ Stage')
+        ->assertDontSee('− Unstage');
+});
+
+it('renders unstage button for staged diff', function () {
+    Process::fake([
+        'git diff --cached -- src/App.php' => GitOutputFixtures::diffStaged(),
+    ]);
+
+    Livewire::test(DiffViewer::class, ['repoPath' => $this->testRepoPath])
+        ->call('loadDiff', 'src/App.php', true)
+        ->assertSee('− Unstage')
+        ->assertDontSee('+ Stage');
+});

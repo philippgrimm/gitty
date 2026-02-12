@@ -32,11 +32,11 @@ class DiffService
         return $file->hunks;
     }
 
-    public function renderDiffHtml(DiffResult $diff): string
+    public function renderDiffHtml(DiffResult $diff, bool $isStaged = false): string
     {
         $html = '';
 
-        foreach ($diff->files as $file) {
+        foreach ($diff->files as $fileIndex => $file) {
             $html .= '<div class="diff-file">';
             $html .= '<div class="diff-file-header">';
             $html .= '<span class="diff-file-path">' . htmlspecialchars($file->getDisplayPath()) . '</span>';
@@ -46,9 +46,29 @@ class DiffService
             if ($file->isBinary) {
                 $html .= '<div class="diff-binary">Binary file</div>';
             } else {
-                foreach ($file->hunks as $hunk) {
+                foreach ($file->hunks as $hunkIndex => $hunk) {
                     $html .= '<div class="diff-hunk">';
-                    $html .= '<div class="diff-hunk-header">' . htmlspecialchars($hunk->header) . '</div>';
+                    $html .= '<div class="diff-hunk-header group">';
+                    $html .= '<span class="flex-1">' . htmlspecialchars($hunk->header) . '</span>';
+                    
+                    // Add stage/unstage button
+                    if ($isStaged) {
+                        $html .= '<button wire:click="unstageHunk(' . $fileIndex . ', ' . $hunkIndex . ')" ';
+                        $html .= 'class="hunk-action-btn opacity-0 group-hover:opacity-100 transition-opacity duration-200 ';
+                        $html .= 'px-3 py-1 text-xs font-bold uppercase tracking-wider ';
+                        $html .= 'bg-red-900/50 hover:bg-red-900 text-red-100 border border-red-700 rounded" ';
+                        $html .= 'title="Unstage this hunk">';
+                        $html .= '− Unstage</button>';
+                    } else {
+                        $html .= '<button wire:click="stageHunk(' . $fileIndex . ', ' . $hunkIndex . ')" ';
+                        $html .= 'class="hunk-action-btn opacity-0 group-hover:opacity-100 transition-opacity duration-200 ';
+                        $html .= 'px-3 py-1 text-xs font-bold uppercase tracking-wider ';
+                        $html .= 'bg-green-900/50 hover:bg-green-900 text-green-100 border border-green-700 rounded" ';
+                        $html .= 'title="Stage this hunk">';
+                        $html .= '+ Stage</button>';
+                    }
+                    
+                    $html .= '</div>';
 
                     foreach ($hunk->lines as $line) {
                         $class = match ($line->type) {

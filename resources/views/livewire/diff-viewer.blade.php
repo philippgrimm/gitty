@@ -17,7 +17,7 @@
     }
 
     .diff-hunk-header {
-        @apply bg-zinc-900 text-zinc-500 px-4 py-2 font-mono text-xs uppercase tracking-wider border-y border-zinc-800;
+        @apply bg-zinc-900 text-zinc-500 px-4 py-2 font-mono text-xs uppercase tracking-wider border-y border-zinc-800 flex items-center gap-3;
     }
 
     .diff-line-addition,
