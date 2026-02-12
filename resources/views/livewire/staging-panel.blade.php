@@ -18,8 +18,8 @@
     @if($unstagedFiles->isEmpty() && $stagedFiles->isEmpty() && $untrackedFiles->isEmpty())
         <div class="flex-1 flex items-center justify-center">
             <div class="text-center space-y-3">
-                <div class="text-6xl text-zinc-500">✓</div>
-                <div class="text-zinc-400 uppercase tracking-widest text-xs font-bold">No changes</div>
+                <div class="w-20 h-20 mx-auto opacity-60">{!! file_get_contents(resource_path('svg/empty-states/no-changes.svg')) !!}</div>
+                <div class="text-zinc-400 uppercase tracking-wider text-xs font-medium">No changes</div>
             </div>
         </div>
     @else
@@ -32,12 +32,12 @@
             >
                 @if($treeView)
                     <span class="flex items-center gap-2">
-                        <span>☰</span>
+                        <span class="text-zinc-400">≡</span>
                         <span>Flat</span>
                     </span>
                 @else
                     <span class="flex items-center gap-2">
-                        <span>🌳</span>
+                        <span class="text-zinc-400">⊞</span>
                         <span>Tree</span>
                     </span>
                 @endif
@@ -48,7 +48,7 @@
                 <div class="border-b border-zinc-800">
                     <div class="sticky top-0 bg-zinc-900 border-b border-zinc-800 px-4 py-3 flex items-center justify-between">
                         <div class="flex items-center gap-3">
-                            <div class="text-xs uppercase tracking-widest font-bold text-zinc-400">Staged Changes</div>
+                            <div class="text-xs uppercase tracking-wider font-medium text-zinc-400">Staged Changes</div>
                             <flux:badge variant="solid" color="green" class="font-mono text-xs">{{ $stagedFiles->count() }}</flux:badge>
                         </div>
                         <flux:button 
@@ -68,7 +68,7 @@
                             @foreach($stagedFiles as $file)
                                 <div 
                                     wire:click="selectFile('{{ $file['path'] }}', true)"
-                                    class="group px-4 py-2.5 hover:bg-zinc-900 cursor-pointer transition-colors flex items-center justify-between gap-3"
+                                    class="group px-4 py-2.5 hover:bg-zinc-800/30 cursor-pointer transition-colors flex items-center justify-between gap-3"
                                 >
                                     <div class="flex items-center gap-3 flex-1 min-w-0">
                                         @php
@@ -110,7 +110,7 @@
                 <div>
                     <div class="sticky top-0 bg-zinc-900 border-b border-zinc-800 px-4 py-3 flex items-center justify-between">
                         <div class="flex items-center gap-3">
-                            <div class="text-xs uppercase tracking-widest font-bold text-zinc-400">Changes</div>
+                            <div class="text-xs uppercase tracking-wider font-medium text-zinc-400">Changes</div>
                             <flux:badge variant="solid" color="zinc" class="font-mono text-xs">{{ $unstagedFiles->count() + $untrackedFiles->count() }}</flux:badge>
                         </div>
                         <div class="flex items-center gap-2">
@@ -140,7 +140,7 @@
                             @foreach($unstagedFiles->concat($untrackedFiles) as $file)
                                 <div 
                                     wire:click="selectFile('{{ $file['path'] }}', false)"
-                                    class="group px-4 py-2.5 hover:bg-zinc-900 cursor-pointer transition-colors flex items-center justify-between gap-3"
+                                    class="group px-4 py-2.5 hover:bg-zinc-800/30 cursor-pointer transition-colors flex items-center justify-between gap-3"
                                 >
                                     <div class="flex items-center gap-3 flex-1 min-w-0">
                                         @php
@@ -170,7 +170,7 @@
                                             variant="ghost" 
                                             size="sm"
                                         >
-                                            <span class="text-xs">+</span>
+                                            <span class="text-xs text-green-400">+</span>
                                         </flux:button>
                                         <flux:button 
                                             @click.stop="showDiscardModal = true; discardAll = false; discardTarget = '{{ $file['path'] }}'"

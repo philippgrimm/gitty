@@ -9,17 +9,17 @@
             >
                 <div 
                     @click="expanded = !expanded"
-                    class="group px-4 py-2 hover:bg-zinc-900 cursor-pointer transition-colors flex items-center gap-2"
+                    class="group px-4 py-2 hover:bg-zinc-800/30 cursor-pointer transition-colors flex items-center gap-2"
                     style="padding-left: {{ ($level * 16) + 16 }}px"
                 >
                     <div 
-                        class="text-zinc-400 transition-transform duration-200 text-xs"
+                        class="text-zinc-400 transition-transform duration-200"
                         :class="expanded ? 'rotate-90' : ''"
                     >
-                        ▶
+                        <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
                     </div>
-                    <div class="text-zinc-400 text-sm">📁</div>
-                    <div class="text-sm font-medium text-zinc-300 group-hover:text-zinc-100 transition-colors">
+                    <div class="text-amber-500/60 text-sm">◆</div>
+                    <div class="text-sm font-medium text-zinc-200 group-hover:text-zinc-100 transition-colors">
                         {{ $node['name'] }}
                     </div>
                     <flux:badge variant="solid" color="zinc" class="font-mono text-xs ml-1">
@@ -34,7 +34,7 @@
         @else
             <div 
                 wire:click="selectFile('{{ $node['path'] }}', {{ $staged ? 'true' : 'false' }})"
-                class="group px-4 py-2.5 hover:bg-zinc-900 cursor-pointer transition-colors flex items-center justify-between gap-3"
+                class="group px-4 py-2.5 hover:bg-zinc-800/30 cursor-pointer transition-colors flex items-center justify-between gap-3"
                 style="padding-left: {{ ($level * 16) + 16 }}px"
             >
                 <div class="flex items-center gap-3 flex-1 min-w-0">
