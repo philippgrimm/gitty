@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Process;
 
 class StashService
 {
+    private GitCacheService $cache;
+
     public function __construct(
         protected string $repoPath,
     ) {
@@ -17,6 +19,7 @@ class StashService
         if (! is_dir($gitDir)) {
             throw new \InvalidArgumentException("Not a valid git repository: {$this->repoPath}");
         }
+        $this->cache = new GitCacheService();
     }
 
     public function stash(string $message, bool $includeUntracked): void
@@ -28,28 +31,45 @@ class StashService
         $command .= " -m \"{$message}\"";
 
         Process::path($this->repoPath)->run($command);
+
+        $this->cache->invalidateGroup($this->repoPath, 'stashes');
+        $this->cache->invalidateGroup($this->repoPath, 'status');
     }
 
     public function stashList(): Collection
     {
-        $result = Process::path($this->repoPath)->run('git stash list');
-        $lines = array_filter(explode("\n", trim($result->output())));
+        return $this->cache->get(
+            $this->repoPath,
+            'stashes',
+            function () {
+                $result = Process::path($this->repoPath)->run('git stash list');
+                $lines = array_filter(explode("\n", trim($result->output())));
 
-        return collect($lines)->map(fn ($line) => Stash::fromStashLine($line));
+                return collect($lines)->map(fn ($line) => Stash::fromStashLine($line));
+            },
+            30
+        );
     }
 
     public function stashApply(int $index): void
     {
         Process::path($this->repoPath)->run("git stash apply stash@{{$index}}");
+
+        $this->cache->invalidateGroup($this->repoPath, 'status');
     }
 
     public function stashPop(int $index): void
     {
         Process::path($this->repoPath)->run("git stash pop stash@{{$index}}");
+
+        $this->cache->invalidateGroup($this->repoPath, 'stashes');
+        $this->cache->invalidateGroup($this->repoPath, 'status');
     }
 
     public function stashDrop(int $index): void
     {
         Process::path($this->repoPath)->run("git stash drop stash@{{$index}}");
+
+        $this->cache->invalidateGroup($this->repoPath, 'stashes');
     }
 }
