@@ -72,7 +72,7 @@
 }
 
 .diff-hunk-header {
-    @apply px-4 py-2 text-xs uppercase tracking-wider flex items-center gap-3;
+    @apply px-4 py-2 text-xs tracking-wider flex items-center gap-3;
     background-color: var(--surface-1);
     color: var(--text-secondary);
     font-family: var(--font-mono);
@@ -92,11 +92,11 @@
 }
 
 .diff-line-addition {
-    @apply bg-green-950/30 hover:bg-green-950/50;
+    @apply bg-green-950/40 hover:bg-green-950/60;
 }
 
 .diff-line-deletion {
-    @apply bg-red-950/30 hover:bg-red-950/50;
+    @apply bg-red-950/40 hover:bg-red-950/60;
 }
 
 .diff-line-context {
@@ -104,7 +104,7 @@
 }
 
 .diff-line-context:hover {
-    background-color: rgba(24, 24, 27, 0.3);
+    background-color: var(--surface-2);
 }
 
 .diff-line-addition .line-number {
@@ -122,6 +122,7 @@
 .line-number {
     @apply w-12 text-right px-2 py-1 select-none shrink-0;
     font-size: 0.75rem;
+    border-right: 1px solid var(--border-subtle);
 }
 
 .line-content {
