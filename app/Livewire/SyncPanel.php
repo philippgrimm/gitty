@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Livewire;
 
+use App\Services\Git\GitErrorHandler;
 use App\Services\Git\GitService;
 use Illuminate\Support\Facades\Process;
 use Livewire\Component;
@@ -48,7 +49,8 @@ class SyncPanel extends Component
 
             if ($result->exitCode() !== 0) {
                 $errorMsg = trim($result->errorOutput() ?: $result->output());
-                $this->error = 'Push failed: ' . $errorMsg;
+                $this->error = GitErrorHandler::translate($errorMsg);
+                $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
                 $this->isOperationRunning = false;
 
                 return;
@@ -59,7 +61,8 @@ class SyncPanel extends Component
             $this->isOperationRunning = false;
             $this->dispatch('status-updated');
         } catch (\Exception $e) {
-            $this->error = 'Push failed: ' . $e->getMessage();
+            $this->error = GitErrorHandler::translate($e->getMessage());
+            $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
             $this->isOperationRunning = false;
         }
     }
@@ -84,7 +87,8 @@ class SyncPanel extends Component
 
             if ($result->exitCode() !== 0) {
                 $errorMsg = trim($result->errorOutput() ?: $result->output());
-                $this->error = 'Pull failed: ' . $errorMsg;
+                $this->error = GitErrorHandler::translate($errorMsg);
+                $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
                 $this->isOperationRunning = false;
 
                 return;
@@ -95,7 +99,8 @@ class SyncPanel extends Component
             $this->isOperationRunning = false;
             $this->dispatch('status-updated');
         } catch (\Exception $e) {
-            $this->error = 'Pull failed: ' . $e->getMessage();
+            $this->error = GitErrorHandler::translate($e->getMessage());
+            $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
             $this->isOperationRunning = false;
         }
     }
@@ -110,7 +115,8 @@ class SyncPanel extends Component
 
             if ($result->exitCode() !== 0) {
                 $errorMsg = trim($result->errorOutput() ?: $result->output());
-                $this->error = 'Fetch failed: ' . $errorMsg;
+                $this->error = GitErrorHandler::translate($errorMsg);
+                $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
                 $this->isOperationRunning = false;
 
                 return;
@@ -121,7 +127,8 @@ class SyncPanel extends Component
             $this->isOperationRunning = false;
             $this->dispatch('status-updated');
         } catch (\Exception $e) {
-            $this->error = 'Fetch failed: ' . $e->getMessage();
+            $this->error = GitErrorHandler::translate($e->getMessage());
+            $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
             $this->isOperationRunning = false;
         }
     }
@@ -136,7 +143,8 @@ class SyncPanel extends Component
 
             if ($result->exitCode() !== 0) {
                 $errorMsg = trim($result->errorOutput() ?: $result->output());
-                $this->error = 'Fetch all failed: ' . $errorMsg;
+                $this->error = GitErrorHandler::translate($errorMsg);
+                $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
                 $this->isOperationRunning = false;
 
                 return;
@@ -147,7 +155,8 @@ class SyncPanel extends Component
             $this->isOperationRunning = false;
             $this->dispatch('status-updated');
         } catch (\Exception $e) {
-            $this->error = 'Fetch all failed: ' . $e->getMessage();
+            $this->error = GitErrorHandler::translate($e->getMessage());
+            $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
             $this->isOperationRunning = false;
         }
     }
@@ -172,7 +181,8 @@ class SyncPanel extends Component
 
             if ($result->exitCode() !== 0) {
                 $errorMsg = trim($result->errorOutput() ?: $result->output());
-                $this->error = 'Force push failed: ' . $errorMsg;
+                $this->error = GitErrorHandler::translate($errorMsg);
+                $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
                 $this->isOperationRunning = false;
 
                 return;
@@ -183,7 +193,8 @@ class SyncPanel extends Component
             $this->isOperationRunning = false;
             $this->dispatch('status-updated');
         } catch (\Exception $e) {
-            $this->error = 'Force push failed: ' . $e->getMessage();
+            $this->error = GitErrorHandler::translate($e->getMessage());
+            $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
             $this->isOperationRunning = false;
         }
     }

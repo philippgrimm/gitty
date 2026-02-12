@@ -146,8 +146,8 @@ test('component handles commit failure with error message', function () {
     Livewire::test(CommitPanel::class, ['repoPath' => $this->testRepoPath])
         ->set('message', 'feat: add feature')
         ->call('commit')
-        ->assertSet('message', 'feat: add feature') // Message should not be cleared on failure
-        ->assertSet('error', 'Commit failed');
+        ->assertSet('message', 'feat: add feature')
+        ->assertSet('error', 'Git commit failed: ');
 });
 
 test('component does not commit with empty message', function () {

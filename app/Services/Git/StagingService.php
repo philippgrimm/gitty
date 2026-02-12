@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Process;
 
 class StagingService
 {
+    private GitCacheService $cache;
+
     public function __construct(
         protected string $repoPath,
     ) {
@@ -15,35 +17,48 @@ class StagingService
         if (! is_dir($gitDir)) {
             throw new \InvalidArgumentException("Not a valid git repository: {$this->repoPath}");
         }
+        $this->cache = new GitCacheService();
     }
 
     public function stageFile(string $file): void
     {
         Process::path($this->repoPath)->run("git add {$file}");
+
+        $this->cache->invalidateGroup($this->repoPath, 'status');
     }
 
     public function unstageFile(string $file): void
     {
         Process::path($this->repoPath)->run("git reset HEAD {$file}");
+
+        $this->cache->invalidateGroup($this->repoPath, 'status');
     }
 
     public function stageAll(): void
     {
         Process::path($this->repoPath)->run('git add .');
+
+        $this->cache->invalidateGroup($this->repoPath, 'status');
     }
 
     public function unstageAll(): void
     {
         Process::path($this->repoPath)->run('git reset HEAD');
+
+        $this->cache->invalidateGroup($this->repoPath, 'status');
     }
 
     public function discardFile(string $file): void
     {
         Process::path($this->repoPath)->run("git checkout -- {$file}");
+
+        $this->cache->invalidateGroup($this->repoPath, 'status');
     }
 
     public function discardAll(): void
     {
         Process::path($this->repoPath)->run('git checkout -- .');
+
+        $this->cache->invalidateGroup($this->repoPath, 'status');
     }
 }

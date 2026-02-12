@@ -93,6 +93,21 @@
                 <div class="text-zinc-500 uppercase tracking-widest text-sm">No changes to display</div>
             </div>
         </div>
+    @elseif($isLargeFile)
+        <div class="border-b-2 border-zinc-800 p-4 bg-zinc-900">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <span class="text-zinc-100 font-bold">{{ $file }}</span>
+                    <flux:badge variant="solid" color="orange" class="uppercase tracking-wider">LARGE FILE</flux:badge>
+                </div>
+            </div>
+        </div>
+        <div class="flex-1 flex items-center justify-center">
+            <div class="text-center">
+                <div class="text-zinc-600 text-6xl mb-4">⚠</div>
+                <div class="text-zinc-500 uppercase tracking-widest text-sm">File too large (&gt;1MB) — diff skipped</div>
+            </div>
+        </div>
     @elseif($isBinary)
         <div class="border-b-2 border-zinc-800 p-4 bg-zinc-900">
             <div class="flex items-center justify-between">

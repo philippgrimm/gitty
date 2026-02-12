@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Process;
 
 class CommitService
 {
+    private GitCacheService $cache;
+
     public function __construct(
         protected string $repoPath,
     ) {
@@ -15,6 +17,7 @@ class CommitService
         if (! is_dir($gitDir)) {
             throw new \InvalidArgumentException("Not a valid git repository: {$this->repoPath}");
         }
+        $this->cache = new GitCacheService();
     }
 
     public function commit(string $message): void
@@ -24,6 +27,9 @@ class CommitService
         if ($result->exitCode() !== 0) {
             throw new \RuntimeException('Git commit failed: ' . $result->errorOutput());
         }
+
+        $this->cache->invalidateGroup($this->repoPath, 'status');
+        $this->cache->invalidateGroup($this->repoPath, 'history');
     }
 
     public function commitAmend(string $message): void
@@ -33,6 +39,9 @@ class CommitService
         if ($result->exitCode() !== 0) {
             throw new \RuntimeException('Git commit amend failed: ' . $result->errorOutput());
         }
+
+        $this->cache->invalidateGroup($this->repoPath, 'status');
+        $this->cache->invalidateGroup($this->repoPath, 'history');
     }
 
     public function commitAndPush(string $message): void
@@ -48,6 +57,9 @@ class CommitService
         if ($pushResult->exitCode() !== 0) {
             throw new \RuntimeException('Git push failed: ' . $pushResult->errorOutput());
         }
+
+        $this->cache->invalidateGroup($this->repoPath, 'status');
+        $this->cache->invalidateGroup($this->repoPath, 'history');
     }
 
     public function lastCommitMessage(): string

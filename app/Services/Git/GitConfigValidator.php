@@ -32,11 +32,31 @@ class GitConfigValidator
         }
 
         $gitVersion = $this->getGitVersion();
-        if (version_compare($gitVersion, '2.0.0', '<')) {
-            $issues[] = "Git version {$gitVersion} is too old (minimum 2.0.0 required)";
+        if (version_compare($gitVersion, '2.30.0', '<')) {
+            $issues[] = "Git version {$gitVersion} is too old (minimum 2.30.0 required)";
         }
 
         return $issues;
+    }
+
+    public static function checkGitBinary(): bool
+    {
+        $result = Process::run('which git');
+
+        return $result->exitCode() === 0;
+    }
+
+    public function validateAll(): array
+    {
+        $issues = [];
+
+        if (! self::checkGitBinary()) {
+            $issues[] = 'Git is not installed or not in PATH';
+
+            return $issues;
+        }
+
+        return array_merge($issues, $this->validate());
     }
 
     protected function getConfig(string $key): string

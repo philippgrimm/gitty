@@ -48,7 +48,7 @@ test('push operation fails with error message', function () {
 
     Livewire::test(SyncPanel::class, ['repoPath' => $this->testRepoPath])
         ->call('syncPush')
-        ->assertSet('error', 'Push failed: error: failed to push some refs')
+        ->assertSet('error', 'error: failed to push some refs')
         ->assertNotDispatched('status-updated');
 });
 
@@ -75,7 +75,7 @@ test('pull operation fails with error message', function () {
 
     Livewire::test(SyncPanel::class, ['repoPath' => $this->testRepoPath])
         ->call('syncPull')
-        ->assertSet('error', 'Pull failed: error: Your local changes would be overwritten')
+        ->assertSet('error', 'error: Your local changes would be overwritten')
         ->assertNotDispatched('status-updated');
 });
 
