@@ -1,5 +1,6 @@
 <div 
-    x-data="{ showDropdown: false }" 
+    x-data="{ showDropdown: false, commitFlash: false }" 
+    x-on:committed.window="commitFlash = true; setTimeout(() => commitFlash = false, 200)"
     class="flex flex-col bg-zinc-950 text-zinc-100 font-mono border-t border-zinc-800 p-4 space-y-3"
 >
     @if($error)
@@ -37,6 +38,7 @@
             size="sm"
             :disabled="$stagedCount === 0 || empty(trim($message))"
             class="flex-1 uppercase tracking-wider font-semibold !bg-amber-600 hover:!bg-amber-500 !text-white"
+            x-bind:class="{ 'animate-commit-flash': commitFlash }"
         >
             {{ $isAmend ? 'Amend' : 'Commit' }} (⌘↵)
         </flux:button>

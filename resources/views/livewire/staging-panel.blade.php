@@ -16,7 +16,7 @@
     class="h-full flex flex-col bg-zinc-950 text-zinc-100 font-mono border-r border-zinc-800"
 >
     @if($unstagedFiles->isEmpty() && $stagedFiles->isEmpty() && $untrackedFiles->isEmpty())
-        <div class="flex-1 flex items-center justify-center">
+        <div class="flex-1 flex items-center justify-center animate-fade-in">
             <div class="text-center space-y-3">
                 <div class="w-20 h-20 mx-auto opacity-60">{!! file_get_contents(resource_path('svg/empty-states/no-changes.svg')) !!}</div>
                 <div class="text-zinc-400 uppercase tracking-wider text-xs font-medium">No changes</div>
@@ -68,7 +68,7 @@
                             @foreach($stagedFiles as $file)
                                 <div 
                                     wire:click="selectFile('{{ $file['path'] }}', true)"
-                                    class="group px-4 py-2.5 hover:bg-zinc-800/30 cursor-pointer transition-colors flex items-center justify-between gap-3"
+                                    class="group px-4 py-2.5 hover:bg-zinc-800/30 cursor-pointer transition-colors flex items-center justify-between gap-3 animate-slide-in"
                                 >
                                     <div class="flex items-center gap-3 flex-1 min-w-0">
                                         @php
@@ -140,7 +140,7 @@
                             @foreach($unstagedFiles->concat($untrackedFiles) as $file)
                                 <div 
                                     wire:click="selectFile('{{ $file['path'] }}', false)"
-                                    class="group px-4 py-2.5 hover:bg-zinc-800/30 cursor-pointer transition-colors flex items-center justify-between gap-3"
+                                    class="group px-4 py-2.5 hover:bg-zinc-800/30 cursor-pointer transition-colors flex items-center justify-between gap-3 animate-slide-in"
                                 >
                                     <div class="flex items-center gap-3 flex-1 min-w-0">
                                         @php

@@ -1,13 +1,13 @@
 <div class="h-full flex flex-col bg-zinc-950 font-mono">
     @if($isEmpty && !$file)
-        <div class="flex-1 flex items-center justify-center">
+        <div class="flex-1 flex items-center justify-center animate-fade-in">
             <div class="text-center">
                 <div class="w-20 h-20 mx-auto mb-4 opacity-60">{!! file_get_contents(resource_path('svg/empty-states/no-file.svg')) !!}</div>
                 <div class="text-zinc-400 uppercase tracking-wider text-sm">No file selected</div>
             </div>
         </div>
     @elseif($isEmpty && $file)
-        <div class="flex-1 flex items-center justify-center">
+        <div class="flex-1 flex items-center justify-center animate-fade-in">
             <div class="text-center">
                 <div class="w-20 h-20 mx-auto mb-4 opacity-60">{!! file_get_contents(resource_path('svg/empty-states/no-diff.svg')) !!}</div>
                 <div class="text-zinc-400 uppercase tracking-wider text-sm">No changes to display</div>
@@ -22,7 +22,7 @@
                 </div>
             </div>
         </div>
-        <div class="flex-1 flex items-center justify-center">
+        <div class="flex-1 flex items-center justify-center animate-fade-in">
             <div class="text-center">
                 <div class="w-20 h-20 mx-auto mb-4 opacity-60">{!! file_get_contents(resource_path('svg/empty-states/large-file.svg')) !!}</div>
                 <div class="text-zinc-400 uppercase tracking-wider text-sm">File too large (&gt;1MB) — diff skipped</div>
@@ -37,7 +37,7 @@
                 </div>
             </div>
         </div>
-        <div class="flex-1 flex items-center justify-center">
+        <div class="flex-1 flex items-center justify-center animate-fade-in">
             <div class="text-center">
                 <div class="w-20 h-20 mx-auto mb-4 opacity-60">{!! file_get_contents(resource_path('svg/empty-states/binary-file.svg')) !!}</div>
                 <div class="text-zinc-400 uppercase tracking-wider text-sm">Binary file — cannot display diff</div>

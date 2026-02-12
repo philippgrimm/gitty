@@ -64,7 +64,7 @@
                 </div>
             @else
                 @if(!$currentRepoName)
-                    <div class="px-4 py-8 text-center">
+                    <div class="px-4 py-8 text-center animate-fade-in">
                         <div class="w-12 h-12 mx-auto mb-2 opacity-60">{!! file_get_contents(resource_path('svg/empty-states/no-repo.svg')) !!}</div>
                         <div class="text-xs uppercase tracking-wider text-zinc-400">No repositories yet</div>
                     </div>

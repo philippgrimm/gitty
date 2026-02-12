@@ -26,12 +26,12 @@
                 @if($aheadBehind['ahead'] > 0 || $aheadBehind['behind'] > 0)
                     <div class="flex items-center gap-1">
                         @if($aheadBehind['ahead'] > 0)
-                            <flux:badge variant="solid" color="green" class="font-mono text-xs px-1 py-0">
+                            <flux:badge variant="solid" color="green" class="font-mono text-xs px-1 py-0 animate-sync-pulse">
                                 ↑{{ $aheadBehind['ahead'] }}
                             </flux:badge>
                         @endif
                         @if($aheadBehind['behind'] > 0)
-                            <flux:badge variant="solid" color="red" class="font-mono text-xs px-1 py-0">
+                            <flux:badge variant="solid" color="red" class="font-mono text-xs px-1 py-0 animate-sync-pulse">
                                 ↓{{ $aheadBehind['behind'] }}
                             </flux:badge>
                         @endif

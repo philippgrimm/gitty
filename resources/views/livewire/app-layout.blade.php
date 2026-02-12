@@ -37,7 +37,7 @@
     </div>
 
     @if(empty($repoPath))
-        <div class="flex-1 flex items-center justify-center">
+        <div class="flex-1 flex items-center justify-center animate-fade-in">
             <div class="text-center space-y-6">
                 <div class="w-24 h-24 mx-auto opacity-60">
                     {!! file_get_contents(resource_path('svg/empty-states/no-repo.svg')) !!}

@@ -26,7 +26,7 @@
 
     <div class="flex-1 overflow-y-auto">
         @if(empty($stashes))
-            <div class="flex flex-col items-center justify-center h-full text-zinc-400 space-y-4 px-4">
+            <div class="flex flex-col items-center justify-center h-full text-zinc-400 space-y-4 px-4 animate-fade-in">
                 <div class="w-16 h-16 mx-auto opacity-60">{!! file_get_contents(resource_path('svg/empty-states/no-changes.svg')) !!}</div>
                 <div class="text-xs uppercase tracking-wider font-medium">No stashes</div>
             </div>
