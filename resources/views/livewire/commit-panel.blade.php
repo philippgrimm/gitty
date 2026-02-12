@@ -1,6 +1,6 @@
 <div 
     x-data="{ showDropdown: false }" 
-    class="flex flex-col bg-zinc-950 text-zinc-100 font-mono border-t-2 border-zinc-800 p-4 space-y-3"
+    class="flex flex-col bg-zinc-950 text-zinc-100 font-mono border-t border-zinc-800 p-4 space-y-3"
 >
     @if($error)
         <div class="bg-red-950 border border-red-800 text-red-200 px-3 py-2 text-xs font-mono uppercase tracking-wider">

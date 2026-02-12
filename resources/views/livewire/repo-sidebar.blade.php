@@ -9,7 +9,7 @@
     class="h-full flex flex-col bg-zinc-950 text-zinc-100 font-mono overflow-hidden"
 >
     <div class="flex-1 overflow-y-auto">
-        <div class="border-b-2 border-zinc-800">
+        <div class="border-b border-zinc-800">
             <button 
                 @click="branchesOpen = !branchesOpen"
                 class="w-full px-4 py-3 flex items-center justify-between hover:bg-zinc-900 transition-colors"
@@ -48,7 +48,7 @@
             </div>
         </div>
 
-        <div class="border-b-2 border-zinc-800">
+        <div class="border-b border-zinc-800">
             <button 
                 @click="remotesOpen = !remotesOpen"
                 class="w-full px-4 py-3 flex items-center justify-between hover:bg-zinc-900 transition-colors"
@@ -73,7 +73,7 @@
             </div>
         </div>
 
-        <div class="border-b-2 border-zinc-800">
+        <div class="border-b border-zinc-800">
             <button 
                 @click="tagsOpen = !tagsOpen"
                 class="w-full px-4 py-3 flex items-center justify-between hover:bg-zinc-900 transition-colors"
@@ -100,7 +100,7 @@
             </div>
         </div>
 
-        <div class="border-b-2 border-zinc-800">
+        <div class="border-b border-zinc-800">
             <button 
                 @click="stashesOpen = !stashesOpen"
                 class="w-full px-4 py-3 flex items-center justify-between hover:bg-zinc-900 transition-colors"

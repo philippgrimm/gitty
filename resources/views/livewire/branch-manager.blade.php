@@ -100,7 +100,7 @@
                     @endforelse
 
                     @if($this->filteredRemoteBranches->isNotEmpty())
-                        <div class="px-3 py-2 bg-zinc-900 border-t-2 border-zinc-800 sticky top-0">
+                        <div class="px-3 py-2 bg-zinc-900 border-t border-zinc-800 sticky top-0">
                             <div class="text-xs uppercase tracking-widest font-bold text-zinc-400">Remote Branches</div>
                         </div>
 

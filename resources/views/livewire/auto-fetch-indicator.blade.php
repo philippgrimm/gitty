@@ -1,6 +1,6 @@
 <div 
     wire:poll.30s.visible="checkAndFetch"
-    class="flex items-center gap-2 px-3 py-2 bg-zinc-950 text-zinc-100 font-mono border-l-2 border-zinc-800"
+    class="flex items-center gap-2 px-3 py-2 bg-zinc-950 text-zinc-100 font-mono border-l border-zinc-800"
     x-data="{ showTooltip: false }"
 >
     <style>

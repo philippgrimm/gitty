@@ -14,7 +14,7 @@
             </div>
         </div>
     @elseif($isLargeFile)
-        <div class="border-b-2 border-zinc-800 p-4 bg-zinc-900">
+        <div class="border-b border-zinc-800 p-4 bg-zinc-900">
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-3">
                     <span class="text-zinc-100 font-bold">{{ $file }}</span>
@@ -29,7 +29,7 @@
             </div>
         </div>
     @elseif($isBinary)
-        <div class="border-b-2 border-zinc-800 p-4 bg-zinc-900">
+        <div class="border-b border-zinc-800 p-4 bg-zinc-900">
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-3">
                     <span class="text-zinc-100 font-bold">{{ $file }}</span>
@@ -44,7 +44,7 @@
             </div>
         </div>
     @else
-        <div class="border-b-2 border-zinc-800 p-4 bg-zinc-900 sticky top-0 z-10">
+        <div class="border-b border-zinc-800 p-4 bg-zinc-900 sticky top-0 z-10">
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-3">
                     <span class="text-zinc-100 font-bold">{{ $file }}</span>

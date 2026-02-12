@@ -16,7 +16,7 @@
     x-transition:leave="transition ease-in duration-200"
     x-transition:leave-start="opacity-100 translate-y-0"
     x-transition:leave-end="opacity-0 -translate-y-2"
-    class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 font-mono text-sm border-b-2"
+    class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 font-mono text-sm border-b"
     :class="{
         'bg-red-950 border-red-800 text-red-200': '{{ $type }}' === 'error',
         'bg-orange-950 border-orange-800 text-orange-200': '{{ $type }}' === 'warning',

@@ -13,7 +13,7 @@
         }
     }"
     @status-updated.window="startResumeTimer()"
-    class="h-full flex flex-col bg-zinc-950 text-zinc-100 font-mono border-r-2 border-zinc-800"
+    class="h-full flex flex-col bg-zinc-950 text-zinc-100 font-mono border-r border-zinc-800"
 >
     @if($unstagedFiles->isEmpty() && $stagedFiles->isEmpty() && $untrackedFiles->isEmpty())
         <div class="flex-1 flex items-center justify-center">
@@ -23,7 +23,7 @@
             </div>
         </div>
     @else
-        <div class="border-b-2 border-zinc-800 px-4 py-2 flex items-center justify-end">
+        <div class="border-b border-zinc-800 px-4 py-2 flex items-center justify-end">
             <flux:button 
                 wire:click="toggleView"
                 variant="ghost" 
@@ -45,7 +45,7 @@
         </div>
         <div class="flex-1 overflow-y-auto">
             @if($stagedFiles->isNotEmpty())
-                <div class="border-b-2 border-zinc-800">
+                <div class="border-b border-zinc-800">
                     <div class="sticky top-0 bg-zinc-900 border-b border-zinc-800 px-4 py-3 flex items-center justify-between">
                         <div class="flex items-center gap-3">
                             <div class="text-xs uppercase tracking-widest font-bold text-zinc-400">Staged Changes</div>

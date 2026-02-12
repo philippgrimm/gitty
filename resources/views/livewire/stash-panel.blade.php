@@ -1,15 +1,15 @@
 <div 
     wire:poll.5s.visible="refreshStashes"
-    class="h-full flex flex-col bg-zinc-950 text-zinc-100 font-mono border-r-2 border-zinc-800"
+    class="h-full flex flex-col bg-zinc-950 text-zinc-100 font-mono border-r border-zinc-800"
     x-data="{ confirmDropIndex: null }"
 >
     @if($error)
-        <div class="bg-red-950 border-b-2 border-red-800 text-red-200 px-4 py-3 text-xs uppercase tracking-wider font-bold">
+        <div class="bg-red-950 border-b border-red-800 text-red-200 px-4 py-3 text-xs uppercase tracking-wider font-bold">
             {{ $error }}
         </div>
     @endif
 
-    <div class="px-4 py-4 border-b-2 border-zinc-800">
+    <div class="px-4 py-4 border-b border-zinc-800">
         <div class="flex items-center justify-between">
             <div class="text-xs uppercase tracking-widest font-bold text-zinc-400">Stashes</div>
             <flux:button 

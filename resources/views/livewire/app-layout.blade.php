@@ -9,7 +9,7 @@
 >
     @livewire('error-banner', key('error-banner'))
     
-    <div class="border-b-2 border-zinc-800 bg-zinc-900 px-4 py-2 flex items-center justify-between gap-4">
+    <div class="border-b border-zinc-800 bg-zinc-900 px-4 py-2 flex items-center justify-between gap-4">
         <div class="flex items-center gap-4 flex-1 min-w-0">
             @if(!empty($repoPath))
                 <flux:button 
@@ -28,8 +28,8 @@
 
         @if(!empty($repoPath))
             <div class="flex items-center gap-4">
-                @livewire('branch-manager', ['repoPath' => $repoPath], key('branch-manager'))
-                @livewire('sync-panel', ['repoPath' => $repoPath], key('sync-panel'))
+                @livewire('branch-manager', ['repoPath' => $repoPath], key('branch-manager-' . $repoPath))
+                @livewire('sync-panel', ['repoPath' => $repoPath], key('sync-panel-' . $repoPath))
             </div>
         @endif
     </div>
@@ -46,31 +46,31 @@
 
         <div class="flex-1 flex overflow-hidden">
             <div 
-                class="border-r-2 border-zinc-800 bg-zinc-950 transition-all duration-300 overflow-hidden"
+                class="border-r border-zinc-800 bg-zinc-950 transition-all duration-300 overflow-hidden"
                 style="width: {{ $sidebarCollapsed ? '0px' : '250px' }}; min-width: {{ $sidebarCollapsed ? '0px' : '250px' }};"
             >
                 @if(!$sidebarCollapsed)
-                    @livewire('repo-sidebar', ['repoPath' => $repoPath], key('repo-sidebar'))
+                    @livewire('repo-sidebar', ['repoPath' => $repoPath], key('repo-sidebar-' . $repoPath))
                 @endif
             </div>
 
             <div class="flex-1 flex overflow-hidden">
-                <div class="w-1/3 flex flex-col border-r-2 border-zinc-800 overflow-hidden">
+                <div class="w-1/3 flex flex-col border-r border-zinc-800 overflow-hidden">
                     <div class="flex-1 overflow-hidden">
-                        @livewire('staging-panel', ['repoPath' => $repoPath], key('staging-panel'))
+                        @livewire('staging-panel', ['repoPath' => $repoPath], key('staging-panel-' . $repoPath))
                     </div>
-                    <div class="h-64 border-t-2 border-zinc-800 overflow-hidden">
-                        @livewire('commit-panel', ['repoPath' => $repoPath], key('commit-panel'))
+                    <div class="h-64 border-t border-zinc-800 overflow-hidden">
+                        @livewire('commit-panel', ['repoPath' => $repoPath], key('commit-panel-' . $repoPath))
                     </div>
                 </div>
 
                 <div class="flex-1 overflow-hidden">
-                    @livewire('diff-viewer', ['repoPath' => $repoPath], key('diff-viewer'))
+                    @livewire('diff-viewer', ['repoPath' => $repoPath], key('diff-viewer-' . $repoPath))
                 </div>
             </div>
         </div>
 
-        <div class="h-7 border-t-2 border-zinc-800 bg-zinc-900 px-4 flex items-center gap-4 text-xs font-mono text-zinc-400">
+        <div class="h-7 border-t border-zinc-800 bg-zinc-900 px-4 flex items-center gap-4 text-xs font-mono text-zinc-400">
             @if(!empty($this->statusBarData))
                 <span class="flex items-center gap-1.5">
                     <span class="text-zinc-500">⎇</span>

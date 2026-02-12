@@ -8,17 +8,59 @@
 @source '../**/*.js';
 
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+    /* Typography */
+    --font-sans: 'Instrument Sans', 'Inter', system-ui, ui-sans-serif, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', ui-monospace, monospace;
 }
 
-/* Diff Viewer Styles */
+/* Design Tokens - CSS Custom Properties */
+:root {
+    /* Surface Colors */
+    --surface-0: #09090b;        /* zinc-950 - deepest background */
+    --surface-1: #18181b;        /* zinc-900 - elevated panels, headers */
+    --surface-2: rgba(39, 39, 42, 0.5);  /* zinc-800/50 - hover states, subtle elevation */
+    --surface-3: #27272a;        /* zinc-800 - highest elevation, active states */
+    
+    /* Border Colors */
+    --border-default: #27272a;   /* zinc-800 - standard 1px borders */
+    --border-subtle: rgba(39, 39, 42, 0.5);  /* zinc-800/50 - dividers within sections */
+    --border-strong: #3f3f46;    /* zinc-700 - emphasis borders (header bottom) */
+    
+    /* Text Colors */
+    --text-primary: #f4f4f5;     /* zinc-100 */
+    --text-secondary: #a1a1aa;   /* zinc-400 */
+    --text-tertiary: #71717a;    /* zinc-500 */
+    
+    /* Accent Colors */
+    --accent: #f59e0b;           /* amber-500 - primary accent */
+    --accent-muted: rgba(245, 158, 11, 0.2);  /* amber-500/20 - subtle accent backgrounds */
+    --accent-text: #fbbf24;      /* amber-400 - accent text on dark */
+    
+    /* Shadows */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+    --shadow-glow: 0 0 20px rgba(245, 158, 11, 0.08);
+    
+    /* Transitions */
+    --transition-fast: 100ms ease;
+    --transition-normal: 150ms ease;
+    --transition-slow: 250ms ease;
+    
+    /* Border Radius */
+    --radius-sm: 4px;
+    --radius-md: 6px;
+    --radius-lg: 8px;
+}
+
+/* Diff Viewer Styles - Refactored with Design Tokens */
 .diff-container {
-    @apply bg-zinc-950 text-zinc-100 text-sm;
+    @apply text-sm;
+    background-color: var(--surface-0);
+    color: var(--text-primary);
 }
 
 .diff-file {
-    @apply border-b border-zinc-800;
+    border-bottom: 1px solid var(--border-default);
 }
 
 .diff-file-header {
@@ -26,29 +68,43 @@
 }
 
 .diff-hunk {
-    @apply border-b border-zinc-900;
+    border-bottom: 1px solid var(--surface-1);
 }
 
 .diff-hunk-header {
-    @apply bg-zinc-900 text-zinc-400 px-4 py-2 font-mono text-xs uppercase tracking-wider border-y border-zinc-800 flex items-center gap-3;
+    @apply px-4 py-2 text-xs uppercase tracking-wider flex items-center gap-3;
+    background-color: var(--surface-1);
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    border-top: 1px solid var(--border-default);
+    border-bottom: 1px solid var(--border-default);
 }
 
 .diff-line-addition,
 .diff-line-deletion,
 .diff-line-context {
-    @apply flex items-start font-mono text-xs leading-relaxed border-b border-zinc-900/50;
+    @apply flex items-start leading-relaxed;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    line-height: 1.625;
+    border-bottom: 1px solid rgba(24, 24, 27, 0.5);
+    transition: background-color var(--transition-fast);
 }
 
 .diff-line-addition {
-    @apply bg-green-950/30 hover:bg-green-950/50 transition-colors;
+    @apply bg-green-950/30 hover:bg-green-950/50;
 }
 
 .diff-line-deletion {
-    @apply bg-red-950/30 hover:bg-red-950/50 transition-colors;
+    @apply bg-red-950/30 hover:bg-red-950/50;
 }
 
 .diff-line-context {
-    @apply bg-zinc-950 hover:bg-zinc-900/30 transition-colors;
+    background-color: var(--surface-0);
+}
+
+.diff-line-context:hover {
+    background-color: rgba(24, 24, 27, 0.3);
 }
 
 .diff-line-addition .line-number {
@@ -60,11 +116,12 @@
 }
 
 .diff-line-context .line-number {
-    @apply text-zinc-500;
+    color: var(--text-tertiary);
 }
 
 .line-number {
-    @apply w-12 text-right px-2 py-1 select-none shrink-0 text-xs;
+    @apply w-12 text-right px-2 py-1 select-none shrink-0;
+    font-size: 0.75rem;
 }
 
 .line-content {
@@ -88,5 +145,6 @@
 }
 
 .line-content code {
-    @apply bg-transparent font-mono;
+    @apply bg-transparent;
+    font-family: var(--font-mono);
 }
