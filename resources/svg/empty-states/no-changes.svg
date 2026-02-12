@@ -1,0 +1,20 @@
+<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <!-- Outer circle -->
+  <circle cx="60" cy="60" r="35" fill="none" stroke="#71717a" stroke-width="1.5"/>
+  
+  <!-- Checkmark -->
+  <path d="M45 60 L55 70 L75 48" 
+        fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- Decorative radiating lines -->
+  <line x1="60" y1="15" x2="60" y2="20" stroke="#71717a" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="60" y1="100" x2="60" y2="105" stroke="#71717a" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="15" y1="60" x2="20" y2="60" stroke="#71717a" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="100" y1="60" x2="105" y2="60" stroke="#71717a" stroke-width="1.5" stroke-linecap="round"/>
+  
+  <!-- Diagonal rays -->
+  <line x1="25" y1="25" x2="29" y2="29" stroke="#71717a" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="91" y1="91" x2="95" y2="95" stroke="#71717a" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="91" y1="25" x2="95" y2="29" stroke="#71717a" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="25" y1="91" x2="29" y2="95" stroke="#71717a" stroke-width="1.5" stroke-linecap="round"/>
+</svg>

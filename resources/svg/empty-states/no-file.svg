@@ -1,0 +1,16 @@
+<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <!-- Document with folded corner -->
+  <path d="M35 25 L35 95 L85 95 L85 40 L70 25 Z" 
+        fill="none" stroke="#71717a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M70 25 L70 40 L85 40" 
+        fill="none" stroke="#71717a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- Text lines inside document -->
+  <line x1="45" y1="50" x2="75" y2="50" stroke="#71717a" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="45" y1="60" x2="70" y2="60" stroke="#71717a" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="45" y1="70" x2="75" y2="70" stroke="#71717a" stroke-width="1.5" stroke-linecap="round"/>
+  
+  <!-- Cursor pointer -->
+  <path d="M50 80 L50 90 L54 86 L57 92 L60 90 L57 84 L62 84 Z" 
+        fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
