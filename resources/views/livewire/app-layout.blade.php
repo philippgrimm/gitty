@@ -1,4 +1,8 @@
 <div class="h-screen w-screen flex flex-col bg-zinc-950 text-zinc-100 font-mono overflow-hidden">
+    <div class="border-b-2 border-zinc-800 bg-zinc-900 px-4 py-2">
+        @livewire('repo-switcher', key('repo-switcher'))
+    </div>
+
     @if(empty($repoPath))
         <div class="flex-1 flex items-center justify-center">
             <div class="text-center space-y-6">

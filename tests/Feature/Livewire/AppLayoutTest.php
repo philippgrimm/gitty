@@ -3,7 +3,10 @@
 declare(strict_types=1);
 
 use App\Livewire\AppLayout;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
+
+uses(RefreshDatabase::class);
 
 beforeEach(function () {
     $this->testRepoPath = '/tmp/gitty-test-repo';

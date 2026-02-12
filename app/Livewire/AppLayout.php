@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Livewire;
 
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class AppLayout extends Component
@@ -25,6 +26,12 @@ class AppLayout extends Component
     public function toggleSidebar(): void
     {
         $this->sidebarCollapsed = !$this->sidebarCollapsed;
+    }
+
+    #[On('repo-switched')]
+    public function handleRepoSwitched(string $path): void
+    {
+        $this->repoPath = $path;
     }
 
     #[Layout('layouts.app')]
