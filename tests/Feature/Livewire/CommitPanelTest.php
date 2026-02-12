@@ -16,7 +16,7 @@ beforeEach(function () {
 
 test('component mounts with repo path and initializes properties', function () {
     Process::fake([
-        'git status --porcelain=v2' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
+        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
     ]);
 
     Livewire::test(CommitPanel::class, ['repoPath' => $this->testRepoPath])
@@ -29,7 +29,7 @@ test('component mounts with repo path and initializes properties', function () {
 
 test('component counts staged files correctly', function () {
     Process::fake([
-        'git status --porcelain=v2' => Process::result(GitOutputFixtures::statusWithMixedChanges()),
+        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithMixedChanges()),
     ]);
 
     $component = Livewire::test(CommitPanel::class, ['repoPath' => $this->testRepoPath]);
@@ -40,7 +40,7 @@ test('component counts staged files correctly', function () {
 
 test('component commits with message', function () {
     Process::fake([
-        'git status --porcelain=v2' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
+        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
         'git commit -m "feat: add new feature"' => Process::result(''),
     ]);
 
@@ -56,7 +56,7 @@ test('component commits with message', function () {
 
 test('component commits and pushes', function () {
     Process::fake([
-        'git status --porcelain=v2' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
+        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
         'git commit -m "feat: add new feature"' => Process::result(''),
         'git push' => Process::result(''),
     ]);
@@ -74,7 +74,7 @@ test('component commits and pushes', function () {
 
 test('component amends commit', function () {
     Process::fake([
-        'git status --porcelain=v2' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
+        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
         'git commit --amend -m "feat: updated feature"' => Process::result(''),
     ]);
 
@@ -91,7 +91,7 @@ test('component amends commit', function () {
 
 test('component toggles amend and loads last commit message', function () {
     Process::fake([
-        'git status --porcelain=v2' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
+        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
         'git log -1 --pretty=%B' => Process::result("feat: previous commit\n"),
     ]);
 
@@ -105,7 +105,7 @@ test('component toggles amend and loads last commit message', function () {
 
 test('component clears message when toggling amend off', function () {
     Process::fake([
-        'git status --porcelain=v2' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
+        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
         'git log -1 --pretty=%B' => Process::result("feat: previous commit\n"),
     ]);
 
@@ -120,7 +120,7 @@ test('component clears message when toggling amend off', function () {
 
 test('component refreshes staged count on status-updated event', function () {
     Process::fake([
-        'git status --porcelain=v2' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
+        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
     ]);
 
     $component = Livewire::test(CommitPanel::class, ['repoPath' => $this->testRepoPath])
@@ -128,7 +128,7 @@ test('component refreshes staged count on status-updated event', function () {
 
     // Simulate status update with different file count
     Process::fake([
-        'git status --porcelain=v2' => Process::result(GitOutputFixtures::statusWithMixedChanges()),
+        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithMixedChanges()),
     ]);
 
     $component->call('refreshStagedCount')
@@ -137,7 +137,7 @@ test('component refreshes staged count on status-updated event', function () {
 
 test('component handles commit failure with error message', function () {
     Process::fake([
-        'git status --porcelain=v2' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
+        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
         'git commit -m "feat: add feature"' => function () {
             return Process::result('error: commit failed', exitCode: 1);
         },
@@ -152,7 +152,7 @@ test('component handles commit failure with error message', function () {
 
 test('component does not commit with empty message', function () {
     Process::fake([
-        'git status --porcelain=v2' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
+        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
     ]);
 
     Livewire::test(CommitPanel::class, ['repoPath' => $this->testRepoPath])

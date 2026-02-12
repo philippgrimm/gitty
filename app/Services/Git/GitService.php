@@ -17,11 +17,11 @@ class GitService
     public function __construct(
         protected string $repoPath,
     ) {
-        $gitDir = rtrim($this->repoPath, '/') . '/.git';
+        $gitDir = rtrim($this->repoPath, '/').'/.git';
         if (! is_dir($gitDir)) {
             throw new \InvalidArgumentException("Not a valid git repository: {$this->repoPath}");
         }
-        $this->cache = new GitCacheService();
+        $this->cache = new GitCacheService;
     }
 
     public function status(): GitStatus
@@ -30,7 +30,7 @@ class GitService
             $this->repoPath,
             'status',
             function () {
-                $result = Process::path($this->repoPath)->run('git status --porcelain=v2');
+                $result = Process::path($this->repoPath)->run('git status --porcelain=v2 --branch');
 
                 return GitStatus::fromOutput($result->output());
             },
@@ -40,7 +40,7 @@ class GitService
 
     public function log(int $limit = 100, ?string $branch = null): Collection
     {
-        $cacheKey = "log:{$limit}:" . ($branch ?? 'HEAD');
+        $cacheKey = "log:{$limit}:".($branch ?? 'HEAD');
 
         return $this->cache->get(
             $this->repoPath,

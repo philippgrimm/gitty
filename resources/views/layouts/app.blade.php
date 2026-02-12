@@ -1,11 +1,17 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ config('app.name', 'Gitty') }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @fluxAppearance
+    <script>
+        // Force dark mode regardless of system preference
+        if (window.Flux && window.Flux.applyAppearance) {
+            window.Flux.applyAppearance('dark');
+        }
+    </script>
     @livewireStyles
 </head>
 <body class="min-h-screen bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100">

@@ -6,12 +6,16 @@ namespace App\Livewire;
 
 use App\Services\RepoManager;
 use Livewire\Component;
+use Native\Desktop\Dialog;
 
 class RepoSwitcher extends Component
 {
     public string $currentRepoPath = '';
+
     public string $currentRepoName = '';
+
     public array $recentRepos = [];
+
     public string $error = '';
 
     public function mount(): void
@@ -25,7 +29,7 @@ class RepoSwitcher extends Component
         $this->error = '';
 
         try {
-            $repoManager = new RepoManager();
+            $repoManager = new RepoManager;
             $repo = $repoManager->openRepo($path);
 
             $this->currentRepoPath = $repo->path;
@@ -43,16 +47,18 @@ class RepoSwitcher extends Component
     {
         $this->error = '';
 
-        $repoManager = new RepoManager();
+        $repoManager = new RepoManager;
         $repo = $repoManager->recentRepos()->firstWhere('id', $id);
 
-        if (!$repo) {
+        if (! $repo) {
             $this->error = 'Repository not found';
+
             return;
         }
 
-        if (!is_dir($repo->path . '/.git')) {
+        if (! is_dir($repo->path.'/.git')) {
             $this->error = 'Repository path does not exist or is not a valid git repository';
+
             return;
         }
 
@@ -70,15 +76,30 @@ class RepoSwitcher extends Component
 
     public function removeRecentRepo(int $id): void
     {
-        $repoManager = new RepoManager();
+        $repoManager = new RepoManager;
         $repoManager->removeRepo($id);
 
         $this->loadRecentRepos();
     }
 
+    public function openFolderDialog(): void
+    {
+        $path = Dialog::new()
+            ->title('Open Git Repository')
+            ->button('Open')
+            ->folders()
+            ->open();
+
+        if (! $path) {
+            return;
+        }
+
+        $this->openRepo($path);
+    }
+
     private function loadCurrentRepo(): void
     {
-        $repoManager = new RepoManager();
+        $repoManager = new RepoManager;
         $currentRepo = $repoManager->currentRepo();
 
         if ($currentRepo) {
@@ -89,7 +110,7 @@ class RepoSwitcher extends Component
 
     private function loadRecentRepos(): void
     {
-        $repoManager = new RepoManager();
+        $repoManager = new RepoManager;
         $this->recentRepos = $repoManager->recentRepos(20)
             ->map(fn ($repo) => [
                 'id' => $repo->id,

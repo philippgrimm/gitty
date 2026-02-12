@@ -76,6 +76,7 @@
             <flux:menu.item 
                 icon="folder-open"
                 class="uppercase tracking-wider text-xs font-bold"
+                wire:click="openFolderDialog"
             >
                 Open Repository
             </flux:menu.item>

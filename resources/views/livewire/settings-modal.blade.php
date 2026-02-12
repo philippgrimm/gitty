@@ -66,10 +66,8 @@
                 
                 <flux:field>
                     <flux:label class="font-mono">Theme</flux:label>
-                    <flux:select wire:model="theme" class="font-mono">
+                    <flux:select wire:model="theme" class="font-mono" disabled>
                         <flux:select.option value="dark">Dark</flux:select.option>
-                        <flux:select.option value="light">Light</flux:select.option>
-                        <flux:select.option value="system">System</flux:select.option>
                     </flux:select>
                 </flux:field>
             </div>

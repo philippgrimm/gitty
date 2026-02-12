@@ -16,7 +16,7 @@ beforeEach(function () {
 
 test('component mounts with repo path and loads branches', function () {
     Process::fake([
-        'git status --porcelain=v2' => Process::result(GitOutputFixtures::statusAheadBehind()),
+        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusAheadBehind()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
     ]);
 
@@ -31,7 +31,7 @@ test('component mounts with repo path and loads branches', function () {
 
 test('component displays current branch with ahead/behind badges', function () {
     Process::fake([
-        'git status --porcelain=v2' => Process::result(GitOutputFixtures::statusAheadBehind()),
+        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusAheadBehind()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
     ]);
 
@@ -43,7 +43,7 @@ test('component displays current branch with ahead/behind badges', function () {
 
 test('component switches to another branch', function () {
     Process::fake([
-        'git status --porcelain=v2' => Process::result(GitOutputFixtures::statusAheadBehind()),
+        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusAheadBehind()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
         'git checkout main' => Process::result(''),
     ]);
@@ -57,7 +57,7 @@ test('component switches to another branch', function () {
 
 test('component creates new branch', function () {
     Process::fake([
-        'git status --porcelain=v2' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
         'git checkout -b feature/new-feature main' => Process::result(''),
     ]);
@@ -75,7 +75,7 @@ test('component creates new branch', function () {
 
 test('component deletes branch', function () {
     Process::fake([
-        'git status --porcelain=v2' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
         'git branch -d feature/new-ui' => Process::result(''),
     ]);
@@ -89,7 +89,7 @@ test('component deletes branch', function () {
 
 test('component prevents deleting current branch', function () {
     Process::fake([
-        'git status --porcelain=v2' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
     ]);
 
@@ -102,7 +102,7 @@ test('component prevents deleting current branch', function () {
 
 test('component merges branch successfully', function () {
     Process::fake([
-        'git status --porcelain=v2' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
         'git merge feature/new-ui' => Process::result('Fast-forward merge completed'),
     ]);
@@ -117,7 +117,7 @@ test('component merges branch successfully', function () {
 
 test('component shows conflict warning when merge has conflicts', function () {
     Process::fake([
-        'git status --porcelain=v2' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
         'git merge feature/new-ui' => function () {
             return Process::result('CONFLICT (content): Merge conflict in README.md', exitCode: 1);
@@ -132,7 +132,7 @@ test('component shows conflict warning when merge has conflicts', function () {
 
 test('component shows detached HEAD warning', function () {
     Process::fake([
-        'git status --porcelain=v2' => Process::result(GitOutputFixtures::statusDetachedHead()),
+        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusDetachedHead()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
     ]);
 
@@ -144,7 +144,7 @@ test('component shows detached HEAD warning', function () {
 
 test('component refreshes branches on demand', function () {
     Process::fake([
-        'git status --porcelain=v2' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
     ]);
 

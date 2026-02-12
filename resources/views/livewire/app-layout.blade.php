@@ -9,8 +9,29 @@
 >
     @livewire('error-banner', key('error-banner'))
     
-    <div class="border-b-2 border-zinc-800 bg-zinc-900 px-4 py-2">
-        @livewire('repo-switcher', key('repo-switcher'))
+    <div class="border-b-2 border-zinc-800 bg-zinc-900 px-4 py-2 flex items-center justify-between gap-4">
+        <div class="flex items-center gap-4 flex-1 min-w-0">
+            @if(!empty($repoPath))
+                <flux:button 
+                    wire:click="toggleSidebar" 
+                    variant="ghost" 
+                    size="sm"
+                    square
+                    icon="{{ $sidebarCollapsed ? 'bars-3' : 'bars-3' }}"
+                />
+            @endif
+            
+            <div class="flex-1 min-w-0">
+                @livewire('repo-switcher', key('repo-switcher'))
+            </div>
+        </div>
+
+        @if(!empty($repoPath))
+            <div class="flex items-center gap-4">
+                @livewire('branch-manager', ['repoPath' => $repoPath], key('branch-manager'))
+                @livewire('sync-panel', ['repoPath' => $repoPath], key('sync-panel'))
+            </div>
+        @endif
     </div>
 
     @if(empty($repoPath))
@@ -22,21 +43,6 @@
             </div>
         </div>
     @else
-        <div class="border-b-2 border-zinc-800 bg-zinc-900 px-4 py-2 flex items-center justify-between">
-            <div class="flex items-center gap-4">
-                <flux:button 
-                    wire:click="toggleSidebar" 
-                    variant="ghost" 
-                    size="sm"
-                    square
-                    icon="{{ $sidebarCollapsed ? 'bars-3' : 'bars-3' }}"
-                />
-                @livewire('branch-manager', ['repoPath' => $repoPath], key('branch-manager'))
-            </div>
-            <div class="flex items-center gap-2">
-                @livewire('sync-panel', ['repoPath' => $repoPath], key('sync-panel'))
-            </div>
-        </div>
 
         <div class="flex-1 flex overflow-hidden">
             <div 

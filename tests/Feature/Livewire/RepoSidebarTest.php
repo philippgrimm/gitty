@@ -16,7 +16,7 @@ beforeEach(function () {
 
 test('component mounts with repo path and loads sidebar data', function () {
     Process::fake([
-        'git status --porcelain=v2' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchList()),
         'git remote -v' => Process::result(GitOutputFixtures::remoteList()),
         'git tag -l --format=%(refname:short) %(objectname:short)' => Process::result("v1.0.0 a1b2c3d\nv2.0.0 d4e5f6g"),
@@ -33,7 +33,7 @@ test('component mounts with repo path and loads sidebar data', function () {
 
 test('component displays local branches only', function () {
     Process::fake([
-        'git status --porcelain=v2' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchList()),
         'git remote -v' => Process::result(GitOutputFixtures::remoteList()),
         'git tag -l --format=%(refname:short) %(objectname:short)' => Process::result(''),
@@ -55,7 +55,7 @@ test('component displays local branches only', function () {
 
 test('component displays remotes with URLs', function () {
     Process::fake([
-        'git status --porcelain=v2' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchList()),
         'git remote -v' => Process::result(GitOutputFixtures::remoteList()),
         'git tag -l --format=%(refname:short) %(objectname:short)' => Process::result(''),
@@ -78,7 +78,7 @@ test('component displays remotes with URLs', function () {
 
 test('component displays tags with SHAs', function () {
     Process::fake([
-        'git status --porcelain=v2' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchList()),
         'git remote -v' => Process::result(GitOutputFixtures::remoteList()),
         'git tag -l --format=%(refname:short) %(objectname:short)' => Process::result("v1.0.0 a1b2c3d\nv2.0.0 d4e5f6g"),
@@ -96,7 +96,7 @@ test('component displays tags with SHAs', function () {
 
 test('component displays stashes', function () {
     Process::fake([
-        'git status --porcelain=v2' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchList()),
         'git remote -v' => Process::result(GitOutputFixtures::remoteList()),
         'git tag -l --format=%(refname:short) %(objectname:short)' => Process::result(''),
@@ -120,7 +120,7 @@ test('component displays stashes', function () {
 
 test('component switches branch and dispatches event', function () {
     Process::fake([
-        'git status --porcelain=v2' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchList()),
         'git remote -v' => Process::result(GitOutputFixtures::remoteList()),
         'git tag -l --format=%(refname:short) %(objectname:short)' => Process::result(''),
@@ -137,7 +137,7 @@ test('component switches branch and dispatches event', function () {
 
 test('component refreshes on status-updated event', function () {
     Process::fake([
-        'git status --porcelain=v2' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchList()),
         'git remote -v' => Process::result(GitOutputFixtures::remoteList()),
         'git tag -l --format=%(refname:short) %(objectname:short)' => Process::result(''),

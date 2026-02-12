@@ -7,7 +7,6 @@ namespace App\Livewire;
 use App\Services\Git\BranchService;
 use App\Services\Git\GitErrorHandler;
 use App\Services\Git\GitService;
-use Illuminate\Support\Collection;
 use Livewire\Component;
 
 class BranchManager extends Component
@@ -30,6 +29,8 @@ class BranchManager extends Component
 
     public string $error = '';
 
+    public string $branchQuery = '';
+
     public function mount(): void
     {
         $this->aheadBehind = ['ahead' => 0, 'behind' => 0];
@@ -46,7 +47,7 @@ class BranchManager extends Component
             $this->currentBranch = $status->branch;
             $this->aheadBehind = $status->aheadBehind;
             $this->isDetachedHead = $gitService->isDetachedHead();
-            
+
             $this->branches = $branchService->branches()
                 ->map(fn ($branch) => [
                     'name' => $branch->name,
@@ -55,7 +56,7 @@ class BranchManager extends Component
                     'lastCommitSha' => $branch->lastCommitSha,
                 ])
                 ->toArray();
-            
+
             if (empty($this->baseBranch)) {
                 $this->baseBranch = $this->currentBranch;
             }
@@ -70,11 +71,11 @@ class BranchManager extends Component
     public function switchBranch(string $name): void
     {
         $this->error = '';
-        
+
         try {
             $branchService = new BranchService($this->repoPath);
             $branchService->switchBranch($name);
-            
+
             $this->refreshBranches();
             $this->dispatch('status-updated');
         } catch (\Exception $e) {
@@ -86,11 +87,11 @@ class BranchManager extends Component
     public function createBranch(): void
     {
         $this->error = '';
-        
+
         try {
             $branchService = new BranchService($this->repoPath);
             $branchService->createBranch($this->newBranchName, $this->baseBranch);
-            
+
             $this->showCreateModal = false;
             $this->newBranchName = '';
             $this->refreshBranches();
@@ -104,17 +105,18 @@ class BranchManager extends Component
     public function deleteBranch(string $name): void
     {
         $this->error = '';
-        
+
         if ($name === $this->currentBranch) {
             $this->error = 'Cannot delete the current branch';
             $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
+
             return;
         }
-        
+
         try {
             $branchService = new BranchService($this->repoPath);
             $branchService->deleteBranch($name, false);
-            
+
             $this->refreshBranches();
             $this->dispatch('status-updated');
         } catch (\Exception $e) {
@@ -126,14 +128,14 @@ class BranchManager extends Component
     public function mergeBranch(string $name): void
     {
         $this->error = '';
-        
+
         try {
             $branchService = new BranchService($this->repoPath);
             $mergeResult = $branchService->mergeBranch($name);
-            
+
             $this->refreshBranches();
             $this->dispatch('status-updated');
-            
+
             if ($mergeResult->hasConflicts) {
                 $conflictList = implode(', ', $mergeResult->conflictFiles);
                 $this->error = "Merge conflicts detected in: {$conflictList}";
@@ -143,6 +145,34 @@ class BranchManager extends Component
             $this->error = GitErrorHandler::translate($e->getMessage());
             $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
         }
+    }
+
+    /**
+     * @return \Illuminate\Support\Collection<int, array>
+     */
+    public function getFilteredLocalBranchesProperty(): \Illuminate\Support\Collection
+    {
+        $local = collect($this->branches)->filter(fn ($b) => ! $b['isRemote'] && ! str_contains($b['name'], 'remotes/'));
+
+        if (! empty($this->branchQuery)) {
+            $local = $local->filter(fn ($b) => str_contains(strtolower($b['name']), strtolower($this->branchQuery)));
+        }
+
+        return $local;
+    }
+
+    /**
+     * @return \Illuminate\Support\Collection<int, array>
+     */
+    public function getFilteredRemoteBranchesProperty(): \Illuminate\Support\Collection
+    {
+        $remote = collect($this->branches)->filter(fn ($b) => $b['isRemote'] || str_contains($b['name'], 'remotes/'));
+
+        if (! empty($this->branchQuery)) {
+            $remote = $remote->filter(fn ($b) => str_contains(strtolower($b['name']), strtolower($this->branchQuery)));
+        }
+
+        return $remote;
     }
 
     public function render()

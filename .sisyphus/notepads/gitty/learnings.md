@@ -1423,3 +1423,45 @@ public function handleRepoSwitched(string $path): void
 - Git validation happens BEFORE any repo loading to fail fast on missing git
 - Process::fake() in tests supports mocking `which git` command
 - All 240 tests pass including 6 new startup tests
+
+## Layout Overhaul - Compact Toolbar Design (2026-02-12)
+
+### Problem
+The original layout had BranchManager and SyncPanel as full-height panels in a second toolbar bar, pushing the staging/commit/diff panels below the fold. Users couldn't see their changes without scrolling past 30+ branches.
+
+### Solution
+Converted to a VS Code-inspired single-toolbar layout:
+
+1. **BranchManager** → Compact dropdown button
+   - Shows current branch name with ahead/behind badges
+   - Clicking opens a Flux dropdown with:
+     - Search input at top (wire:model.live="branchQuery")
+     - Filtered local branches (using computed property `$this->filteredLocalBranches`)
+     - Filtered remote branches (using computed property `$this->filteredRemoteBranches`)
+     - "New Branch" button at bottom
+   - Added `$branchQuery` property and two computed properties for filtering
+
+2. **SyncPanel** → Compact icon buttons
+   - Three main buttons: ↑ (push), ↓ (pull), ↻ (fetch)
+   - Overflow menu (⋯) for: Fetch All, Force Push, Operation Log
+   - Loading spinner shows on active button during operations
+   - Used `x-bind:disabled` (not `:disabled`) to avoid PHP interpretation
+
+3. **App Layout** → Single top bar
+   - Merged two toolbar bars into one
+   - Layout: [Sidebar Toggle] [RepoSwitcher] | [BranchManager] [SyncPanel]
+   - Main content area unchanged: sidebar | staging+commit | diff
+
+### Technical Details
+- Computed properties in Livewire use `getPropertyNameProperty()` naming convention
+- Access in Blade with `$this->propertyName` (not `$propertyName`)
+- Alpine.js `:disabled` syntax must be `x-bind:disabled` in Blade to avoid PHP interpretation
+- Flux UI components: `<flux:dropdown>`, `<flux:menu>`, `<flux:tooltip>`, `<flux:modal>`
+- All 240 tests pass after changes
+
+### Files Modified
+- `app/Livewire/BranchManager.php` - Added branchQuery property and two computed filter methods
+- `resources/views/livewire/branch-manager.blade.php` - Complete redesign to dropdown
+- `resources/views/livewire/sync-panel.blade.php` - Complete redesign to icon buttons
+- `resources/views/livewire/app-layout.blade.php` - Merged toolbars into single bar
+
