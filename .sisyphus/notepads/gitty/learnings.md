@@ -1505,3 +1505,36 @@ Fixed contrast issues across all blade templates and extracted inline styles fro
 - `npm run build` successful
 - No PHP logic changes, only visual/CSS updates
 
+
+## Status Bar Implementation (2026-02-12)
+
+### What Was Done
+- Added VS Code-inspired status bar at bottom of app layout
+- Status bar shows: branch name (⎇), ahead/behind counts (↑N ↓N), repo name
+- Collapsed sidebar Branches section by default (now redundant with toolbar dropdown)
+
+### Implementation Details
+- **AppLayout.php**: Added `getStatusBarDataProperty()` computed property
+  - Uses GitService to fetch branch and ahead/behind data
+  - Returns empty array if no repo or on error
+  - Livewire computed properties use `getXxxProperty()` pattern
+- **app-layout.blade.php**: Added status bar div inside `@else` block (when repo is open)
+  - Height: `h-7` (thin, VS Code-style)
+  - Background: `bg-zinc-900` with `border-t-2 border-zinc-800`
+  - Branch icon: `⎇` in `text-zinc-500`
+  - Ahead: `↑N` in `text-green-400`
+  - Behind: `↓N` in `text-orange-400`
+  - Repo name: `basename($repoPath)` in `text-zinc-500` at right edge (`ml-auto`)
+- **repo-sidebar.blade.php**: Changed `branchesOpen: true` to `branchesOpen: false`
+
+### Design Decisions
+- Status bar only shows when repo is open (inside `@else` block)
+- Used existing GitService instead of listening to BranchManager events (simpler)
+- Ahead/behind only shown when > 0 (cleaner UI)
+- Repo name at right edge provides context without clutter
+- Mono font (`font-mono`) and small text (`text-xs`) match VS Code aesthetic
+
+### Verification
+- All 240 tests pass
+- LSP errors in blade file are false positives (CSS linter on inline styles)
+

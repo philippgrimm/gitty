@@ -69,5 +69,25 @@
                 </div>
             </div>
         </div>
+
+        <div class="h-7 border-t-2 border-zinc-800 bg-zinc-900 px-4 flex items-center gap-4 text-xs font-mono text-zinc-400">
+            @if(!empty($this->statusBarData))
+                <span class="flex items-center gap-1.5">
+                    <span class="text-zinc-500">⎇</span>
+                    <span class="text-zinc-300">{{ $this->statusBarData['branch'] }}</span>
+                </span>
+                @if($this->statusBarData['ahead'] > 0 || $this->statusBarData['behind'] > 0)
+                    <span class="flex items-center gap-1.5">
+                        @if($this->statusBarData['ahead'] > 0)
+                            <span class="text-green-400">↑{{ $this->statusBarData['ahead'] }}</span>
+                        @endif
+                        @if($this->statusBarData['behind'] > 0)
+                            <span class="text-orange-400">↓{{ $this->statusBarData['behind'] }}</span>
+                        @endif
+                    </span>
+                @endif
+            @endif
+            <span class="ml-auto text-zinc-500">{{ basename($repoPath) }}</span>
+        </div>
     @endif
 </div>

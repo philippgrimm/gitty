@@ -1,7 +1,7 @@
 <div 
     wire:poll.10s.visible="refreshSidebar"
     x-data="{ 
-        branchesOpen: true, 
+        branchesOpen: false, 
         remotesOpen: false, 
         tagsOpen: false, 
         stashesOpen: false 

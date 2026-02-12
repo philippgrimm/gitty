@@ -34,20 +34,20 @@ The app has a **fundamental layout architecture problem**: the BranchManager com
 
 ### Phase 1: CRITICAL — Fix Layout (app is currently unusable)
 
-- [ ] **1.1 Convert BranchManager from full-panel to compact dropdown/picker**
+- [x] **1.1 Convert BranchManager from full-panel to compact dropdown/picker**
   - Current: Full-height panel with scrolling branch list embedded in toolbar
   - Target: A compact button showing current branch name that opens a dropdown/modal with search
   - Files: `app/Livewire/BranchManager.php`, `resources/views/livewire/branch-manager.blade.php`
   - Complexity: L
 
-- [ ] **1.2 Redesign app-layout to VS Code-inspired 3-panel layout**
+- [x] **1.2 Redesign app-layout to VS Code-inspired 3-panel layout**
   - Current: Toolbar with embedded BranchManager takes full height
   - Target: Thin top bar → [sidebar | changes+commit | diff] horizontal split
   - The top bar should contain: repo picker, branch picker (dropdown), sync buttons, settings
   - Files: `resources/views/livewire/app-layout.blade.php`, `app/Livewire/AppLayout.php`
   - Complexity: L
 
-- [ ] **1.3 Move SyncPanel buttons into top bar (compact)**
+- [x] **1.3 Move SyncPanel buttons into top bar (compact)**
   - Current: Sync buttons are at the bottom of the branch list (invisible)
   - Target: Compact icon buttons in the top bar (↑ ↓ ↻) with tooltips
   - Files: `resources/views/livewire/sync-panel.blade.php`
@@ -55,28 +55,28 @@ The app has a **fundamental layout architecture problem**: the BranchManager com
 
 ### Phase 2: HIGH — Essential UX Features
 
-- [ ] **2.1 Add branch search/filter to the branch picker dropdown**
+- [x] **2.1 Add branch search/filter to the branch picker dropdown**
   - With 30+ branches, a flat list is unusable
   - Add a search input at the top of the branch dropdown
   - Filter branches as user types, show "N results"
   - Files: `app/Livewire/BranchManager.php`, `resources/views/livewire/branch-manager.blade.php`
   - Complexity: M
 
-- [ ] **2.2 Show current branch prominently in top bar**
+- [x] **2.2 Show current branch prominently in top bar**
   - Display branch name as a pill/badge next to repo name
   - Show ahead/behind counts (↑2 ↓0)
   - Clicking opens the branch picker dropdown
   - Files: `resources/views/livewire/app-layout.blade.php`, `app/Livewire/BranchManager.php`
   - Complexity: M
 
-- [ ] **2.3 Make staging panel the primary left panel (not branches)**
+- [x] **2.3 Make staging panel the primary left panel (not branches)**
   - Changes/staged files should be the first thing users see
   - File list with status icons (M, A, D, R, U)
   - Stage/unstage/discard actions on hover
   - Files: `resources/views/livewire/staging-panel.blade.php`
   - Complexity: S
 
-- [ ] **2.4 Fix commit panel visibility and usability**
+- [x] **2.4 Fix commit panel visibility and usability**
   - Commit panel should be directly below the staging panel, always visible
   - Show staged file count prominently
   - Commit button should be clearly actionable
@@ -85,20 +85,20 @@ The app has a **fundamental layout architecture problem**: the BranchManager com
 
 ### Phase 3: MEDIUM — Dark Mode & Contrast
 
-- [ ] **3.1 Enforce dark-only mode consistently**
+- [x] **3.1 Enforce dark-only mode consistently**
   - Force `<html class="dark">` at layout level
   - Remove light/system theme options from settings (or disable them)
   - Files: `resources/views/layouts/app.blade.php`, `resources/views/livewire/settings-modal.blade.php`
   - Complexity: S
 
-- [ ] **3.2 Fix contrast issues across all panels**
+- [x] **3.2 Fix contrast issues across all panels**
   - Raise secondary text from zinc-500/600 to zinc-300/400
   - Ensure all interactive elements have visible hover/focus states
   - Replace hardcoded `text-white` with `text-zinc-100`
   - Files: All blade templates
   - Complexity: M
 
-- [ ] **3.3 Extract inline styles from diff-viewer into CSS classes**
+- [x] **3.3 Extract inline styles from diff-viewer into CSS classes**
   - Move `<style>@apply...</style>` blocks into `resources/css/app.css`
   - Files: `resources/views/livewire/diff-viewer.blade.php`, `resources/css/app.css`
   - Complexity: S
@@ -116,15 +116,15 @@ The app has a **fundamental layout architecture problem**: the BranchManager com
   - Files: `resources/views/livewire/repo-sidebar.blade.php`
   - Complexity: S
 
-- [ ] **4.3 Make Force Push less prominent**
+- [x] **4.3 Make Force Push less prominent**
   - Move behind a dropdown or secondary section
   - Files: `resources/views/livewire/sync-panel.blade.php`
   - Complexity: S
 
 ## Definition of Done
-- [ ] User can see changes, stage files, write commits, and view diffs without scrolling
-- [ ] Current branch is visible at all times in the top bar
-- [ ] Branch picker has search/filter functionality
-- [ ] All panels are visible in the default viewport (1200x800)
-- [ ] Dark mode is consistent across all components
-- [ ] All 240 existing tests pass
+- [x] User can see changes, stage files, write commits, and view diffs without scrolling
+- [x] Current branch is visible at all times in the top bar
+- [x] Branch picker has search/filter functionality
+- [x] All panels are visible in the default viewport (1200x800)
+- [x] Dark mode is consistent across all components
+- [x] All 240 existing tests pass
