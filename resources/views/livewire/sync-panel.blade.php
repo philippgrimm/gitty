@@ -94,7 +94,7 @@
             <div>
                 <flux:heading size="lg" class="font-mono uppercase tracking-wider">Operation Log</flux:heading>
                 <flux:subheading class="font-mono">
-                    Last operation: <span class="text-zinc-100 font-bold">{{ $lastOperation }}</span>
+                    Last operation: <span class="text-zinc-100 font-semibold">{{ $lastOperation }}</span>
                 </flux:subheading>
             </div>
 
@@ -112,9 +112,9 @@
         <div>
             <flux:heading size="lg" class="font-mono uppercase tracking-wider text-orange-400">Force Push Warning</flux:heading>
             <flux:subheading class="font-mono">
-                This will force push with <span class="text-orange-400 font-bold">--force-with-lease</span> to prevent overwriting others' work.
+                This will force push with <span class="text-orange-400 font-semibold">--force-with-lease</span> to prevent overwriting others' work.
                 <br><br>
-                <span class="text-zinc-100 font-bold">Are you sure you want to continue?</span>
+                <span class="text-zinc-100 font-semibold">Are you sure you want to continue?</span>
             </flux:subheading>
         </div>
 

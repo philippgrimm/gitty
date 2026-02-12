@@ -4,7 +4,7 @@
 >
     @if($isDetachedHead)
         <div class="flex items-center gap-2 px-3 py-1.5 bg-orange-950 border border-orange-800 rounded text-orange-200">
-            <span class="text-xs uppercase tracking-wider font-bold">HEAD detached at {{ substr($currentBranch, 0, 7) }}</span>
+            <span class="text-xs uppercase tracking-wider font-semibold">HEAD detached at {{ substr($currentBranch, 0, 7) }}</span>
             <flux:button 
                 @click="$wire.showCreateModal = true"
                 variant="ghost" 
@@ -21,8 +21,8 @@
                 size="sm"
                 class="flex items-center gap-2 px-3 py-1.5 bg-zinc-900 border border-zinc-800 hover:border-zinc-700 transition-colors"
             >
-                <span class="text-zinc-400">⎇</span>
-                <span class="font-bold text-zinc-100">{{ $currentBranch }}</span>
+                <span class="text-amber-500">⎇</span>
+                <span class="font-semibold text-zinc-100">{{ $currentBranch }}</span>
                 @if($aheadBehind['ahead'] > 0 || $aheadBehind['behind'] > 0)
                     <div class="flex items-center gap-1">
                         @if($aheadBehind['ahead'] > 0)
@@ -37,7 +37,7 @@
                         @endif
                     </div>
                 @endif
-                <span class="text-zinc-400">▼</span>
+                <svg class="w-3 h-3 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
             </flux:button>
 
             <flux:menu class="w-96 max-h-[600px] overflow-hidden">
@@ -52,21 +52,21 @@
 
                 <div class="flex-1 overflow-y-auto">
                     <div class="px-3 py-2 bg-zinc-900 border-b border-zinc-800 sticky top-0">
-                        <div class="text-xs uppercase tracking-widest font-bold text-zinc-400">Local Branches</div>
+                        <div class="text-xs uppercase tracking-wider font-medium text-zinc-400">Local Branches</div>
                     </div>
 
                     @forelse($this->filteredLocalBranches as $branch)
-                        <div class="group flex items-center justify-between gap-3 px-3 py-2 hover:bg-zinc-900 transition-colors">
+                        <div class="group flex items-center justify-between gap-3 px-3 py-2 hover:bg-zinc-800/30 transition-colors">
                             <div 
                                 wire:click="switchBranch('{{ $branch['name'] }}')"
                                 class="flex items-center gap-3 flex-1 min-w-0 cursor-pointer"
                             >
                                 <div class="w-4 h-4 flex items-center justify-center">
                                     @if($branch['isCurrent'])
-                                        <span class="text-green-400 text-sm">✓</span>
+                                        <div class="w-2 h-2 rounded-full bg-amber-500"></div>
                                     @endif
                                 </div>
-                                <div class="text-sm truncate {{ $branch['isCurrent'] ? 'text-zinc-100 font-bold' : 'text-zinc-300' }}">
+                                <div class="text-sm truncate {{ $branch['isCurrent'] ? 'text-zinc-100 font-semibold' : 'text-zinc-300' }}">
                                     {{ $branch['name'] }}
                                 </div>
                             </div>
@@ -101,14 +101,14 @@
 
                     @if($this->filteredRemoteBranches->isNotEmpty())
                         <div class="px-3 py-2 bg-zinc-900 border-t border-zinc-800 sticky top-0">
-                            <div class="text-xs uppercase tracking-widest font-bold text-zinc-400">Remote Branches</div>
+                            <div class="text-xs uppercase tracking-wider font-medium text-zinc-400">Remote Branches</div>
                         </div>
 
                         @foreach($this->filteredRemoteBranches as $branch)
                             @php
                                 $cleanName = str_replace('remotes/', '', $branch['name']);
                             @endphp
-                            <div class="px-3 py-2 hover:bg-zinc-900 transition-colors">
+                            <div class="px-3 py-2 hover:bg-zinc-800/30 transition-colors">
                                 <div class="flex items-center gap-3">
                                     <div class="w-4 h-4"></div>
                                     <div class="text-sm truncate text-zinc-400 italic">
@@ -126,7 +126,7 @@
                         variant="primary" 
                         size="sm"
                         icon="plus"
-                        class="w-full uppercase tracking-wider text-xs"
+                        class="w-full uppercase tracking-wider text-xs !bg-amber-600 hover:!bg-amber-500 !text-white"
                     >
                         New Branch
                     </flux:button>
@@ -168,7 +168,7 @@
                 variant="primary" 
                 wire:click="createBranch"
                 :disabled="empty(trim($newBranchName))"
-                class="uppercase tracking-wider"
+                class="uppercase tracking-wider !bg-amber-600 hover:!bg-amber-500 !text-white"
             >
                 Create Branch
             </flux:button>
