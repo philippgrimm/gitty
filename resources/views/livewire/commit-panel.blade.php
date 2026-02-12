@@ -38,7 +38,7 @@
             :disabled="$stagedCount === 0 || empty(trim($message))"
             class="flex-1 uppercase tracking-wider font-bold"
         >
-            {{ $isAmend ? 'Amend' : 'Commit' }}
+            {{ $isAmend ? 'Amend' : 'Commit' }} (⌘↵)
         </flux:button>
 
         <flux:dropdown position="top">
@@ -51,10 +51,10 @@
             />
             <flux:menu>
                 <flux:menu.item wire:click="commit" icon="check">
-                    {{ $isAmend ? 'Amend' : 'Commit' }}
+                    {{ $isAmend ? 'Amend' : 'Commit' }} (⌘↵)
                 </flux:menu.item>
                 <flux:menu.item wire:click="commitAndPush" icon="arrow-up-tray">
-                    Commit & Push
+                    Commit & Push (⌘⇧↵)
                 </flux:menu.item>
             </flux:menu>
         </flux:dropdown>

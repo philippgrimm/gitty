@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace App\Livewire;
 
 use App\Helpers\FileTreeBuilder;
+use App\Services\Git\GitErrorHandler;
 use App\Services\Git\GitService;
 use App\Services\Git\StagingService;
 use Illuminate\Support\Collection;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class StagingPanel extends Component
@@ -21,6 +23,8 @@ class StagingPanel extends Component
     public Collection $untrackedFiles;
 
     public bool $treeView = false;
+
+    public string $error = '';
 
     private bool $pausePolling = false;
 
@@ -38,83 +42,126 @@ class StagingPanel extends Component
             return;
         }
 
-        $gitService = new GitService($this->repoPath);
-        $status = $gitService->status();
+        try {
+            $gitService = new GitService($this->repoPath);
+            $status = $gitService->status();
 
-        $this->unstagedFiles = collect();
-        $this->stagedFiles = collect();
-        $this->untrackedFiles = collect();
+            $this->unstagedFiles = collect();
+            $this->stagedFiles = collect();
+            $this->untrackedFiles = collect();
 
-        foreach ($status->changedFiles as $file) {
-            $indexStatus = $file['indexStatus'];
-            $worktreeStatus = $file['worktreeStatus'];
-            $path = $file['path'];
+            foreach ($status->changedFiles as $file) {
+                $indexStatus = $file['indexStatus'];
+                $worktreeStatus = $file['worktreeStatus'];
+                $path = $file['path'];
 
-            if ($indexStatus === '?' && $worktreeStatus === '?') {
-                $this->untrackedFiles->push($file);
-            } else {
-                if ($worktreeStatus !== '.') {
-                    $this->unstagedFiles->push($file);
-                }
-                if ($indexStatus !== '.' && $indexStatus !== '?') {
-                    $this->stagedFiles->push($file);
+                if ($indexStatus === '?' && $worktreeStatus === '?') {
+                    $this->untrackedFiles->push($file);
+                } else {
+                    if ($worktreeStatus !== '.') {
+                        $this->unstagedFiles->push($file);
+                    }
+                    if ($indexStatus !== '.' && $indexStatus !== '?') {
+                        $this->stagedFiles->push($file);
+                    }
                 }
             }
+
+            $this->error = '';
+        } catch (\Exception $e) {
+            $this->error = GitErrorHandler::translate($e->getMessage());
+            $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
         }
     }
 
     public function stageFile(string $file): void
     {
-        $stagingService = new StagingService($this->repoPath);
-        $stagingService->stageFile($file);
-        $this->pausePollingTemporarily();
-        $this->refreshStatus();
-        $this->dispatch('status-updated');
+        try {
+            $stagingService = new StagingService($this->repoPath);
+            $stagingService->stageFile($file);
+            $this->pausePollingTemporarily();
+            $this->refreshStatus();
+            $this->dispatch('status-updated');
+            $this->error = '';
+        } catch (\Exception $e) {
+            $this->error = GitErrorHandler::translate($e->getMessage());
+            $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
+        }
     }
 
     public function unstageFile(string $file): void
     {
-        $stagingService = new StagingService($this->repoPath);
-        $stagingService->unstageFile($file);
-        $this->pausePollingTemporarily();
-        $this->refreshStatus();
-        $this->dispatch('status-updated');
+        try {
+            $stagingService = new StagingService($this->repoPath);
+            $stagingService->unstageFile($file);
+            $this->pausePollingTemporarily();
+            $this->refreshStatus();
+            $this->dispatch('status-updated');
+            $this->error = '';
+        } catch (\Exception $e) {
+            $this->error = GitErrorHandler::translate($e->getMessage());
+            $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
+        }
     }
 
     public function stageAll(): void
     {
-        $stagingService = new StagingService($this->repoPath);
-        $stagingService->stageAll();
-        $this->pausePollingTemporarily();
-        $this->refreshStatus();
-        $this->dispatch('status-updated');
+        try {
+            $stagingService = new StagingService($this->repoPath);
+            $stagingService->stageAll();
+            $this->pausePollingTemporarily();
+            $this->refreshStatus();
+            $this->dispatch('status-updated');
+            $this->error = '';
+        } catch (\Exception $e) {
+            $this->error = GitErrorHandler::translate($e->getMessage());
+            $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
+        }
     }
 
     public function unstageAll(): void
     {
-        $stagingService = new StagingService($this->repoPath);
-        $stagingService->unstageAll();
-        $this->pausePollingTemporarily();
-        $this->refreshStatus();
-        $this->dispatch('status-updated');
+        try {
+            $stagingService = new StagingService($this->repoPath);
+            $stagingService->unstageAll();
+            $this->pausePollingTemporarily();
+            $this->refreshStatus();
+            $this->dispatch('status-updated');
+            $this->error = '';
+        } catch (\Exception $e) {
+            $this->error = GitErrorHandler::translate($e->getMessage());
+            $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
+        }
     }
 
     public function discardFile(string $file): void
     {
-        $stagingService = new StagingService($this->repoPath);
-        $stagingService->discardFile($file);
-        $this->pausePollingTemporarily();
-        $this->refreshStatus();
-        $this->dispatch('status-updated');
+        try {
+            $stagingService = new StagingService($this->repoPath);
+            $stagingService->discardFile($file);
+            $this->pausePollingTemporarily();
+            $this->refreshStatus();
+            $this->dispatch('status-updated');
+            $this->error = '';
+        } catch (\Exception $e) {
+            $this->error = GitErrorHandler::translate($e->getMessage());
+            $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
+        }
     }
 
     public function discardAll(): void
     {
-        $stagingService = new StagingService($this->repoPath);
-        $stagingService->discardAll();
-        $this->pausePollingTemporarily();
-        $this->refreshStatus();
-        $this->dispatch('status-updated');
+        try {
+            $stagingService = new StagingService($this->repoPath);
+            $stagingService->discardAll();
+            $this->pausePollingTemporarily();
+            $this->refreshStatus();
+            $this->dispatch('status-updated');
+            $this->error = '';
+        } catch (\Exception $e) {
+            $this->error = GitErrorHandler::translate($e->getMessage());
+            $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
+        }
     }
 
     public function selectFile(string $file, bool $staged): void
@@ -152,5 +199,17 @@ class StagingPanel extends Component
     public function resumePolling(): void
     {
         $this->pausePolling = false;
+    }
+
+    #[On('keyboard-stage-all')]
+    public function handleKeyboardStageAll(): void
+    {
+        $this->stageAll();
+    }
+
+    #[On('keyboard-unstage-all')]
+    public function handleKeyboardUnstageAll(): void
+    {
+        $this->unstageAll();
     }
 }

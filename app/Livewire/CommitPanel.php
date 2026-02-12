@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Livewire;
 
 use App\Services\Git\CommitService;
+use App\Services\Git\GitErrorHandler;
 use App\Services\Git\GitService;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -39,6 +40,18 @@ class CommitPanel extends Component
             ->count();
     }
 
+    #[On('keyboard-commit')]
+    public function handleKeyboardCommit(): void
+    {
+        $this->commit();
+    }
+
+    #[On('keyboard-commit-push')]
+    public function handleKeyboardCommitPush(): void
+    {
+        $this->commitAndPush();
+    }
+
     public function commit(): void
     {
         if (empty(trim($this->message))) {
@@ -60,7 +73,8 @@ class CommitPanel extends Component
             $this->isAmend = false;
             $this->dispatch('committed');
         } catch (\Exception $e) {
-            $this->error = 'Commit failed';
+            $this->error = GitErrorHandler::translate($e->getMessage());
+            $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
         }
     }
 
@@ -80,7 +94,8 @@ class CommitPanel extends Component
             $this->isAmend = false;
             $this->dispatch('committed');
         } catch (\Exception $e) {
-            $this->error = 'Commit and push failed';
+            $this->error = GitErrorHandler::translate($e->getMessage());
+            $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
         }
     }
 

@@ -1,4 +1,12 @@
-<div class="h-screen w-screen flex flex-col bg-zinc-950 text-zinc-100 font-mono overflow-hidden">
+<div 
+    class="h-screen w-screen flex flex-col bg-zinc-950 text-zinc-100 font-mono overflow-hidden"
+    @keydown.window.meta.enter.prevent="if (!$wire.repoPath) return; $wire.$dispatch('keyboard-commit')"
+    @keydown.window.meta.shift.enter.prevent="if (!$wire.repoPath) return; $wire.$dispatch('keyboard-commit-push')"
+    @keydown.window.meta.shift.k.prevent="if (!$wire.repoPath) return; $wire.$dispatch('keyboard-stage-all')"
+    @keydown.window.meta.shift.u.prevent="if (!$wire.repoPath) return; $wire.$dispatch('keyboard-unstage-all')"
+    @keydown.window.meta.b.prevent="if (!$wire.repoPath) return; $wire.toggleSidebar()"
+    @keydown.window.escape.prevent="$wire.$dispatch('keyboard-escape')"
+>
     <div class="border-b-2 border-zinc-800 bg-zinc-900 px-4 py-2">
         @livewire('repo-switcher', key('repo-switcher'))
     </div>

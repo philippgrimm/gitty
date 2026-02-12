@@ -57,7 +57,7 @@
                             size="sm"
                             class="text-xs uppercase tracking-wider"
                         >
-                            Unstage All
+                            Unstage All (⌘⇧U)
                         </flux:button>
                     </div>
                     
@@ -120,7 +120,7 @@
                                 size="sm"
                                 class="text-xs uppercase tracking-wider"
                             >
-                                Stage All
+                                Stage All (⌘⇧K)
                             </flux:button>
                             <flux:button 
                                 @click="showDiscardModal = true; discardAll = true; discardTarget = null"
