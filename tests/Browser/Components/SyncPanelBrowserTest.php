@@ -31,9 +31,9 @@ test('sync panel displays push, pull, and fetch buttons', function () {
 
     $page = visit('/');
 
-    $page->assertSee('↑');
-    $page->assertSee('↓');
-    $page->assertSee('↻');
+    $page->assertVisible('button[wire\\:click="syncPush"]');
+    $page->assertVisible('button[wire\\:click="syncPull"]');
+    $page->assertVisible('button[wire\\:click="syncFetch"]');
 
     $page->screenshot(fullPage: true, filename: 'sync-panel-buttons');
 });
@@ -59,7 +59,7 @@ test('sync panel shows force push confirmation modal', function () {
 
     $page = visit('/');
 
-    $page->click('button:has-text("⋯")');
+    $page->click('div.flex.items-center.gap-1 button >> nth=3');
     $page->click('text=Force Push (Lease)');
 
     $page->assertSee('Force Push Warning');
@@ -90,7 +90,7 @@ test('sync panel shows fetch all option in dropdown', function () {
 
     $page = visit('/');
 
-    $page->click('button:has-text("⋯")');
+    $page->click('div.flex.items-center.gap-1 button >> nth=3');
 
     $page->assertSee('Fetch All');
 

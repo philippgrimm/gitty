@@ -199,6 +199,10 @@ test('full page screenshot of complete app layout with mixed changes', function 
 
     $page = visit('/');
 
+    // Verify app loaded with mixed changes
+    $page->assertSee('gitty-test-repo');
+    $page->assertSee('README.md');
+
     // Expand sidebar sections to show full data
     $page->click('button:has-text("Remotes")');
     $page->wait(0.2);
