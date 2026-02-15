@@ -32,7 +32,7 @@
             <div class="flex items-center gap-1">
                 <flux:tooltip content="Stage All">
                     <flux:button 
-                        x-on:click="document.querySelectorAll('[wire\\:key^=unstaged-]').forEach(el => { el.classList.add('opacity-30', 'pointer-events-none'); }); $wire.stageAll();"
+                        wire:click="stageAll"
                         wire:loading.attr="disabled"
                         wire:target="stageAll"
                         variant="ghost" 
@@ -45,7 +45,7 @@
                 </flux:tooltip>
                 <flux:tooltip content="Unstage All">
                     <flux:button 
-                        x-on:click="document.querySelectorAll('[wire\\:key^=staged-]').forEach(el => { el.classList.add('opacity-30', 'pointer-events-none'); }); $wire.unstageAll();"
+                        wire:click="unstageAll"
                         wire:loading.attr="disabled"
                         wire:target="unstageAll"
                         variant="ghost" 
@@ -110,7 +110,7 @@
                                     </div>
                                     <flux:tooltip content="Unstage">
                                         <flux:button 
-                                            x-on:click.stop="$el.closest('[wire\\:key]').classList.add('opacity-30', 'pointer-events-none'); $wire.unstageFile('{{ $file['path'] }}')"
+                                            wire:click.stop="unstageFile('{{ $file['path'] }}')"
                                             wire:loading.attr="disabled"
                                             wire:target="unstageFile"
                                             variant="ghost" 
@@ -170,7 +170,7 @@
                                     <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                         <flux:tooltip content="Stage">
                                             <flux:button 
-                                                x-on:click.stop="$el.closest('[wire\\:key]').classList.add('opacity-30', 'pointer-events-none'); $wire.stageFile('{{ $file['path'] }}')"
+                                                wire:click.stop="stageFile('{{ $file['path'] }}')"
                                                 wire:loading.attr="disabled"
                                                 wire:target="stageFile"
                                                 variant="ghost" 

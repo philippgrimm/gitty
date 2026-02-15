@@ -59,7 +59,7 @@
                 
                 @if($staged)
                     <flux:button 
-                        x-on:click.stop="$el.closest('[wire\\:key]').classList.add('opacity-30', 'pointer-events-none'); $wire.unstageFile('{{ $node['path'] }}')"
+                        wire:click.stop="unstageFile('{{ $node['path'] }}')"
                         wire:loading.attr="disabled"
                         wire:target="unstageFile"
                         variant="ghost" 
@@ -72,7 +72,7 @@
                 @else
                     <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                         <flux:button 
-                            x-on:click.stop="$el.closest('[wire\\:key]').classList.add('opacity-30', 'pointer-events-none'); $wire.stageFile('{{ $node['path'] }}')"
+                            wire:click.stop="stageFile('{{ $node['path'] }}')"
                             wire:loading.attr="disabled"
                             wire:target="stageFile"
                             variant="ghost" 
