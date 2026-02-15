@@ -172,7 +172,7 @@ class DiffViewer extends Component
             $diffService = new DiffService($this->repoPath);
             $diffService->stageHunk($diffFile, $hunk);
 
-            $this->loadDiff($this->file, $this->isStaged);
+            $this->refreshFileData($fileIndex);
             $this->dispatch('refresh-staging');
         } catch (\Exception $e) {
             $this->error = GitErrorHandler::translate($e->getMessage());
@@ -221,7 +221,7 @@ class DiffViewer extends Component
             $diffService = new DiffService($this->repoPath);
             $diffService->unstageHunk($diffFile, $hunk);
 
-            $this->loadDiff($this->file, $this->isStaged);
+            $this->refreshFileData($fileIndex);
             $this->dispatch('refresh-staging');
         } catch (\Exception $e) {
             $this->error = GitErrorHandler::translate($e->getMessage());
@@ -232,6 +232,64 @@ class DiffViewer extends Component
     public function render()
     {
         return view('livewire.diff-viewer');
+    }
+
+    private function refreshFileData(int $fileIndex): void
+    {
+        $gitService = new GitService($this->repoPath);
+        $diffResult = $gitService->diff($this->file, $this->isStaged);
+
+        if ($diffResult->files->isEmpty()) {
+            // File fully staged/unstaged — no more hunks to show
+            $this->files = null;
+            $this->isEmpty = true;
+            $this->diffData = null;
+
+            return;
+        }
+
+        $diffFile = $diffResult->files->first();
+
+        // Update diffData (header info)
+        $this->diffData = [
+            'oldPath' => $diffFile->oldPath,
+            'newPath' => $diffFile->newPath,
+            'status' => $diffFile->status,
+            'additions' => $diffFile->additions,
+            'deletions' => $diffFile->deletions,
+            'isBinary' => $diffFile->isBinary,
+        ];
+
+        // Update only the affected file in $files array
+        $extension = pathinfo($diffFile->getDisplayPath(), PATHINFO_EXTENSION);
+        $language = $this->mapExtensionToLanguage($extension);
+
+        $this->files[$fileIndex] = [
+            'oldPath' => $diffFile->oldPath,
+            'newPath' => $diffFile->newPath,
+            'status' => $diffFile->status,
+            'isBinary' => $diffFile->isBinary,
+            'additions' => $diffFile->additions,
+            'deletions' => $diffFile->deletions,
+            'language' => $language,
+            'hunks' => $diffFile->hunks->map(function ($hunk) {
+                return [
+                    'oldStart' => $hunk->oldStart,
+                    'oldCount' => $hunk->oldCount,
+                    'newStart' => $hunk->newStart,
+                    'newCount' => $hunk->newCount,
+                    'header' => $hunk->header,
+                    'lines' => $hunk->lines->map(function ($line) {
+                        return [
+                            'type' => $line->type,
+                            'content' => $line->content,
+                            'oldLineNumber' => $line->oldLineNumber,
+                            'newLineNumber' => $line->newLineNumber,
+                        ];
+                    })->toArray(),
+                ];
+            })->toArray(),
+        ];
     }
 
     private function getFileSize(string $file): int
