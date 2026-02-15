@@ -38,39 +38,45 @@
                 @endif
             </flux:button>
             <div class="flex items-center gap-1">
-                <flux:button 
-                    wire:click="stageAll" 
-                    variant="ghost" 
-                    size="xs"
-                    square
-                    class="text-[#9ca0b0] hover:text-[#6c6f85]"
-                >
-                    <x-phosphor-plus class="w-4 h-4" />
-                </flux:button>
-                <flux:button 
-                    wire:click="unstageAll" 
-                    variant="ghost" 
-                    size="xs"
-                    square
-                    class="text-[#9ca0b0] hover:text-[#6c6f85]"
-                >
-                    <x-phosphor-minus class="w-4 h-4" />
-                </flux:button>
-                <flux:button 
-                    @click="showDiscardModal = true; discardAll = true; discardTarget = null"
-                    variant="ghost" 
-                    size="xs"
-                    square
-                    class="text-[#9ca0b0] hover:text-[#d20f39]"
-                >
-                    <x-phosphor-trash class="w-4 h-4" />
-                </flux:button>
+                <flux:tooltip content="Stage All">
+                    <flux:button 
+                        wire:click="stageAll" 
+                        variant="ghost" 
+                        size="xs"
+                        square
+                        class="text-[#9ca0b0] hover:text-[#6c6f85]"
+                    >
+                        <x-phosphor-plus class="w-4 h-4" />
+                    </flux:button>
+                </flux:tooltip>
+                <flux:tooltip content="Unstage All">
+                    <flux:button 
+                        wire:click="unstageAll" 
+                        variant="ghost" 
+                        size="xs"
+                        square
+                        class="text-[#9ca0b0] hover:text-[#6c6f85]"
+                    >
+                        <x-phosphor-minus class="w-4 h-4" />
+                    </flux:button>
+                </flux:tooltip>
+                <flux:tooltip content="Discard All">
+                    <flux:button 
+                        @click="showDiscardModal = true; discardAll = true; discardTarget = null"
+                        variant="ghost" 
+                        size="xs"
+                        square
+                        class="text-[#9ca0b0] hover:text-[#d20f39]"
+                    >
+                        <x-phosphor-trash class="w-4 h-4" />
+                    </flux:button>
+                </flux:tooltip>
             </div>
         </div>
         <div class="flex-1 overflow-y-auto">
             @if($stagedFiles->isNotEmpty())
                 <div class="border-b border-[#ccd0da]">
-                    <div class="sticky top-0 bg-[#e6e9ef] border-b border-[#ccd0da] px-4 py-3 flex items-center justify-between">
+                    <div class="sticky top-0 bg-[#e6e9ef] border-b border-[#ccd0da] px-4 py-2 flex items-center justify-between">
                         <div class="flex items-center gap-3">
                             <div class="text-xs uppercase tracking-wider font-medium text-[#9ca0b0]">Staged</div>
                             <span class="text-xs text-[#9ca0b0] font-mono">{{ $stagedFiles->count() }}</span>
@@ -80,11 +86,11 @@
                     @if($treeView)
                         <x-file-tree :tree="$stagedTree" :staged="true" />
                     @else
-                        <div class="divide-y divide-[#ccd0da]">
+                        <div>
                             @foreach($stagedFiles as $file)
                                 <div 
                                     wire:click="selectFile('{{ $file['path'] }}', true)"
-                                    class="group px-4 py-2 hover:bg-[#dce0e8] cursor-pointer transition-colors flex items-center justify-between gap-3 animate-slide-in"
+                                    class="group px-4 py-1.5 hover:bg-[#dce0e8] cursor-pointer transition-colors flex items-center justify-between gap-3 animate-slide-in"
                                 >
                                     <div class="flex items-center gap-2.5 flex-1 min-w-0">
                                         @php
@@ -105,15 +111,17 @@
                                             </div>
                                         </flux:tooltip>
                                     </div>
-                                    <flux:button 
-                                        wire:click.stop="unstageFile('{{ $file['path'] }}')"
-                                        variant="ghost" 
-                                        size="xs"
-                                        square
-                                        class="opacity-0 group-hover:opacity-100 transition-opacity"
-                                    >
-                                        <x-phosphor-minus class="w-3.5 h-3.5" />
-                                    </flux:button>
+                                    <flux:tooltip content="Unstage">
+                                        <flux:button 
+                                            wire:click.stop="unstageFile('{{ $file['path'] }}')"
+                                            variant="ghost" 
+                                            size="xs"
+                                            square
+                                            class="opacity-0 group-hover:opacity-100 transition-opacity"
+                                        >
+                                            <x-phosphor-minus class="w-3.5 h-3.5" />
+                                        </flux:button>
+                                    </flux:tooltip>
                                 </div>
                             @endforeach
                         </div>
@@ -123,7 +131,7 @@
 
             @if($unstagedFiles->isNotEmpty() || $untrackedFiles->isNotEmpty())
                 <div>
-                    <div class="sticky top-0 bg-[#e6e9ef] border-b border-[#ccd0da] px-4 py-3 flex items-center justify-between">
+                    <div class="sticky top-0 bg-[#e6e9ef] border-b border-[#ccd0da] px-4 py-2 flex items-center justify-between">
                         <div class="flex items-center gap-3">
                             <div class="text-xs uppercase tracking-wider font-medium text-[#9ca0b0]">Changes</div>
                             <span class="text-xs text-[#9ca0b0] font-mono">{{ $unstagedFiles->count() + $untrackedFiles->count() }}</span>
@@ -133,11 +141,11 @@
                     @if($treeView)
                         <x-file-tree :tree="$unstagedTree" :staged="false" />
                     @else
-                        <div class="divide-y divide-[#ccd0da]">
+                        <div>
                             @foreach($unstagedFiles->concat($untrackedFiles) as $file)
                                 <div 
                                     wire:click="selectFile('{{ $file['path'] }}', false)"
-                                    class="group px-4 py-2 hover:bg-[#dce0e8] cursor-pointer transition-colors flex items-center justify-between gap-3 animate-slide-in"
+                                    class="group px-4 py-1.5 hover:bg-[#dce0e8] cursor-pointer transition-colors flex items-center justify-between gap-3 animate-slide-in"
                                 >
                                     <div class="flex items-center gap-2.5 flex-1 min-w-0">
                                         @php
@@ -160,23 +168,27 @@
                                         </flux:tooltip>
                                     </div>
                                     <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <flux:button 
-                                            wire:click.stop="stageFile('{{ $file['path'] }}')"
-                                            variant="ghost" 
-                                            size="xs"
-                                            square
-                                        >
-                                            <x-phosphor-plus class="w-3.5 h-3.5" />
-                                        </flux:button>
-                                        <flux:button 
-                                            @click.stop="showDiscardModal = true; discardAll = false; discardTarget = '{{ $file['path'] }}'"
-                                            variant="ghost" 
-                                            size="xs"
-                                            square
-                                            class="text-[#d20f39] hover:text-[#d20f39]"
-                                        >
-                                            <x-phosphor-arrow-counter-clockwise class="w-3.5 h-3.5" />
-                                        </flux:button>
+                                        <flux:tooltip content="Stage">
+                                            <flux:button 
+                                                wire:click.stop="stageFile('{{ $file['path'] }}')"
+                                                variant="ghost" 
+                                                size="xs"
+                                                square
+                                            >
+                                                <x-phosphor-plus class="w-3.5 h-3.5" />
+                                            </flux:button>
+                                        </flux:tooltip>
+                                        <flux:tooltip content="Discard">
+                                            <flux:button 
+                                                @click.stop="showDiscardModal = true; discardAll = false; discardTarget = '{{ $file['path'] }}'"
+                                                variant="ghost" 
+                                                size="xs"
+                                                square
+                                                class="text-[#d20f39] hover:text-[#d20f39]"
+                                            >
+                                                <x-phosphor-arrow-counter-clockwise class="w-3.5 h-3.5" />
+                                            </flux:button>
+                                        </flux:tooltip>
                                     </div>
                                 </div>
                             @endforeach

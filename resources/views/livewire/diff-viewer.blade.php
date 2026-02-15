@@ -14,11 +14,13 @@
             </div>
         </div>
     @elseif($isLargeFile)
-        <div class="border-b border-[#ccd0da] p-4 bg-[#e6e9ef]">
+        <div class="border-b border-[#ccd0da] px-3 py-2 bg-[#e6e9ef]">
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-3">
-                    <span class="text-[#4c4f69] font-semibold">{{ $file }}</span>
-                    <flux:badge variant="solid" color="orange" class="uppercase tracking-wider">LARGE FILE</flux:badge>
+                    <span class="text-[#4c4f69] text-sm">{{ $file }}</span>
+                    <div class="flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-medium uppercase tracking-wider" style="background-color: #fe640b15; color: #fe640b">
+                        LARGE FILE
+                    </div>
                 </div>
             </div>
         </div>
@@ -29,11 +31,13 @@
             </div>
         </div>
     @elseif($isBinary)
-        <div class="border-b border-[#ccd0da] p-4 bg-[#e6e9ef]">
+        <div class="border-b border-[#ccd0da] px-3 py-2 bg-[#e6e9ef]">
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-3">
-                    <span class="text-[#4c4f69] font-semibold">{{ $file }}</span>
-                    <flux:badge variant="solid" color="zinc" class="uppercase tracking-wider">BINARY</flux:badge>
+                    <span class="text-[#4c4f69] text-sm">{{ $file }}</span>
+                    <div class="flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-medium uppercase tracking-wider" style="background-color: #9ca0b015; color: #9ca0b0">
+                        BINARY
+                    </div>
                 </div>
             </div>
         </div>
@@ -44,14 +48,23 @@
             </div>
         </div>
     @else
-        <div class="border-b border-[#ccd0da] p-4 bg-[#e6e9ef] sticky top-0 z-10" style="box-shadow: var(--shadow-sm)">
+        <div class="border-b border-[#ccd0da] px-3 py-2 bg-[#e6e9ef] sticky top-0 z-10" style="box-shadow: var(--shadow-sm)">
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-3">
-                    <span class="text-[#4c4f69] font-semibold">{{ $file }}</span>
+                    <span class="text-[#4c4f69] text-sm">{{ $file }}</span>
                     @if($diffData)
-                        <flux:badge variant="solid" color="yellow" class="uppercase tracking-wider">
+                        @php
+                            $badgeColor = match(strtoupper($diffData['status'])) {
+                                'MODIFIED', 'M' => '#df8e1d',
+                                'ADDED', 'A' => '#40a02b',
+                                'DELETED', 'D' => '#d20f39',
+                                'RENAMED', 'R' => '#084CCF',
+                                default => '#9ca0b0',
+                            };
+                        @endphp
+                        <div class="flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-medium uppercase tracking-wider" style="background-color: {{ $badgeColor }}15; color: {{ $badgeColor }}">
                             {{ strtoupper($diffData['status']) }}
-                        </flux:badge>
+                        </div>
                     @endif
                 </div>
                 @if($diffData)

@@ -9,7 +9,7 @@
             >
                 <div 
                     @click="expanded = !expanded"
-                    class="group px-4 py-2 hover:bg-[#dce0e8] cursor-pointer transition-colors flex items-center gap-2"
+                    class="group px-4 py-1.5 hover:bg-[#dce0e8] cursor-pointer transition-colors flex items-center gap-2"
                     style="padding-left: {{ ($level * 16) + 16 }}px"
                 >
                     <div 
@@ -22,9 +22,7 @@
                     <div class="text-sm font-medium text-[#5c5f77] group-hover:text-[#4c4f69] transition-colors">
                         {{ $node['name'] }}
                     </div>
-                    <flux:badge variant="solid" color="zinc" class="font-mono text-xs ml-1">
-                        {{ count($node['children']) }}
-                    </flux:badge>
+                    <span class="text-xs text-[#9ca0b0] ml-1">{{ count($node['children']) }}</span>
                 </div>
                 
                 <div x-show="expanded" x-collapse>
@@ -34,10 +32,10 @@
         @else
             <div 
                 wire:click="selectFile('{{ $node['path'] }}', {{ $staged ? 'true' : 'false' }})"
-                class="group px-4 py-2.5 hover:bg-[#dce0e8] cursor-pointer transition-colors flex items-center justify-between gap-3"
+                class="group px-4 py-1.5 hover:bg-[#dce0e8] cursor-pointer transition-colors flex items-center justify-between gap-3"
                 style="padding-left: {{ ($level * 16) + 16 }}px"
             >
-                <div class="flex items-center gap-3 flex-1 min-w-0">
+                <div class="flex items-center gap-2.5 flex-1 min-w-0">
                     @php
                         $status = $staged ? $node['indexStatus'] : ($node['worktreeStatus'] ?? $node['indexStatus']);
                         $statusConfig = match($status) {
@@ -50,9 +48,7 @@
                             default => ['label' => '?', 'color' => 'zinc', 'icon' => '?'],
                         };
                     @endphp
-                    <flux:badge variant="solid" color="{{ $statusConfig['color'] }}" class="font-mono text-xs w-6 h-6 flex items-center justify-center">
-                        {{ $statusConfig['icon'] }}
-                    </flux:badge>
+                    <div class="w-2.5 h-2.5 rounded-full shrink-0 {{ match($statusConfig['color']) { 'yellow' => 'bg-[#df8e1d]', 'green' => 'bg-[#40a02b]', 'red' => 'bg-[#d20f39]', 'blue' => 'bg-[#084CCF]', 'orange' => 'bg-[#fe640b]', default => 'bg-[#9ca0b0]' } }}"></div>
                     <flux:tooltip :content="$node['path']">
                         <div class="text-sm truncate text-[#5c5f77] group-hover:text-[#4c4f69] transition-colors">
                             {{ $node['name'] }}

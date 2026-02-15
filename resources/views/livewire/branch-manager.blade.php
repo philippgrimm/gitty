@@ -21,9 +21,9 @@
                 size="xs"
                 class="flex items-center gap-2 px-2.5 py-1 !bg-[#eff1f5] border border-[#ccd0da] hover:border-[#bcc0cc] transition-colors text-sm rounded-lg"
             >
-                <x-phosphor-git-branch-light class="w-3.5 h-3.5 text-[#9ca0b0] shrink-0" />
+                <x-phosphor-git-branch-light class="w-3.5 h-3.5 text-[#6c6f85] shrink-0" />
                 <span class="font-semibold text-[#4c4f69]">{{ $currentBranch }}</span>
-                <svg class="w-3 h-3 text-[#9ca0b0]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                <svg class="w-3 h-3 text-[#6c6f85]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
             </flux:button>
 
             <flux:menu class="w-96 max-h-[600px] overflow-hidden !p-0">
@@ -59,7 +59,7 @@
                     @keydown.enter.prevent="selectActive()"
                 >
                     {{-- Search field --}}
-                    <div class="p-2 border-b border-[var(--border-subtle)] sticky top-0 z-10">
+                    <div class="p-2 border-b border-[var(--border-subtle)] sticky top-0 z-10 bg-white">
                         <div class="flex items-center gap-1.5 px-2 py-1 border border-[var(--border-subtle)] rounded">
                             <x-phosphor-magnifying-glass-light class="w-3 h-3 text-[var(--text-tertiary)] shrink-0" />
                             <input
@@ -135,7 +135,7 @@
                     </div>
 
                     {{-- New Branch button --}}
-                    <div class="border-t border-[var(--border-subtle)] p-2 sticky bottom-0">
+                    <div class="border-t border-[var(--border-subtle)] p-2 sticky bottom-0 bg-white">
                         <button
                             @click="$wire.showCreateModal = true"
                             type="button"
