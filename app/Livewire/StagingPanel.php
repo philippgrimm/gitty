@@ -9,6 +9,7 @@ use App\Services\Git\GitErrorHandler;
 use App\Services\Git\GitService;
 use App\Services\Git\StagingService;
 use Illuminate\Support\Collection;
+use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
@@ -26,11 +27,10 @@ class StagingPanel extends Component
 
     public string $error = '';
 
-    private bool $pausePolling = false;
+    #[Locked]
+    public string $lastStatusHash = '';
 
     private ?array $lastAheadBehind = null;
-
-    private ?string $lastStatusHash = null;
 
     public function mount(): void
     {
@@ -42,10 +42,6 @@ class StagingPanel extends Component
 
     public function refreshStatus(): void
     {
-        if ($this->pausePolling) {
-            return;
-        }
-
         try {
             $gitService = new GitService($this->repoPath);
             $status = $gitService->status();
@@ -90,7 +86,6 @@ class StagingPanel extends Component
         try {
             $stagingService = new StagingService($this->repoPath);
             $stagingService->stageFile($file);
-            $this->pausePollingTemporarily();
             $this->refreshStatus();
             $this->dispatch('status-updated',
                 stagedCount: $this->stagedFiles->count(),
@@ -108,7 +103,6 @@ class StagingPanel extends Component
         try {
             $stagingService = new StagingService($this->repoPath);
             $stagingService->unstageFile($file);
-            $this->pausePollingTemporarily();
             $this->refreshStatus();
             $this->dispatch('status-updated',
                 stagedCount: $this->stagedFiles->count(),
@@ -121,12 +115,12 @@ class StagingPanel extends Component
         }
     }
 
+    #[On('keyboard-stage-all')]
     public function stageAll(): void
     {
         try {
             $stagingService = new StagingService($this->repoPath);
             $stagingService->stageAll();
-            $this->pausePollingTemporarily();
             $this->refreshStatus();
             $this->dispatch('status-updated',
                 stagedCount: $this->stagedFiles->count(),
@@ -139,12 +133,12 @@ class StagingPanel extends Component
         }
     }
 
+    #[On('keyboard-unstage-all')]
     public function unstageAll(): void
     {
         try {
             $stagingService = new StagingService($this->repoPath);
             $stagingService->unstageAll();
-            $this->pausePollingTemporarily();
             $this->refreshStatus();
             $this->dispatch('status-updated',
                 stagedCount: $this->stagedFiles->count(),
@@ -162,7 +156,6 @@ class StagingPanel extends Component
         try {
             $stagingService = new StagingService($this->repoPath);
             $stagingService->discardFile($file);
-            $this->pausePollingTemporarily();
             $this->refreshStatus();
             $this->dispatch('status-updated',
                 stagedCount: $this->stagedFiles->count(),
@@ -180,7 +173,6 @@ class StagingPanel extends Component
         try {
             $stagingService = new StagingService($this->repoPath);
             $stagingService->discardAll();
-            $this->pausePollingTemporarily();
             $this->refreshStatus();
             $this->dispatch('status-updated',
                 stagedCount: $this->stagedFiles->count(),
@@ -217,29 +209,6 @@ class StagingPanel extends Component
             'stagedTree' => $stagedTree,
             'unstagedTree' => $unstagedTree,
         ]);
-    }
-
-    private function pausePollingTemporarily(): void
-    {
-        $this->pausePolling = true;
-        $this->dispatch('$refresh')->self();
-    }
-
-    public function resumePolling(): void
-    {
-        $this->pausePolling = false;
-    }
-
-    #[On('keyboard-stage-all')]
-    public function handleKeyboardStageAll(): void
-    {
-        $this->stageAll();
-    }
-
-    #[On('keyboard-unstage-all')]
-    public function handleKeyboardUnstageAll(): void
-    {
-        $this->unstageAll();
     }
 
     #[On('refresh-staging')]

@@ -33,7 +33,7 @@
             <div 
                 wire:key="file-{{ $node['path'] }}-{{ $staged ? 'staged' : 'unstaged' }}"
                 wire:click="selectFile('{{ $node['path'] }}', {{ $staged ? 'true' : 'false' }})"
-                class="group px-4 py-1.5 hover:bg-[#eff1f5] cursor-pointer transition-colors flex items-center justify-between gap-3"
+                class="group px-4 py-1.5 hover:bg-[#eff1f5] cursor-pointer transition-colors transition-opacity duration-150 flex items-center justify-between gap-3"
                 style="padding-left: {{ ($level * 16) + 16 }}px"
             >
                 <div class="flex items-center gap-2.5 flex-1 min-w-0">
@@ -59,7 +59,7 @@
                 
                 @if($staged)
                     <flux:button 
-                        wire:click.stop="unstageFile('{{ $node['path'] }}')"
+                        x-on:click.stop="$el.closest('[wire\\:key]').classList.add('opacity-30', 'pointer-events-none'); $wire.unstageFile('{{ $node['path'] }}')"
                         wire:loading.attr="disabled"
                         wire:target="unstageFile"
                         variant="ghost" 
@@ -72,7 +72,7 @@
                 @else
                     <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                         <flux:button 
-                            wire:click.stop="stageFile('{{ $node['path'] }}')"
+                            x-on:click.stop="$el.closest('[wire\\:key]').classList.add('opacity-30', 'pointer-events-none'); $wire.stageFile('{{ $node['path'] }}')"
                             wire:loading.attr="disabled"
                             wire:target="stageFile"
                             variant="ghost" 

@@ -3,16 +3,8 @@
     x-data="{ 
         showDiscardModal: false, 
         discardTarget: null, 
-        discardAll: false,
-        resumePollingTimer: null,
-        startResumeTimer() {
-            clearTimeout(this.resumePollingTimer);
-            this.resumePollingTimer = setTimeout(() => {
-                $wire.resumePolling();
-            }, 5000);
-        }
+        discardAll: false
     }"
-    @status-updated.window="startResumeTimer()"
     class="h-full flex flex-col bg-white text-[#4c4f69] font-mono border-r border-[#ccd0da]"
 >
     @if($unstagedFiles->isEmpty() && $stagedFiles->isEmpty() && $untrackedFiles->isEmpty())
@@ -40,7 +32,7 @@
             <div class="flex items-center gap-1">
                 <flux:tooltip content="Stage All">
                     <flux:button 
-                        wire:click="stageAll" 
+                        x-on:click="document.querySelectorAll('[wire\\:key^=unstaged-]').forEach(el => { el.classList.add('opacity-30', 'pointer-events-none'); }); $wire.stageAll();"
                         wire:loading.attr="disabled"
                         wire:target="stageAll"
                         variant="ghost" 
@@ -53,7 +45,7 @@
                 </flux:tooltip>
                 <flux:tooltip content="Unstage All">
                     <flux:button 
-                        wire:click="unstageAll" 
+                        x-on:click="document.querySelectorAll('[wire\\:key^=staged-]').forEach(el => { el.classList.add('opacity-30', 'pointer-events-none'); }); $wire.unstageAll();"
                         wire:loading.attr="disabled"
                         wire:target="unstageAll"
                         variant="ghost" 
@@ -95,7 +87,7 @@
                                 <div 
                                     wire:key="staged-{{ $file['path'] }}"
                                     wire:click="selectFile('{{ $file['path'] }}', true)"
-                                    class="group px-4 py-1.5 hover:bg-[#eff1f5] cursor-pointer transition-colors flex items-center justify-between gap-3 animate-slide-in"
+                                    class="group px-4 py-1.5 hover:bg-[#eff1f5] cursor-pointer transition-colors transition-opacity duration-150 flex items-center justify-between gap-3 animate-slide-in"
                                 >
                                     <div class="flex items-center gap-2.5 flex-1 min-w-0">
                                         @php
@@ -118,7 +110,7 @@
                                     </div>
                                     <flux:tooltip content="Unstage">
                                         <flux:button 
-                                            wire:click.stop="unstageFile('{{ $file['path'] }}')"
+                                            x-on:click.stop="$el.closest('[wire\\:key]').classList.add('opacity-30', 'pointer-events-none'); $wire.unstageFile('{{ $file['path'] }}')"
                                             wire:loading.attr="disabled"
                                             wire:target="unstageFile"
                                             variant="ghost" 
@@ -153,7 +145,7 @@
                                 <div 
                                     wire:key="unstaged-{{ $file['path'] }}"
                                     wire:click="selectFile('{{ $file['path'] }}', false)"
-                                    class="group px-4 py-1.5 hover:bg-[#eff1f5] cursor-pointer transition-colors flex items-center justify-between gap-3 animate-slide-in"
+                                    class="group px-4 py-1.5 hover:bg-[#eff1f5] cursor-pointer transition-colors transition-opacity duration-150 flex items-center justify-between gap-3 animate-slide-in"
                                 >
                                     <div class="flex items-center gap-2.5 flex-1 min-w-0">
                                         @php
@@ -178,7 +170,7 @@
                                     <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                         <flux:tooltip content="Stage">
                                             <flux:button 
-                                                wire:click.stop="stageFile('{{ $file['path'] }}')"
+                                                x-on:click.stop="$el.closest('[wire\\:key]').classList.add('opacity-30', 'pointer-events-none'); $wire.stageFile('{{ $file['path'] }}')"
                                                 wire:loading.attr="disabled"
                                                 wire:target="stageFile"
                                                 variant="ghost" 
