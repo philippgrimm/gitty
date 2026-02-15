@@ -1538,3 +1538,24 @@ Fixed contrast issues across all blade templates and extracted inline styles fro
 - All 240 tests pass
 - LSP errors in blade file are false positives (CSS linter on inline styles)
 
+
+## AGENTS.md Creation (2026-02-15)
+
+Created comprehensive design system documentation by reading actual source files:
+- Extracted exact color values from `resources/css/app.css`
+- Documented split button pattern from `commit-panel.blade.php`
+- Captured header layout structure from `app-layout.blade.php`
+- Noted icon usage patterns from `sync-panel.blade.php`
+
+Key sections included:
+1. Project overview (tech stack)
+2. Catppuccin Latte color system (exact hex values)
+3. Flux UI integration (accent color gotcha)
+4. Phosphor icon conventions (light vs regular)
+5. Header layout (traffic light spacer, drag regions)
+6. CSS architecture (two systems: @theme vs :root)
+7. Git commit style (type/scope format)
+8. Six critical gotchas learned through iteration
+
+The document captures 13 rounds of UI iteration wisdom to prevent future AI sessions from repeating the same mistakes.
+
