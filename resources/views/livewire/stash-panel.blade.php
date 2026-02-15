@@ -1,23 +1,23 @@
 <div 
     wire:poll.5s.visible="refreshStashes"
-    class="h-full flex flex-col bg-zinc-950 text-zinc-100 font-mono border-r border-zinc-800"
+    class="h-full flex flex-col bg-[#eff1f5] text-[#4c4f69] font-mono border-r border-[#ccd0da]"
     x-data="{ confirmDropIndex: null }"
 >
     @if($error)
-        <div class="bg-red-950 border-b border-red-800 text-red-200 px-4 py-3 text-xs uppercase tracking-wider font-semibold">
+        <div class="bg-[#d20f39]/10 border-b border-[#d20f39]/30 text-[#d20f39] px-4 py-3 text-xs uppercase tracking-wider font-semibold">
             {{ $error }}
         </div>
     @endif
 
-    <div class="px-4 py-4 border-b border-zinc-800">
+    <div class="px-4 py-4 border-b border-[#ccd0da]">
         <div class="flex items-center justify-between">
-            <div class="text-xs uppercase tracking-wider font-medium text-zinc-400">Stashes</div>
+            <div class="text-xs uppercase tracking-wider font-medium text-[#9ca0b0]">Stashes</div>
             <flux:button 
                 @click="$wire.showCreateModal = true"
                 variant="primary" 
                 size="sm"
                 icon="archive-box"
-                class="text-xs uppercase tracking-wider !bg-amber-600 hover:!bg-amber-500 !text-white"
+                class="text-xs uppercase tracking-wider"
             >
                 Stash
             </flux:button>
@@ -26,14 +26,14 @@
 
     <div class="flex-1 overflow-y-auto">
         @if(empty($stashes))
-            <div class="flex flex-col items-center justify-center h-full text-zinc-400 space-y-4 px-4 animate-fade-in">
+            <div class="flex flex-col items-center justify-center h-full text-[#9ca0b0] space-y-4 px-4 animate-fade-in">
                 <div class="w-16 h-16 mx-auto opacity-60">{!! file_get_contents(resource_path('svg/empty-states/no-changes.svg')) !!}</div>
                 <div class="text-xs uppercase tracking-wider font-medium">No stashes</div>
             </div>
         @else
-            <div class="divide-y divide-zinc-800">
+            <div class="divide-y divide-[#ccd0da]">
                 @foreach($stashes as $stash)
-                    <div class="group px-4 py-3 hover:bg-zinc-800/30 transition-colors">
+                    <div class="group px-4 py-3 hover:bg-[#dce0e8] transition-colors">
                         <div class="flex items-start justify-between gap-3">
                             <div class="flex-1 min-w-0 space-y-1.5">
                                 <div class="flex items-center gap-2">
@@ -46,11 +46,11 @@
                                         </flux:badge>
                                     @endif
                                 </div>
-                                <div class="text-sm text-zinc-300 break-words">
+                                <div class="text-sm text-[#6c6f85] break-words">
                                     {{ $stash['message'] }}
                                 </div>
                                 @if(!empty($stash['sha']))
-                                    <div class="text-xs text-zinc-400 font-mono">
+                                    <div class="text-xs text-[#9ca0b0] font-mono">
                                         {{ substr($stash['sha'], 0, 7) }}
                                     </div>
                                 @endif
@@ -119,7 +119,7 @@
                 variant="primary" 
                 wire:click="createStash"
                 :disabled="empty(trim($stashMessage))"
-                class="uppercase tracking-wider !bg-amber-600 hover:!bg-amber-500 !text-white"
+                class="uppercase tracking-wider"
             >
                 Create Stash
             </flux:button>
@@ -129,15 +129,15 @@
     <!-- Drop Confirmation Modal -->
     <flux:modal x-model="confirmDropIndex !== null" class="space-y-6">
         <div>
-            <flux:heading size="lg" class="font-mono uppercase tracking-wider text-red-400">Drop Stash</flux:heading>
+            <flux:heading size="lg" class="font-mono uppercase tracking-wider text-[#d20f39]">Drop Stash</flux:heading>
             <flux:subheading class="font-mono">
                 Are you sure? This action cannot be undone.
             </flux:subheading>
         </div>
 
-        <div class="bg-zinc-900 border border-zinc-800 rounded px-4 py-3">
-            <div class="text-sm text-zinc-400 font-mono">
-                This will permanently delete <span class="text-zinc-100 font-semibold">stash@{<span x-text="confirmDropIndex"></span>}</span>
+        <div class="bg-[#e6e9ef] border border-[#ccd0da] rounded px-4 py-3">
+            <div class="text-sm text-[#9ca0b0] font-mono">
+                This will permanently delete <span class="text-[#4c4f69] font-semibold">stash@{<span x-text="confirmDropIndex"></span>}</span>
             </div>
         </div>
 

@@ -18,9 +18,9 @@
     x-transition:leave-end="opacity-0 -translate-y-2"
     class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 font-mono text-sm border-b"
     :class="{
-        'bg-red-950 border-red-800 text-red-200': '{{ $type }}' === 'error',
-        'bg-orange-950 border-orange-800 text-orange-200': '{{ $type }}' === 'warning',
-        'bg-blue-950 border-blue-800 text-blue-200': '{{ $type }}' === 'info'
+        'bg-[#d20f39]/10 border-[#d20f39]/30 text-[#d20f39]': '{{ $type }}' === 'error',
+        'bg-[#fe640b]/10 border-[#fe640b]/30 text-[#fe640b]': '{{ $type }}' === 'warning',
+        'bg-[#084CCF]/10 border-[#084CCF]/30 text-[#084CCF]': '{{ $type }}' === 'info'
     }"
     style="display: none;"
 >
@@ -39,7 +39,7 @@
     
     <button 
         wire:click="dismiss"
-        class="text-lg font-semibold px-2 py-1 rounded hover:bg-white/10 transition-colors"
+        class="text-lg font-semibold px-2 py-1 rounded hover:bg-black/5 transition-colors"
         aria-label="Dismiss"
     >
         ×
