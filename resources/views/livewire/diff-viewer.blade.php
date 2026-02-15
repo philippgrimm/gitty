@@ -14,8 +14,8 @@
             </div>
         </div>
     @elseif($isLargeFile)
-        <div class="border-b border-[#ccd0da] px-4 h-10 bg-white">
-            <div class="flex items-center justify-between">
+        <div class="border-b border-[#ccd0da] px-4 h-10 flex items-center bg-white">
+            <div class="flex items-center justify-between flex-1">
                 <div class="flex items-center gap-3">
                     <span class="text-[#4c4f69] text-sm">{{ $file }}</span>
                     <div class="flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-medium uppercase tracking-wider" style="background-color: #fe640b15; color: #fe640b">
@@ -31,8 +31,8 @@
             </div>
         </div>
     @elseif($isBinary)
-        <div class="border-b border-[#ccd0da] px-4 h-10 bg-white">
-            <div class="flex items-center justify-between">
+        <div class="border-b border-[#ccd0da] px-4 h-10 flex items-center bg-white">
+            <div class="flex items-center justify-between flex-1">
                 <div class="flex items-center gap-3">
                     <span class="text-[#4c4f69] text-sm">{{ $file }}</span>
                     <div class="flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-medium uppercase tracking-wider" style="background-color: #9ca0b015; color: #9ca0b0">
@@ -48,8 +48,8 @@
             </div>
         </div>
     @else
-        <div class="border-b border-[#ccd0da] px-4 h-10 bg-white sticky top-0 z-10" style="box-shadow: var(--shadow-sm)">
-            <div class="flex items-center justify-between">
+        <div class="border-b border-[#ccd0da] px-4 h-10 flex items-center bg-white sticky top-0 z-10" style="box-shadow: var(--shadow-sm)">
+            <div class="flex items-center justify-between flex-1">
                 <div class="flex items-center gap-3">
                     <span class="text-[#4c4f69] text-sm">{{ $file }}</span>
                     @if($diffData)
