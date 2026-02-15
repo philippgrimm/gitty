@@ -1,5 +1,5 @@
 <div 
-    wire:poll.3s.visible="refreshStatus" 
+    wire:poll.5s.visible="refreshStatus" 
     x-data="{ 
         showDiscardModal: false, 
         discardTarget: null, 

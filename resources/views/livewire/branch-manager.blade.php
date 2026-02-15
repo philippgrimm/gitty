@@ -1,5 +1,5 @@
 <div 
-    wire:poll.5s.visible="refreshBranches"
+    wire:poll.15s.visible="refreshBranches"
     class="flex items-center gap-2 font-mono"
 >
     @if($isDetachedHead)

@@ -1,5 +1,5 @@
 <div 
-    wire:poll.10s.visible="refreshSidebar"
+    wire:poll.30s.visible="refreshSidebar"
     x-data="{ 
         branchesOpen: false, 
         remotesOpen: false, 

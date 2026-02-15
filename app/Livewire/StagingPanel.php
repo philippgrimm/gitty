@@ -30,6 +30,8 @@ class StagingPanel extends Component
 
     private ?array $lastAheadBehind = null;
 
+    private ?string $lastStatusHash = null;
+
     public function mount(): void
     {
         $this->unstagedFiles = collect();
@@ -47,6 +49,12 @@ class StagingPanel extends Component
         try {
             $gitService = new GitService($this->repoPath);
             $status = $gitService->status();
+
+            $statusHash = md5(serialize($status->changedFiles->toArray()).serialize($status->aheadBehind));
+            if ($this->lastStatusHash === $statusHash) {
+                return; // Nothing changed, skip rebuilding collections
+            }
+            $this->lastStatusHash = $statusHash;
 
             $this->unstagedFiles = collect();
             $this->stagedFiles = collect();

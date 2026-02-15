@@ -25,6 +25,8 @@ class RepoSidebar extends Component
 
     public string $currentBranch = '';
 
+    private ?string $lastSidebarHash = null;
+
     public function mount(): void
     {
         $this->refreshSidebar();
@@ -38,9 +40,8 @@ class RepoSidebar extends Component
         $stashService = new StashService($this->repoPath);
 
         $status = $gitService->status();
-        $this->currentBranch = $status->branch;
 
-        $this->branches = $branchService->branches()
+        $branches = $branchService->branches()
             ->filter(fn ($branch) => ! $branch->isRemote)
             ->map(fn ($branch) => [
                 'name' => $branch->name,
@@ -49,7 +50,7 @@ class RepoSidebar extends Component
             ])
             ->toArray();
 
-        $this->remotes = $remoteService->remotes()
+        $remotes = $remoteService->remotes()
             ->map(fn ($remote) => [
                 'name' => $remote->name,
                 'fetchUrl' => $remote->fetchUrl,
@@ -57,9 +58,9 @@ class RepoSidebar extends Component
             ])
             ->toArray();
 
-        $this->tags = $this->fetchTags();
+        $tags = $this->fetchTags();
 
-        $this->stashes = $stashService->stashList()
+        $stashes = $stashService->stashList()
             ->map(fn ($stash) => [
                 'index' => $stash->index,
                 'message' => $stash->message,
@@ -67,6 +68,26 @@ class RepoSidebar extends Component
                 'sha' => $stash->sha,
             ])
             ->toArray();
+
+        // Hash check
+        $sidebarHash = md5(
+            serialize($branches).
+            serialize($remotes).
+            serialize($tags).
+            serialize($stashes).
+            $status->branch
+        );
+        if ($this->lastSidebarHash === $sidebarHash) {
+            return;
+        }
+        $this->lastSidebarHash = $sidebarHash;
+
+        // Assign to public properties
+        $this->currentBranch = $status->branch;
+        $this->branches = $branches;
+        $this->remotes = $remotes;
+        $this->tags = $tags;
+        $this->stashes = $stashes;
     }
 
     public function switchBranch(string $name): void

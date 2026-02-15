@@ -1,5 +1,5 @@
 <div 
-    wire:poll.5s.visible="refreshStashes"
+    wire:poll.15s.visible="refreshStashes"
     class="h-full flex flex-col bg-[#eff1f5] text-[#4c4f69] font-mono border-r border-[#ccd0da]"
     x-data="{ confirmDropIndex: null }"
 >
