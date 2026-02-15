@@ -1,0 +1,20 @@
+{
+    "agents": [
+        "codex",
+        "opencode",
+        "junie",
+        "cursor",
+        "claude_code",
+        "gemini"
+    ],
+    "guidelines": true,
+    "herd_mcp": false,
+    "mcp": true,
+    "sail": false,
+    "skills": [
+        "fluxui-development",
+        "livewire-development",
+        "pest-testing",
+        "tailwindcss-development"
+    ]
+}
