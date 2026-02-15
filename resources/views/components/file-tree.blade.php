@@ -60,6 +60,8 @@
                 @if($staged)
                     <flux:button 
                         wire:click.stop="unstageFile('{{ $node['path'] }}')"
+                        wire:loading.attr="disabled"
+                        wire:target="unstageFile"
                         variant="ghost" 
                         size="xs"
                         square
@@ -71,6 +73,8 @@
                     <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                         <flux:button 
                             wire:click.stop="stageFile('{{ $node['path'] }}')"
+                            wire:loading.attr="disabled"
+                            wire:target="stageFile"
                             variant="ghost" 
                             size="xs"
                             square

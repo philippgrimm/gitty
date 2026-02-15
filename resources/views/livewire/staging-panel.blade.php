@@ -41,6 +41,8 @@
                 <flux:tooltip content="Stage All">
                     <flux:button 
                         wire:click="stageAll" 
+                        wire:loading.attr="disabled"
+                        wire:target="stageAll"
                         variant="ghost" 
                         size="xs"
                         square
@@ -52,6 +54,8 @@
                 <flux:tooltip content="Unstage All">
                     <flux:button 
                         wire:click="unstageAll" 
+                        wire:loading.attr="disabled"
+                        wire:target="unstageAll"
                         variant="ghost" 
                         size="xs"
                         square
@@ -115,6 +119,8 @@
                                     <flux:tooltip content="Unstage">
                                         <flux:button 
                                             wire:click.stop="unstageFile('{{ $file['path'] }}')"
+                                            wire:loading.attr="disabled"
+                                            wire:target="unstageFile"
                                             variant="ghost" 
                                             size="xs"
                                             square
@@ -173,6 +179,8 @@
                                         <flux:tooltip content="Stage">
                                             <flux:button 
                                                 wire:click.stop="stageFile('{{ $file['path'] }}')"
+                                                wire:loading.attr="disabled"
+                                                wire:target="stageFile"
                                                 variant="ghost" 
                                                 size="xs"
                                                 square

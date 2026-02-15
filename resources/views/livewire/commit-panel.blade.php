@@ -34,6 +34,8 @@
     <flux:button.group class="w-full">
         <flux:button 
             wire:click="commit"
+            wire:loading.attr="disabled"
+            wire:target="commit,commitAndPush"
             variant="primary"
             size="sm"
             :disabled="$stagedCount === 0 || empty(trim($message))"
