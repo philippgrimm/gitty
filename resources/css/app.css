@@ -228,3 +228,46 @@
 .animate-fade-in {
     animation: fadeIn 150ms ease-out;
 }
+
+/* Highlight.js — Catppuccin Latte theme for diff viewer */
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-built_in,
+.hljs-name,
+.hljs-tag { color: #8839ef; }
+
+.hljs-string,
+.hljs-title,
+.hljs-section,
+.hljs-attribute,
+.hljs-literal,
+.hljs-template-tag,
+.hljs-template-variable,
+.hljs-type { color: #40a02b; }
+
+.hljs-comment,
+.hljs-quote,
+.hljs-deletion { color: #9ca0b0; }
+
+.hljs-meta,
+.hljs-meta .hljs-keyword { color: #fe640b; }
+
+.hljs-number,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-link { color: #df8e1d; }
+
+.hljs-variable,
+.hljs-params { color: #4c4f69; }
+
+.hljs-function { color: #1e66f5; }
+
+.hljs-title.function_ { color: #1e66f5; }
+
+.hljs-regexp { color: #179299; }
+
+.hljs-addition { color: #40a02b; }
+
+.hljs-emphasis { font-style: italic; }
+
+.hljs-strong { font-weight: bold; }

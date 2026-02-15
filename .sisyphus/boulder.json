@@ -1,10 +1,9 @@
 {
-  "active_plan": "/Users/philipp.grimm/workspace/gitty/.sisyphus/plans/gitty.md",
-  "started_at": "2026-02-12T12:47:26.617Z",
+  "active_plan": "/Users/philipp.grimm/workspace/gitty/.sisyphus/plans/performance-optimization.md",
+  "started_at": "2026-02-15T14:13:05.935Z",
   "session_ids": [
-    "ses_3ae3e3a36ffemigwRJO2fbx4VC",
-    "ses_3a33d590cffeBFsBP30Epnnksi"
+    "ses_39ea397eaffe8IWwcl9x527mda"
   ],
-  "plan_name": "gitty",
+  "plan_name": "performance-optimization",
   "agent": "atlas"
 }
