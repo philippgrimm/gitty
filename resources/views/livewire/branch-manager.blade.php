@@ -3,7 +3,7 @@
     class="flex items-center gap-2 font-mono"
 >
     @if($isDetachedHead)
-        <div class="flex items-center gap-2 px-3 py-1.5 bg-orange-950 border border-orange-800 rounded text-orange-200">
+        <div class="flex items-center gap-2 px-3 py-1.5 bg-[#fe640b]/10 border border-[#fe640b]/30 rounded text-[#fe640b]">
             <span class="text-xs uppercase tracking-wider font-semibold">HEAD detached at {{ substr($currentBranch, 0, 7) }}</span>
             <flux:button 
                 @click="$wire.showCreateModal = true"
@@ -17,120 +17,134 @@
     @else
         <flux:dropdown position="bottom-start">
             <flux:button 
-                variant="ghost" 
-                size="sm"
-                class="flex items-center gap-2 px-3 py-1.5 bg-zinc-900 border border-zinc-800 hover:border-zinc-700 transition-colors"
+                variant="subtle" 
+                size="xs"
+                class="flex items-center gap-2 px-2.5 py-1 !bg-[#eff1f5] border border-[#ccd0da] hover:border-[#bcc0cc] transition-colors text-sm rounded-lg"
             >
-                <span class="text-amber-500">⎇</span>
-                <span class="font-semibold text-zinc-100">{{ $currentBranch }}</span>
-                @if($aheadBehind['ahead'] > 0 || $aheadBehind['behind'] > 0)
-                    <div class="flex items-center gap-1">
-                        @if($aheadBehind['ahead'] > 0)
-                            <flux:badge variant="solid" color="green" class="font-mono text-xs px-1 py-0 animate-sync-pulse">
-                                ↑{{ $aheadBehind['ahead'] }}
-                            </flux:badge>
-                        @endif
-                        @if($aheadBehind['behind'] > 0)
-                            <flux:badge variant="solid" color="red" class="font-mono text-xs px-1 py-0 animate-sync-pulse">
-                                ↓{{ $aheadBehind['behind'] }}
-                            </flux:badge>
-                        @endif
-                    </div>
-                @endif
-                <svg class="w-3 h-3 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                <x-phosphor-git-branch-light class="w-3.5 h-3.5 text-[#9ca0b0] shrink-0" />
+                <span class="font-semibold text-[#4c4f69]">{{ $currentBranch }}</span>
+                <svg class="w-3 h-3 text-[#9ca0b0]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
             </flux:button>
 
-            <flux:menu class="w-96 max-h-[600px] overflow-hidden">
-                <div class="flex flex-col h-full">
-                <div class="p-3 border-b border-zinc-800 bg-zinc-900 sticky top-0 z-10">
-                    <flux:input 
-                        wire:model.live="branchQuery"
-                        placeholder="Search branches..."
-                        class="font-mono text-sm"
-                    />
-                </div>
-
-                <div class="flex-1 overflow-y-auto">
-                    <div class="px-3 py-2 bg-zinc-900 border-b border-zinc-800 sticky top-0">
-                        <div class="text-xs uppercase tracking-wider font-medium text-zinc-400">Local Branches</div>
+            <flux:menu class="w-96 max-h-[600px] overflow-hidden !p-0">
+                <div
+                    class="flex flex-col h-full"
+                    x-data="{
+                        activeIndex: -1,
+                        items: [],
+                        init() {
+                            this.updateItems();
+                        },
+                        updateItems() {
+                            this.items = [...this.$el.querySelectorAll('[data-branch-item]')];
+                            this.activeIndex = -1;
+                        },
+                        navigate(direction) {
+                            if (this.items.length === 0) return;
+                            if (direction === 'down') {
+                                this.activeIndex = this.activeIndex < this.items.length - 1 ? this.activeIndex + 1 : 0;
+                            } else {
+                                this.activeIndex = this.activeIndex > 0 ? this.activeIndex - 1 : this.items.length - 1;
+                            }
+                            this.items[this.activeIndex]?.scrollIntoView({ block: 'nearest' });
+                        },
+                        selectActive() {
+                            if (this.activeIndex >= 0 && this.items[this.activeIndex]) {
+                                this.items[this.activeIndex].click();
+                            }
+                        }
+                    }"
+                    @keydown.arrow-down.prevent="navigate('down')"
+                    @keydown.arrow-up.prevent="navigate('up')"
+                    @keydown.enter.prevent="selectActive()"
+                >
+                    {{-- Search field --}}
+                    <div class="p-2 border-b border-[var(--border-subtle)] sticky top-0 z-10">
+                        <div class="flex items-center gap-1.5 px-2 py-1 border border-[var(--border-subtle)] rounded">
+                            <x-phosphor-magnifying-glass-light class="w-3 h-3 text-[var(--text-tertiary)] shrink-0" />
+                            <input
+                                type="text"
+                                wire:model.live="branchQuery"
+                                placeholder="Search…"
+                                class="w-full bg-transparent border-none outline-none text-[11px] text-[var(--text-primary)] placeholder-[var(--text-tertiary)] font-mono p-0 focus:ring-0"
+                                @keydown.arrow-down.prevent="$event.target.blur(); navigate('down')"
+                            />
+                        </div>
                     </div>
 
-                    @forelse($this->filteredLocalBranches as $branch)
-                        <div class="group flex items-center justify-between gap-3 px-3 py-2 hover:bg-zinc-800/30 transition-colors">
-                            <div 
+                    <div class="flex-1 overflow-y-auto">
+                        {{-- Local Branches header --}}
+                        <div class="px-3 py-1.5 border-b border-[var(--border-subtle)]">
+                            <span class="text-[10px] uppercase tracking-wider font-medium text-[var(--text-tertiary)]">Local Branches</span>
+                        </div>
+
+                        @forelse($this->filteredLocalBranches as $branch)
+                            <div
+                                class="group flex items-center justify-between px-3 py-1.5 transition-colors cursor-pointer"
+                                :class="activeIndex === {{ $loop->index }} ? 'bg-[var(--surface-2)]' : 'hover:bg-[var(--surface-2)]'"
+                                data-branch-item
                                 wire:click="switchBranch('{{ $branch['name'] }}')"
-                                class="flex items-center gap-3 flex-1 min-w-0 cursor-pointer"
                             >
-                                <div class="w-4 h-4 flex items-center justify-center">
-                                    @if($branch['isCurrent'])
-                                        <div class="w-2 h-2 rounded-full bg-amber-500"></div>
-                                    @endif
-                                </div>
-                                <div class="text-sm truncate {{ $branch['isCurrent'] ? 'text-zinc-100 font-semibold' : 'text-zinc-300' }}">
-                                    {{ $branch['name'] }}
-                                </div>
-                            </div>
-
-                            @if(!$branch['isCurrent'])
-                                <flux:dropdown position="left">
-                                    <flux:button 
-                                        icon="ellipsis-horizontal"
-                                        variant="ghost" 
-                                        size="xs"
-                                        square
-                                        class="opacity-0 group-hover:opacity-100 transition-opacity"
-                                    />
-                                    <flux:menu>
-                                        <flux:menu.item wire:click="switchBranch('{{ $branch['name'] }}')" icon="arrow-path">
-                                            Switch to
-                                        </flux:menu.item>
-                                        <flux:menu.item wire:click="mergeBranch('{{ $branch['name'] }}')" icon="arrow-down-tray">
-                                            Merge into current
-                                        </flux:menu.item>
-                                        <flux:menu.separator />
-                                        <flux:menu.item wire:click="deleteBranch('{{ $branch['name'] }}')" variant="danger" icon="trash">
-                                            Delete
-                                        </flux:menu.item>
-                                    </flux:menu>
-                                </flux:dropdown>
-                            @endif
-                        </div>
-                    @empty
-                        <div class="px-3 py-4 text-center text-zinc-400 text-sm">No local branches found</div>
-                    @endforelse
-
-                    @if($this->filteredRemoteBranches->isNotEmpty())
-                        <div class="px-3 py-2 bg-zinc-900 border-t border-zinc-800 sticky top-0">
-                            <div class="text-xs uppercase tracking-wider font-medium text-zinc-400">Remote Branches</div>
-                        </div>
-
-                        @foreach($this->filteredRemoteBranches as $branch)
-                            @php
-                                $cleanName = str_replace('remotes/', '', $branch['name']);
-                            @endphp
-                            <div class="px-3 py-2 hover:bg-zinc-800/30 transition-colors">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-4 h-4"></div>
-                                    <div class="text-sm truncate text-zinc-400 italic">
-                                        {{ $cleanName }}
+                                <div class="flex items-center gap-2 flex-1 min-w-0">
+                                    <div class="w-4 flex items-center justify-center shrink-0">
+                                        @if($branch['isCurrent'])
+                                            <div class="w-1.5 h-1.5 rounded-full bg-[var(--accent)]"></div>
+                                        @endif
                                     </div>
+                                    <span class="text-sm truncate {{ $branch['isCurrent'] ? 'font-semibold text-[var(--text-primary)]' : 'text-[var(--text-secondary)]' }}">
+                                        {{ $branch['name'] }}
+                                    </span>
                                 </div>
-                            </div>
-                        @endforeach
-                    @endif
-                </div>
 
-                <div class="border-t border-zinc-800 p-2 bg-zinc-900 sticky bottom-0">
-                    <flux:button 
-                        @click="$wire.showCreateModal = true"
-                        variant="primary" 
-                        size="sm"
-                        icon="plus"
-                        class="w-full uppercase tracking-wider text-xs !bg-amber-600 hover:!bg-amber-500 !text-white"
-                    >
-                        New Branch
-                    </flux:button>
-                </div>
+                                @if(!$branch['isCurrent'])
+                                    <button
+                                        wire:click.stop="deleteBranch('{{ $branch['name'] }}')"
+                                        class="opacity-0 group-hover:opacity-100 transition-opacity text-[var(--text-tertiary)] hover:text-[var(--color-red)] p-0.5 shrink-0"
+                                    >
+                                        <x-phosphor-trash-light class="w-3.5 h-3.5" />
+                                    </button>
+                                @endif
+                            </div>
+                        @empty
+                            <div class="px-3 py-4 text-center text-[var(--text-tertiary)] text-sm">No local branches found</div>
+                        @endforelse
+
+                        @if($this->filteredRemoteBranches->isNotEmpty())
+                            {{-- Remote Branches header --}}
+                            <div class="px-3 py-1.5 border-t border-b border-[var(--border-subtle)]">
+                                <span class="text-[10px] uppercase tracking-wider font-medium text-[var(--text-tertiary)]">Remote Branches</span>
+                            </div>
+
+                            @foreach($this->filteredRemoteBranches as $branch)
+                                @php
+                                    $cleanName = str_replace('remotes/', '', $branch['name']);
+                                    $remoteIndex = $loop->index + $this->filteredLocalBranches->count();
+                                @endphp
+                                <div
+                                    class="flex items-center px-3 py-1.5 transition-colors cursor-default"
+                                    :class="activeIndex === {{ $remoteIndex }} ? 'bg-[var(--surface-2)]' : 'hover:bg-[var(--surface-2)]'"
+                                    data-branch-item
+                                >
+                                    <div class="w-4 shrink-0"></div>
+                                    <span class="text-sm truncate text-[var(--text-tertiary)] italic ml-2">
+                                        {{ $cleanName }}
+                                    </span>
+                                </div>
+                            @endforeach
+                        @endif
+                    </div>
+
+                    {{-- New Branch button --}}
+                    <div class="border-t border-[var(--border-subtle)] p-2 sticky bottom-0">
+                        <button
+                            @click="$wire.showCreateModal = true"
+                            type="button"
+                            class="w-full flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs uppercase tracking-wider text-[var(--text-secondary)] hover:bg-[var(--surface-2)] transition-colors rounded"
+                        >
+                            <x-phosphor-plus-light class="w-3.5 h-3.5 shrink-0" />
+                            <span>New Branch</span>
+                        </button>
+                    </div>
                 </div>
             </flux:menu>
         </flux:dropdown>
@@ -168,7 +182,7 @@
                 variant="primary" 
                 wire:click="createBranch"
                 :disabled="empty(trim($newBranchName))"
-                class="uppercase tracking-wider !bg-amber-600 hover:!bg-amber-500 !text-white"
+                class="uppercase tracking-wider"
             >
                 Create Branch
             </flux:button>

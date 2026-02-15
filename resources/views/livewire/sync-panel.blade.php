@@ -5,38 +5,48 @@
     }"
     class="flex items-center gap-1 font-mono"
 >
-    <flux:tooltip content="Push" position="bottom">
-        <flux:button 
-            wire:click="syncPush" 
-            x-bind:disabled="$wire.isOperationRunning"
-            variant="ghost" 
-            size="sm"
-            square
-            class="text-amber-400 hover:text-amber-300 hover:bg-zinc-800 transition-colors"
-        >
-            @if($isOperationRunning && $lastOperation === 'push')
-                <span class="animate-spin">⟳</span>
-            @else
-                <span class="text-lg">↑</span>
+    <flux:tooltip :content="$aheadBehind['ahead'] > 0 ? 'Push (' . $aheadBehind['ahead'] . ')' : 'Push'" position="bottom">
+        <div class="relative">
+            <flux:button 
+                wire:click="syncPush" 
+                x-bind:disabled="$wire.isOperationRunning"
+                variant="ghost" 
+                size="xs"
+                square
+                class="text-[#8c8fa1] hover:text-[#6c6f85] hover:bg-[#dce0e8] transition-colors flex items-center justify-center"
+            >
+                @if($isOperationRunning && $lastOperation === 'push')
+                    <x-phosphor-circle-notch-light class="w-4 h-4 animate-spin" />
+                @else
+                    <x-phosphor-arrow-up-light class="w-4 h-4" />
+                @endif
+            </flux:button>
+            @if($aheadBehind['ahead'] > 0)
+                <span style="top: 2px; right: 2px;" class="absolute w-2 h-2 rounded-full bg-[#40a02b] pointer-events-none ring-1 ring-[#eff1f5]"></span>
             @endif
-        </flux:button>
+        </div>
     </flux:tooltip>
 
-    <flux:tooltip content="Pull" position="bottom">
+    <flux:tooltip :content="$aheadBehind['behind'] > 0 ? 'Pull (' . $aheadBehind['behind'] . ')' : 'Pull'" position="bottom">
+        <div class="relative">
         <flux:button 
             wire:click="syncPull" 
             x-bind:disabled="$wire.isOperationRunning"
             variant="ghost" 
-            size="sm"
+            size="xs"
             square
-            class="text-cyan-400 hover:text-cyan-300 hover:bg-zinc-800 transition-colors"
+            class="text-[#8c8fa1] hover:text-[#6c6f85] hover:bg-[#dce0e8] transition-colors"
         >
             @if($isOperationRunning && $lastOperation === 'pull')
-                <span class="animate-spin">⟳</span>
+                <x-phosphor-circle-notch-light class="w-4 h-4 animate-spin" />
             @else
-                <span class="text-lg">↓</span>
+                <x-phosphor-arrow-down-light class="w-4 h-4" />
             @endif
         </flux:button>
+            @if($aheadBehind['behind'] > 0)
+                <span style="top: 2px; right: 2px;" class="absolute w-2 h-2 rounded-full bg-[#fe640b] pointer-events-none ring-1 ring-[#eff1f5]"></span>
+            @endif
+        </div>
     </flux:tooltip>
 
     <flux:tooltip content="Fetch" position="bottom">
@@ -44,62 +54,29 @@
             wire:click="syncFetch" 
             x-bind:disabled="$wire.isOperationRunning"
             variant="ghost" 
-            size="sm"
+            size="xs"
             square
-            class="text-green-400 hover:text-green-300 hover:bg-zinc-800 transition-colors"
+            class="text-[#8c8fa1] hover:text-[#6c6f85] hover:bg-[#dce0e8] transition-colors"
         >
             @if($isOperationRunning && $lastOperation === 'fetch')
-                <span class="animate-spin">⟳</span>
+                <x-phosphor-circle-notch-light class="w-4 h-4 animate-spin" />
             @else
-                <span class="text-lg">↻</span>
+                <x-phosphor-arrows-clockwise-light class="w-4 h-4" />
             @endif
         </flux:button>
     </flux:tooltip>
-
-    <flux:dropdown position="bottom-end">
-        <flux:button 
-            variant="ghost" 
-            size="sm"
-            square
-            class="text-zinc-400 hover:text-zinc-300 hover:bg-zinc-800 transition-colors"
-        >
-            <span class="text-lg">⋯</span>
-        </flux:button>
-
-        <flux:menu>
-            <flux:menu.item wire:click="syncFetchAll" icon="arrow-path">
-                @if($isOperationRunning && $lastOperation === 'fetch-all')
-                    <span class="animate-spin">⟳</span>
-                @endif
-                Fetch All
-            </flux:menu.item>
-            
-            <flux:menu.separator />
-            
-            <flux:menu.item @click="confirmForcePush = true" variant="danger" icon="exclamation-triangle">
-                Force Push (Lease)
-            </flux:menu.item>
-
-            @if($operationOutput && !$isOperationRunning)
-                <flux:menu.separator />
-                <flux:menu.item @click="showOutputLog = !showOutputLog" icon="document-text">
-                    <span x-text="showOutputLog ? 'Hide' : 'Show'"></span> Operation Log
-                </flux:menu.item>
-            @endif
-        </flux:menu>
-    </flux:dropdown>
 
     @if($operationOutput && !$isOperationRunning)
         <flux:modal x-model="showOutputLog" class="space-y-4">
             <div>
                 <flux:heading size="lg" class="font-mono uppercase tracking-wider">Operation Log</flux:heading>
                 <flux:subheading class="font-mono">
-                    Last operation: <span class="text-zinc-100 font-semibold">{{ $lastOperation }}</span>
+                    Last operation: <span class="text-[#4c4f69] font-semibold">{{ $lastOperation }}</span>
                 </flux:subheading>
             </div>
 
-            <div class="p-4 bg-zinc-900 border border-zinc-800 max-h-96 overflow-y-auto rounded">
-                <pre class="text-xs text-zinc-300 whitespace-pre-wrap break-words font-mono">{{ $operationOutput }}</pre>
+            <div class="p-4 bg-[#e6e9ef] border border-[#ccd0da] max-h-96 overflow-y-auto rounded">
+                <pre class="text-xs text-[#6c6f85] whitespace-pre-wrap break-words font-mono">{{ $operationOutput }}</pre>
             </div>
 
             <div class="flex justify-end">
@@ -110,11 +87,11 @@
 
     <flux:modal x-model="confirmForcePush" class="space-y-6">
         <div>
-            <flux:heading size="lg" class="font-mono uppercase tracking-wider text-orange-400">Force Push Warning</flux:heading>
+            <flux:heading size="lg" class="font-mono uppercase tracking-wider text-[#fe640b]">Force Push Warning</flux:heading>
             <flux:subheading class="font-mono">
-                This will force push with <span class="text-orange-400 font-semibold">--force-with-lease</span> to prevent overwriting others' work.
+                This will force push with <span class="text-[#fe640b] font-semibold">--force-with-lease</span> to prevent overwriting others' work.
                 <br><br>
-                <span class="text-zinc-100 font-semibold">Are you sure you want to continue?</span>
+                <span class="text-[#4c4f69] font-semibold">Are you sure you want to continue?</span>
             </flux:subheading>
         </div>
 
