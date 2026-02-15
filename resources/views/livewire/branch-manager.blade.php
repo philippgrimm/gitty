@@ -84,6 +84,7 @@
                                 :class="activeIndex === {{ $loop->index }} ? 'bg-[var(--surface-2)]' : 'hover:bg-[var(--surface-2)]'"
                                 data-branch-item
                                 wire:click="switchBranch('{{ $branch['name'] }}')"
+                                x-on:click="$el.closest('[popover]')?.hidePopover()"
                             >
                                 <div class="flex items-center gap-2 flex-1 min-w-0">
                                     <div class="w-4 flex items-center justify-center shrink-0">
