@@ -1,4 +1,4 @@
-<div class="h-full flex flex-col bg-[#eff1f5] font-mono">
+<div class="h-full flex flex-col bg-white font-mono">
     @if($isEmpty && !$file)
         <div class="flex-1 flex items-center justify-center animate-fade-in">
             <div class="text-center">

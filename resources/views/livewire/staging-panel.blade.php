@@ -13,7 +13,7 @@
         }
     }"
     @status-updated.window="startResumeTimer()"
-    class="h-full flex flex-col bg-[#eff1f5] text-[#4c4f69] font-mono border-r border-[#ccd0da]"
+    class="h-full flex flex-col bg-white text-[#4c4f69] font-mono border-r border-[#ccd0da]"
 >
     @if($unstagedFiles->isEmpty() && $stagedFiles->isEmpty() && $untrackedFiles->isEmpty())
         <div class="flex-1 flex items-center justify-center animate-fade-in">

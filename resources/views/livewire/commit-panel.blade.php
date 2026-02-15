@@ -37,7 +37,7 @@
             variant="primary"
             size="sm"
             :disabled="$stagedCount === 0 || empty(trim($message))"
-            class="flex-1 font-semibold"
+            class="flex-1 font-semibold disabled:!bg-[#ccd0da] disabled:!text-[#8c8fa1] disabled:!border-[#ccd0da] disabled:!shadow-none"
             x-bind:class="{ 
                 'animate-commit-flash': commitFlash
             }"
@@ -52,6 +52,7 @@
                 size="sm"
                 square
                 :disabled="$stagedCount === 0 || empty(trim($message))"
+                class="disabled:!bg-[#ccd0da] disabled:!text-[#8c8fa1] disabled:!border-[#ccd0da] disabled:!shadow-none"
             />
             <flux:menu>
                 <flux:menu.item wire:click="commit" icon="check">
