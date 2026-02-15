@@ -28,6 +28,8 @@ class StagingPanel extends Component
 
     private bool $pausePolling = false;
 
+    private ?array $lastAheadBehind = null;
+
     public function mount(): void
     {
         $this->unstagedFiles = collect();
@@ -67,6 +69,7 @@ class StagingPanel extends Component
                 }
             }
 
+            $this->lastAheadBehind = $status->aheadBehind;
             $this->error = '';
         } catch (\Exception $e) {
             $this->error = GitErrorHandler::translate($e->getMessage());
@@ -81,7 +84,10 @@ class StagingPanel extends Component
             $stagingService->stageFile($file);
             $this->pausePollingTemporarily();
             $this->refreshStatus();
-            $this->dispatch('status-updated');
+            $this->dispatch('status-updated',
+                stagedCount: $this->stagedFiles->count(),
+                aheadBehind: $this->lastAheadBehind ?? ['ahead' => 0, 'behind' => 0],
+            );
             $this->error = '';
         } catch (\Exception $e) {
             $this->error = GitErrorHandler::translate($e->getMessage());
@@ -96,7 +102,10 @@ class StagingPanel extends Component
             $stagingService->unstageFile($file);
             $this->pausePollingTemporarily();
             $this->refreshStatus();
-            $this->dispatch('status-updated');
+            $this->dispatch('status-updated',
+                stagedCount: $this->stagedFiles->count(),
+                aheadBehind: $this->lastAheadBehind ?? ['ahead' => 0, 'behind' => 0],
+            );
             $this->error = '';
         } catch (\Exception $e) {
             $this->error = GitErrorHandler::translate($e->getMessage());
@@ -111,7 +120,10 @@ class StagingPanel extends Component
             $stagingService->stageAll();
             $this->pausePollingTemporarily();
             $this->refreshStatus();
-            $this->dispatch('status-updated');
+            $this->dispatch('status-updated',
+                stagedCount: $this->stagedFiles->count(),
+                aheadBehind: $this->lastAheadBehind ?? ['ahead' => 0, 'behind' => 0],
+            );
             $this->error = '';
         } catch (\Exception $e) {
             $this->error = GitErrorHandler::translate($e->getMessage());
@@ -126,7 +138,10 @@ class StagingPanel extends Component
             $stagingService->unstageAll();
             $this->pausePollingTemporarily();
             $this->refreshStatus();
-            $this->dispatch('status-updated');
+            $this->dispatch('status-updated',
+                stagedCount: $this->stagedFiles->count(),
+                aheadBehind: $this->lastAheadBehind ?? ['ahead' => 0, 'behind' => 0],
+            );
             $this->error = '';
         } catch (\Exception $e) {
             $this->error = GitErrorHandler::translate($e->getMessage());
@@ -141,7 +156,10 @@ class StagingPanel extends Component
             $stagingService->discardFile($file);
             $this->pausePollingTemporarily();
             $this->refreshStatus();
-            $this->dispatch('status-updated');
+            $this->dispatch('status-updated',
+                stagedCount: $this->stagedFiles->count(),
+                aheadBehind: $this->lastAheadBehind ?? ['ahead' => 0, 'behind' => 0],
+            );
             $this->error = '';
         } catch (\Exception $e) {
             $this->error = GitErrorHandler::translate($e->getMessage());
@@ -156,7 +174,10 @@ class StagingPanel extends Component
             $stagingService->discardAll();
             $this->pausePollingTemporarily();
             $this->refreshStatus();
-            $this->dispatch('status-updated');
+            $this->dispatch('status-updated',
+                stagedCount: $this->stagedFiles->count(),
+                aheadBehind: $this->lastAheadBehind ?? ['ahead' => 0, 'behind' => 0],
+            );
             $this->error = '';
         } catch (\Exception $e) {
             $this->error = GitErrorHandler::translate($e->getMessage());
@@ -171,7 +192,7 @@ class StagingPanel extends Component
 
     public function toggleView(): void
     {
-        $this->treeView = !$this->treeView;
+        $this->treeView = ! $this->treeView;
     }
 
     public function render()
@@ -211,5 +232,15 @@ class StagingPanel extends Component
     public function handleKeyboardUnstageAll(): void
     {
         $this->unstageAll();
+    }
+
+    #[On('refresh-staging')]
+    public function handleRefreshStaging(): void
+    {
+        $this->refreshStatus();
+        $this->dispatch('status-updated',
+            stagedCount: $this->stagedFiles->count(),
+            aheadBehind: $this->lastAheadBehind ?? ['ahead' => 0, 'behind' => 0],
+        );
     }
 }

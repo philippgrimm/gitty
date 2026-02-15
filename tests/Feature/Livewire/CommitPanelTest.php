@@ -9,8 +9,8 @@ use Tests\Mocks\GitOutputFixtures;
 
 beforeEach(function () {
     $this->testRepoPath = '/tmp/gitty-test-repo';
-    if (! is_dir($this->testRepoPath . '/.git')) {
-        mkdir($this->testRepoPath . '/.git', 0755, true);
+    if (! is_dir($this->testRepoPath.'/.git')) {
+        mkdir($this->testRepoPath.'/.git', 0755, true);
     }
 });
 
@@ -126,13 +126,9 @@ test('component refreshes staged count on status-updated event', function () {
     $component = Livewire::test(CommitPanel::class, ['repoPath' => $this->testRepoPath])
         ->assertSet('stagedCount', 2);
 
-    // Simulate status update with different file count
-    Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithMixedChanges()),
-    ]);
-
-    $component->call('refreshStagedCount')
-        ->assertSet('stagedCount', 2);
+    // Simulate status-updated event with new count
+    $component->call('refreshStagedCount', stagedCount: 5, aheadBehind: ['ahead' => 1, 'behind' => 0])
+        ->assertSet('stagedCount', 5);
 });
 
 test('component handles commit failure with error message', function () {

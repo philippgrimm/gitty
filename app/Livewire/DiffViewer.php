@@ -178,7 +178,7 @@ class DiffViewer extends Component
             $diffService->stageHunk($diffFile, $hunk);
 
             $this->loadDiff($this->file, $this->isStaged);
-            $this->dispatch('status-updated');
+            $this->dispatch('refresh-staging');
         } catch (\Exception $e) {
             $this->error = GitErrorHandler::translate($e->getMessage());
             $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
@@ -227,7 +227,7 @@ class DiffViewer extends Component
             $diffService->unstageHunk($diffFile, $hunk);
 
             $this->loadDiff($this->file, $this->isStaged);
-            $this->dispatch('status-updated');
+            $this->dispatch('refresh-staging');
         } catch (\Exception $e) {
             $this->error = GitErrorHandler::translate($e->getMessage());
             $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);

@@ -9,8 +9,8 @@ use Tests\Mocks\GitOutputFixtures;
 
 beforeEach(function () {
     $this->testRepoPath = '/tmp/gitty-test-repo';
-    if (! is_dir($this->testRepoPath . '/.git')) {
-        mkdir($this->testRepoPath . '/.git', 0755, true);
+    if (! is_dir($this->testRepoPath.'/.git')) {
+        mkdir($this->testRepoPath.'/.git', 0755, true);
     }
 });
 
@@ -133,18 +133,4 @@ test('component switches branch and dispatches event', function () {
         ->assertDispatched('status-updated');
 
     Process::assertRan('git checkout develop');
-});
-
-test('component refreshes on status-updated event', function () {
-    Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
-        'git branch -a -vv' => Process::result(GitOutputFixtures::branchList()),
-        'git remote -v' => Process::result(GitOutputFixtures::remoteList()),
-        'git tag -l --format=%(refname:short) %(objectname:short)' => Process::result(''),
-        'git stash list' => Process::result(''),
-    ]);
-
-    Livewire::test(RepoSidebar::class, ['repoPath' => $this->testRepoPath])
-        ->dispatch('status-updated')
-        ->assertSet('repoPath', $this->testRepoPath);
 });

@@ -26,18 +26,17 @@ class CommitPanel extends Component
 
     public function mount(): void
     {
-        $this->refreshStagedCount();
-    }
-
-    #[On('status-updated')]
-    public function refreshStagedCount(): void
-    {
         $gitService = new GitService($this->repoPath);
         $status = $gitService->status();
-
         $this->stagedCount = $status->changedFiles
             ->filter(fn ($file) => $file['indexStatus'] !== '.' && $file['indexStatus'] !== '?')
             ->count();
+    }
+
+    #[On('status-updated')]
+    public function refreshStagedCount(int $stagedCount = 0, array $aheadBehind = []): void
+    {
+        $this->stagedCount = $stagedCount;
     }
 
     #[On('keyboard-commit')]

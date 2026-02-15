@@ -9,8 +9,8 @@ use Tests\Mocks\GitOutputFixtures;
 
 beforeEach(function () {
     $this->testRepoPath = '/tmp/gitty-test-repo';
-    if (! is_dir($this->testRepoPath . '/.git')) {
-        mkdir($this->testRepoPath . '/.git', 0755, true);
+    if (! is_dir($this->testRepoPath.'/.git')) {
+        mkdir($this->testRepoPath.'/.git', 0755, true);
     }
 });
 
@@ -123,7 +123,7 @@ it('renders diff html with syntax highlighting', function () {
         ->assertSet('isBinary', false);
 
     expect($component->get('renderedHtml'))->not->toBeEmpty();
-    
+
     $component->assertSee('Hello, Gitty!');
 });
 
@@ -153,7 +153,7 @@ it('stages a hunk from unstaged diff', function () {
     Livewire::test(DiffViewer::class, ['repoPath' => $this->testRepoPath])
         ->call('loadDiff', 'README.md', false)
         ->call('stageHunk', 0, 0)
-        ->assertDispatched('status-updated');
+        ->assertDispatched('refresh-staging');
 
     Process::assertRan('git apply --cached');
 });
@@ -167,7 +167,7 @@ it('unstages a hunk from staged diff', function () {
     Livewire::test(DiffViewer::class, ['repoPath' => $this->testRepoPath])
         ->call('loadDiff', 'src/App.php', true)
         ->call('unstageHunk', 0, 0)
-        ->assertDispatched('status-updated');
+        ->assertDispatched('refresh-staging');
 
     Process::assertRan('git apply --cached --reverse');
 });

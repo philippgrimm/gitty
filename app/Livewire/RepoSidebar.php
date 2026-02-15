@@ -8,9 +8,7 @@ use App\Services\Git\BranchService;
 use App\Services\Git\GitService;
 use App\Services\Git\RemoteService;
 use App\Services\Git\StashService;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Process;
-use Livewire\Attributes\On;
 use Livewire\Component;
 
 class RepoSidebar extends Component
@@ -32,7 +30,6 @@ class RepoSidebar extends Component
         $this->refreshSidebar();
     }
 
-    #[On('status-updated')]
     public function refreshSidebar(): void
     {
         $gitService = new GitService($this->repoPath);
@@ -44,7 +41,7 @@ class RepoSidebar extends Component
         $this->currentBranch = $status->branch;
 
         $this->branches = $branchService->branches()
-            ->filter(fn ($branch) => !$branch->isRemote)
+            ->filter(fn ($branch) => ! $branch->isRemote)
             ->map(fn ($branch) => [
                 'name' => $branch->name,
                 'isCurrent' => $branch->isCurrent,

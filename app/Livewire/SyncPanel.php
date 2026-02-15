@@ -30,13 +30,6 @@ class SyncPanel extends Component
         $this->error = '';
         $this->operationOutput = '';
         $this->lastOperation = '';
-        $this->refreshAheadBehind();
-    }
-
-    #[On('status-updated')]
-    #[On('remote-updated')]
-    public function refreshAheadBehind(): void
-    {
         try {
             $gitService = new GitService($this->repoPath);
             $status = $gitService->status();
@@ -44,6 +37,13 @@ class SyncPanel extends Component
         } catch (\Exception $e) {
             $this->aheadBehind = ['ahead' => 0, 'behind' => 0];
         }
+    }
+
+    #[On('status-updated')]
+    #[On('remote-updated')]
+    public function refreshAheadBehind(int $stagedCount = 0, array $aheadBehind = []): void
+    {
+        $this->aheadBehind = $aheadBehind;
     }
 
     public function syncPush(): void
