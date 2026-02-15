@@ -89,6 +89,7 @@
                         <div>
                             @foreach($stagedFiles as $file)
                                 <div 
+                                    wire:key="staged-{{ $file['path'] }}"
                                     wire:click="selectFile('{{ $file['path'] }}', true)"
                                     class="group px-4 py-1.5 hover:bg-[#eff1f5] cursor-pointer transition-colors flex items-center justify-between gap-3 animate-slide-in"
                                 >
@@ -144,6 +145,7 @@
                         <div>
                             @foreach($unstagedFiles->concat($untrackedFiles) as $file)
                                 <div 
+                                    wire:key="unstaged-{{ $file['path'] }}"
                                     wire:click="selectFile('{{ $file['path'] }}', false)"
                                     class="group px-4 py-1.5 hover:bg-[#eff1f5] cursor-pointer transition-colors flex items-center justify-between gap-3 animate-slide-in"
                                 >

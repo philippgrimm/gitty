@@ -4,6 +4,7 @@
     @foreach($tree as $node)
         @if($node['type'] === 'directory')
             <div 
+                wire:key="dir-{{ $node['path'] }}"
                 x-data="{ expanded: true }"
             >
                 <div 
@@ -30,6 +31,7 @@
             </div>
         @else
             <div 
+                wire:key="file-{{ $node['path'] }}-{{ $staged ? 'staged' : 'unstaged' }}"
                 wire:click="selectFile('{{ $node['path'] }}', {{ $staged ? 'true' : 'false' }})"
                 class="group px-4 py-1.5 hover:bg-[#eff1f5] cursor-pointer transition-colors flex items-center justify-between gap-3"
                 style="padding-left: {{ ($level * 16) + 16 }}px"
