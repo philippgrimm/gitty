@@ -65,8 +65,52 @@
                 @endif
             </div>
 
-            <div class="flex-1 flex overflow-hidden">
-                <div class="w-1/3 flex flex-col border-r border-[#ccd0da] overflow-hidden">
+            <div class="flex-1 flex overflow-hidden"
+                 x-data="{
+                     panelWidth: null,
+                     isDragging: false,
+                     startX: 0,
+                     startWidth: 0,
+                     init() {
+                         const saved = localStorage.getItem('gitty-panel-width');
+                         if (saved && !isNaN(parseInt(saved))) {
+                             this.panelWidth = parseInt(saved);
+                         }
+                     },
+                     get effectiveWidth() {
+                         if (this.panelWidth) return this.panelWidth;
+                         return Math.round(this.$el.offsetWidth / 3);
+                     },
+                     startDrag(e) {
+                         this.isDragging = true;
+                         this.startX = e.clientX;
+                         this.startWidth = this.effectiveWidth;
+                         document.body.style.cursor = 'col-resize';
+                         document.body.style.userSelect = 'none';
+                     },
+                     onDrag(e) {
+                         if (!this.isDragging) return;
+                         const delta = e.clientX - this.startX;
+                         const maxWidth = Math.round(this.$el.offsetWidth * 0.5);
+                         this.panelWidth = Math.min(Math.max(this.startWidth + delta, 200), maxWidth);
+                     },
+                     stopDrag() {
+                         if (!this.isDragging) return;
+                         this.isDragging = false;
+                         document.body.style.cursor = '';
+                         document.body.style.userSelect = '';
+                         if (this.panelWidth) {
+                             localStorage.setItem('gitty-panel-width', this.panelWidth.toString());
+                         }
+                     }
+                 }"
+                 @mousemove.window="onDrag($event)"
+                 @mouseup.window="stopDrag()"
+            >
+                {{-- Staging + Commit Panel --}}
+                <div class="flex flex-col overflow-hidden"
+                     :style="'width: ' + effectiveWidth + 'px'"
+                >
                     <div class="flex-1 overflow-hidden">
                         @livewire('staging-panel', ['repoPath' => $repoPath], key('staging-panel-' . $repoPath))
                     </div>
@@ -75,6 +119,16 @@
                     </div>
                 </div>
 
+                {{-- Resize Handle --}}
+                <div @mousedown.prevent="startDrag($event)"
+                     class="w-[5px] flex-shrink-0 cursor-col-resize relative group/resize"
+                >
+                    <div class="absolute inset-y-0 left-[2px] w-px bg-[#ccd0da] group-hover/resize:bg-[#084CCF] transition-colors"
+                         :class="isDragging && 'bg-[#084CCF]'"
+                    ></div>
+                </div>
+
+                {{-- Diff Viewer --}}
                 <div class="flex-1 overflow-hidden">
                     @livewire('diff-viewer', ['repoPath' => $repoPath], key('diff-viewer-' . $repoPath))
                 </div>

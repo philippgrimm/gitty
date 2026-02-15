@@ -5,7 +5,7 @@
         discardTarget: null, 
         discardAll: false
     }"
-    class="h-full flex flex-col bg-white text-[#4c4f69] font-mono border-r border-[#ccd0da]"
+    class="h-full flex flex-col bg-white text-[#4c4f69] font-mono"
 >
     @if($unstagedFiles->isEmpty() && $stagedFiles->isEmpty() && $untrackedFiles->isEmpty())
         <div class="flex-1 flex items-center justify-center animate-fade-in">
@@ -87,7 +87,7 @@
                                 <div 
                                     wire:key="staged-{{ $file['path'] }}"
                                     wire:click="selectFile('{{ $file['path'] }}', true)"
-                                    class="group px-4 py-1.5 hover:bg-[#eff1f5] cursor-pointer transition-colors transition-opacity duration-150 flex items-center justify-between gap-3 animate-slide-in"
+                                    class="group px-4 py-1.5 hover:bg-[#eff1f5] cursor-pointer transition-colors duration-150 flex items-center gap-3 animate-slide-in relative"
                                 >
                                     <div class="flex items-center gap-2.5 flex-1 min-w-0">
                                         @php
@@ -101,26 +101,27 @@
                                                 default => ['label' => '?', 'color' => 'zinc', 'icon' => '?'],
                                             };
                                         @endphp
-                                        <div class="w-2.5 h-2.5 rounded-full shrink-0 {{ match($statusConfig['color']) { 'yellow' => 'bg-[#df8e1d]', 'green' => 'bg-[#40a02b]', 'red' => 'bg-[#d20f39]', 'blue' => 'bg-[#084CCF]', 'orange' => 'bg-[#fe640b]', default => 'bg-[#9ca0b0]' } }}"></div>
-                                        <flux:tooltip :content="$file['path']">
+                                        <div class="w-2 h-2 rounded-full shrink-0 {{ match($statusConfig['color']) { 'yellow' => 'bg-[#df8e1d]', 'green' => 'bg-[#40a02b]', 'red' => 'bg-[#d20f39]', 'blue' => 'bg-[#084CCF]', 'orange' => 'bg-[#fe640b]', default => 'bg-[#9ca0b0]' } }}"></div>
+                                        <flux:tooltip :content="$file['path']" class="min-w-0">
                                             <div class="text-sm truncate text-[#5c5f77] group-hover:text-[#4c4f69] transition-colors">
                                                 {{ basename($file['path']) }}
                                             </div>
                                         </flux:tooltip>
                                     </div>
-                                    <flux:tooltip content="Unstage">
-                                        <flux:button 
-                                            wire:click.stop="unstageFile('{{ $file['path'] }}')"
-                                            wire:loading.attr="disabled"
-                                            wire:target="unstageFile"
-                                            variant="ghost" 
-                                            size="xs"
-                                            square
-                                            class="opacity-0 group-hover:opacity-100 transition-opacity"
-                                        >
-                                            <x-phosphor-minus class="w-3.5 h-3.5" />
-                                        </flux:button>
-                                    </flux:tooltip>
+                                    <div class="absolute right-0 inset-y-0 hidden group-hover:flex items-center pr-4 pl-2 bg-[#eff1f5]">
+                                        <flux:tooltip content="Unstage">
+                                            <flux:button 
+                                                wire:click.stop="unstageFile('{{ $file['path'] }}')"
+                                                wire:loading.attr="disabled"
+                                                wire:target="unstageFile"
+                                                variant="ghost" 
+                                                size="xs"
+                                                square
+                                            >
+                                                <x-phosphor-minus class="w-3.5 h-3.5" />
+                                            </flux:button>
+                                        </flux:tooltip>
+                                    </div>
                                 </div>
                             @endforeach
                         </div>
@@ -145,7 +146,7 @@
                                 <div 
                                     wire:key="unstaged-{{ $file['path'] }}"
                                     wire:click="selectFile('{{ $file['path'] }}', false)"
-                                    class="group px-4 py-1.5 hover:bg-[#eff1f5] cursor-pointer transition-colors transition-opacity duration-150 flex items-center justify-between gap-3 animate-slide-in"
+                                    class="group px-4 py-1.5 hover:bg-[#eff1f5] cursor-pointer transition-colors duration-150 flex items-center gap-3 animate-slide-in relative"
                                 >
                                     <div class="flex items-center gap-2.5 flex-1 min-w-0">
                                         @php
@@ -160,14 +161,14 @@
                                                 default => ['label' => '?', 'color' => 'zinc', 'icon' => '?'],
                                             };
                                         @endphp
-                                        <div class="w-2.5 h-2.5 rounded-full shrink-0 {{ match($statusConfig['color']) { 'yellow' => 'bg-[#df8e1d]', 'green' => 'bg-[#40a02b]', 'red' => 'bg-[#d20f39]', 'blue' => 'bg-[#084CCF]', 'orange' => 'bg-[#fe640b]', default => 'bg-[#9ca0b0]' } }}"></div>
-                                        <flux:tooltip :content="$file['path']">
+                                        <div class="w-2 h-2 rounded-full shrink-0 {{ match($statusConfig['color']) { 'yellow' => 'bg-[#df8e1d]', 'green' => 'bg-[#40a02b]', 'red' => 'bg-[#d20f39]', 'blue' => 'bg-[#084CCF]', 'orange' => 'bg-[#fe640b]', default => 'bg-[#9ca0b0]' } }}"></div>
+                                        <flux:tooltip :content="$file['path']" class="min-w-0">
                                             <div class="text-sm truncate text-[#5c5f77] group-hover:text-[#4c4f69] transition-colors">
                                                 {{ basename($file['path']) }}
                                             </div>
                                         </flux:tooltip>
                                     </div>
-                                    <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <div class="absolute right-0 inset-y-0 hidden group-hover:flex items-center gap-1 pr-4 pl-2 bg-[#eff1f5]">
                                         <flux:tooltip content="Stage">
                                             <flux:button 
                                                 wire:click.stop="stageFile('{{ $file['path'] }}')"

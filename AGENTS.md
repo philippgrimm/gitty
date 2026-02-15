@@ -133,7 +133,7 @@ Header icon buttons need `flex items-center justify-center` for proper vertical 
 ### File Status Dots
 Use colored dots (not Flux badges) for file status. Consistent across flat view, tree view, and diff header badges.
 
-- Size: `w-2.5 h-2.5 rounded-full`
+- Size: `w-2 h-2 rounded-full`
 - Colors (exact Catppuccin hex):
   - Modified: `bg-[#df8e1d]` (Yellow)
   - Added/Untracked: `bg-[#40a02b]` (Green)

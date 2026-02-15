@@ -9,8 +9,8 @@ use Tests\Mocks\GitOutputFixtures;
 
 beforeEach(function () {
     $this->testRepoPath = '/tmp/gitty-test-repo';
-    if (! is_dir($this->testRepoPath . '/.git')) {
-        mkdir($this->testRepoPath . '/.git', 0755, true);
+    if (! is_dir($this->testRepoPath.'/.git')) {
+        mkdir($this->testRepoPath.'/.git', 0755, true);
     }
 });
 
@@ -151,4 +151,14 @@ test('component refreshes status on demand', function () {
         ->assertSee('README.md');
 
     Process::assertRan('git status --porcelain=v2 --branch');
+});
+
+test('staging panel renders smaller 8px status dots', function () {
+    Process::fake([
+        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithMixedChanges()),
+    ]);
+
+    Livewire::test(StagingPanel::class, ['repoPath' => $this->testRepoPath])
+        ->assertSeeHtml('w-2 h-2 rounded-full')
+        ->assertDontSeeHtml('w-2.5 h-2.5');
 });

@@ -33,7 +33,7 @@
             <div 
                 wire:key="file-{{ $node['path'] }}-{{ $staged ? 'staged' : 'unstaged' }}"
                 wire:click="selectFile('{{ $node['path'] }}', {{ $staged ? 'true' : 'false' }})"
-                class="group px-4 py-1.5 hover:bg-[#eff1f5] cursor-pointer transition-colors transition-opacity duration-150 flex items-center justify-between gap-3"
+                class="group px-4 py-1.5 hover:bg-[#eff1f5] cursor-pointer transition-colors duration-150 flex items-center gap-3 relative"
                 style="padding-left: {{ ($level * 16) + 16 }}px"
             >
                 <div class="flex items-center gap-2.5 flex-1 min-w-0">
@@ -49,8 +49,8 @@
                             default => ['label' => '?', 'color' => 'zinc', 'icon' => '?'],
                         };
                     @endphp
-                    <div class="w-2.5 h-2.5 rounded-full shrink-0 {{ match($statusConfig['color']) { 'yellow' => 'bg-[#df8e1d]', 'green' => 'bg-[#40a02b]', 'red' => 'bg-[#d20f39]', 'blue' => 'bg-[#084CCF]', 'orange' => 'bg-[#fe640b]', default => 'bg-[#9ca0b0]' } }}"></div>
-                    <flux:tooltip :content="$node['path']">
+                    <div class="w-2 h-2 rounded-full shrink-0 {{ match($statusConfig['color']) { 'yellow' => 'bg-[#df8e1d]', 'green' => 'bg-[#40a02b]', 'red' => 'bg-[#d20f39]', 'blue' => 'bg-[#084CCF]', 'orange' => 'bg-[#fe640b]', default => 'bg-[#9ca0b0]' } }}"></div>
+                    <flux:tooltip :content="$node['path']" class="min-w-0">
                         <div class="text-sm truncate text-[#5c5f77] group-hover:text-[#4c4f69] transition-colors">
                             {{ $node['name'] }}
                         </div>
@@ -58,19 +58,20 @@
                 </div>
                 
                 @if($staged)
-                    <flux:button 
-                        wire:click.stop="unstageFile('{{ $node['path'] }}')"
-                        wire:loading.attr="disabled"
-                        wire:target="unstageFile"
-                        variant="ghost" 
-                        size="xs"
-                        square
-                        class="opacity-0 group-hover:opacity-100 transition-opacity"
-                    >
-                        <x-phosphor-minus class="w-3.5 h-3.5" />
-                    </flux:button>
+                    <div class="absolute right-0 inset-y-0 hidden group-hover:flex items-center pr-4 pl-2 bg-[#eff1f5]">
+                        <flux:button 
+                            wire:click.stop="unstageFile('{{ $node['path'] }}')"
+                            wire:loading.attr="disabled"
+                            wire:target="unstageFile"
+                            variant="ghost" 
+                            size="xs"
+                            square
+                        >
+                            <x-phosphor-minus class="w-3.5 h-3.5" />
+                        </flux:button>
+                    </div>
                 @else
-                    <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div class="absolute right-0 inset-y-0 hidden group-hover:flex items-center gap-1 pr-4 pl-2 bg-[#eff1f5]">
                         <flux:button 
                             wire:click.stop="stageFile('{{ $node['path'] }}')"
                             wire:loading.attr="disabled"
