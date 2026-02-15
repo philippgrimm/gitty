@@ -158,7 +158,10 @@ class BranchManager extends Component
             $local = $local->filter(fn ($b) => str_contains(strtolower($b['name']), strtolower($this->branchQuery)));
         }
 
-        return $local;
+        return $local->sortBy([
+            fn ($a, $b) => $b['isCurrent'] <=> $a['isCurrent'], // Current branch first
+            fn ($a, $b) => $a['name'] <=> $b['name'], // Then alphabetically
+        ]);
     }
 
     /**

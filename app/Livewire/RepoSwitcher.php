@@ -118,6 +118,11 @@ class RepoSwitcher extends Component
                 'name' => $repo->name,
                 'last_opened_at' => $repo->last_opened_at?->diffForHumans(),
             ])
+            ->sortBy([
+                fn ($a, $b) => ($b['path'] === $this->currentRepoPath) <=> ($a['path'] === $this->currentRepoPath), // Current repo first
+                fn ($a, $b) => $b['last_opened_at'] <=> $a['last_opened_at'], // Then by last opened
+            ])
+            ->values()
             ->toArray();
     }
 

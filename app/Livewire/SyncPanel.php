@@ -7,6 +7,7 @@ namespace App\Livewire;
 use App\Services\Git\GitErrorHandler;
 use App\Services\Git\GitService;
 use Illuminate\Support\Facades\Process;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class SyncPanel extends Component
@@ -21,12 +22,28 @@ class SyncPanel extends Component
 
     public string $lastOperation = '';
 
+    public array $aheadBehind = ['ahead' => 0, 'behind' => 0];
+
     public function mount(): void
     {
         $this->isOperationRunning = false;
         $this->error = '';
         $this->operationOutput = '';
         $this->lastOperation = '';
+        $this->refreshAheadBehind();
+    }
+
+    #[On('status-updated')]
+    #[On('remote-updated')]
+    public function refreshAheadBehind(): void
+    {
+        try {
+            $gitService = new GitService($this->repoPath);
+            $status = $gitService->status();
+            $this->aheadBehind = $status->aheadBehind;
+        } catch (\Exception $e) {
+            $this->aheadBehind = ['ahead' => 0, 'behind' => 0];
+        }
     }
 
     public function syncPush(): void

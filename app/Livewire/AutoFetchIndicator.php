@@ -24,7 +24,7 @@ class AutoFetchIndicator extends Component
 
     public function mount(): void
     {
-        $this->refreshStatus();
+        $this->checkAndFetch();
     }
 
     public function refreshStatus(): void
