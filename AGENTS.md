@@ -19,10 +19,11 @@ Target platform: macOS desktop via Electron (NativePHP).
 All values from `resources/css/app.css`.
 
 ### Background Colors
-- **Base** (`--surface-0`): `#eff1f5` — main background
-- **Mantle** (`--surface-1`): `#e6e9ef` — elevated panels, headers
-- **Crust** (`--surface-2`): `#dce0e8` — hover states, subtle elevation
-- **Surface 0** (`--surface-3`): `#ccd0da` — highest elevation, active states
+- **White**: `#ffffff` — file list panels, diff viewer, dropdown backgrounds
+- **Base** (`--surface-0`): `#eff1f5` — hover state on white backgrounds, app outer background
+- **Mantle** (`--surface-1`): `#e6e9ef` — section headers (Staged, Changes), main header bar
+- **Crust** (`--surface-2`): `#dce0e8` — subtle borders, secondary dividers
+- **Surface 0** (`--surface-3`): `#ccd0da` — primary borders, disabled button background
 
 ### Text Colors
 - **Text** (`--text-primary`): `#4c4f69` — primary text
@@ -127,6 +128,93 @@ Header icon buttons need `flex items-center justify-center` for proper vertical 
 </flux:button>
 ```
 
+## Status Indicators
+
+### File Status Dots
+Use colored dots (not Flux badges) for file status. Consistent across flat view, tree view, and diff header badges.
+
+- Size: `w-2.5 h-2.5 rounded-full`
+- Colors (exact Catppuccin hex):
+  - Modified: `bg-[#df8e1d]` (Yellow)
+  - Added/Untracked: `bg-[#40a02b]` (Green)
+  - Deleted: `bg-[#d20f39]` (Red)
+  - Renamed: `bg-[#084CCF]` (Zed Blue)
+  - Unmerged: `bg-[#fe640b]` (Peach)
+
+### Diff Header Badges
+Use inline-styled divs, NOT `<flux:badge>`. Flux badges use their own color palette which doesn't match Catppuccin.
+
+```blade
+@php
+    $badgeColor = match(strtoupper($status)) {
+        'MODIFIED', 'M' => '#df8e1d',
+        'ADDED', 'A' => '#40a02b',
+        'DELETED', 'D' => '#d20f39',
+        'RENAMED', 'R' => '#084CCF',
+        default => '#9ca0b0',
+    };
+@endphp
+<div class="px-2 py-0.5 rounded text-xs font-medium uppercase tracking-wider"
+     style="background-color: {{ $badgeColor }}15; color: {{ $badgeColor }}">
+    {{ strtoupper($status) }}
+</div>
+```
+
+The `15` suffix on the hex color creates a ~8% opacity background tint.
+
+## Hover & Interaction States
+
+### File Item Hover
+On white backgrounds, use `hover:bg-[#eff1f5]` (Base). The previous `hover:bg-[#dce0e8]` (Crust) is too dark on white.
+
+Color scale (light to dark):
+- `#ffffff` — item background (white)
+- `#eff1f5` — hover state (Base) ← USE THIS
+- `#e6e9ef` — section headers (Mantle)
+- `#dce0e8` — too dark for hover on white (Crust)
+
+### Tooltips on Action Buttons
+All icon-only action buttons must be wrapped in `<flux:tooltip>`:
+
+```blade
+<flux:tooltip content="Stage All">
+    <flux:button wire:click="stageAll" variant="ghost" size="xs" square>
+        <x-phosphor-plus class="w-4 h-4" />
+    </flux:button>
+</flux:tooltip>
+```
+
+Required tooltip labels: Stage All, Unstage All, Discard All, Stage, Unstage, Discard.
+
+## Tree View
+
+The tree view must look visually identical to the flat view, just with indentation and collapsible folders.
+
+### Rules
+- **No dividers**: The wrapper `<div>` must NOT have `divide-y`. File items sit edge-to-edge like the flat view.
+- **No borders on folders**: Directory wrappers must NOT have `border-b`.
+- **Folder icon**: Use `<x-phosphor-folder-simple class="w-3.5 h-3.5 text-[#9ca0b0]" />`, NOT a diamond (◆) or other custom glyph.
+- **Same density**: Items use `py-1.5` and `gap-2.5`, matching flat view exactly.
+- **Indentation**: `padding-left: {{ ($level * 16) + 16 }}px` via inline style.
+- **Collapse chevron**: Small SVG arrow (`w-3 h-3`) that rotates 90° when expanded.
+
+## Dropdown Backgrounds
+
+### Sticky Areas Need Explicit Backgrounds
+Sticky search fields and footer buttons in dropdowns (branch-manager, repo-switcher) MUST have `bg-white`. Without it, list items show through on scroll.
+
+```blade
+{{-- Search field — sticky at top --}}
+<div class="p-2 border-b ... sticky top-0 z-10 bg-white">
+    ...
+</div>
+
+{{-- Footer button — sticky at bottom --}}
+<div class="border-t ... p-2 sticky bottom-0 bg-white">
+    ...
+</div>
+```
+
 ## Header Layout
 
 Fixed height: `h-9` (36px). Background: `bg-[#e6e9ef]`. Border: `border-b border-[#ccd0da]`.
@@ -155,6 +243,9 @@ The header is draggable (for moving the window), but buttons must opt out:
 
 ### No Bottom Status Bar
 The bottom status bar was removed as redundant. All status info is in the header or panels.
+
+### Diff Viewer Header
+White background (`bg-white`), same padding as staging toolbar (`px-4 py-2`). Sticky with `sticky top-0 z-10` and subtle box-shadow. Shows file path, status badge, and +/- counts.
 
 ## CSS Architecture
 
@@ -313,6 +404,15 @@ Header icon buttons need `flex items-center justify-center` for proper vertical 
     <x-phosphor-sidebar-simple class="w-4 h-4" />
 </flux:button>
 ```
+
+### 7. Flux Badge Colors ≠ Catppuccin
+`<flux:badge color="yellow">` uses Flux's own yellow, NOT Catppuccin's `#df8e1d`. For exact color matching, use inline-styled divs (see "Diff Header Badges" section).
+
+### 8. Header Icon Colors
+Header trigger icons (folder, git-branch, chevrons in dropdowns) must use `#6c6f85` (Subtext 0 / text-secondary), NOT `#9ca0b0` (Overlay 0 / border color). Icons should match text weight, not border weight.
+
+### 9. Remote Branch Filtering
+The branch manager only shows remote branches that don't have a corresponding local branch. `origin/main` is hidden when local `main` exists. This avoids redundancy in the dropdown.
 
 ## Typography
 
