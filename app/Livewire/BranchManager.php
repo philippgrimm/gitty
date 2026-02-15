@@ -169,7 +169,22 @@ class BranchManager extends Component
      */
     public function getFilteredRemoteBranchesProperty(): \Illuminate\Support\Collection
     {
-        $remote = collect($this->branches)->filter(fn ($b) => $b['isRemote'] || str_contains($b['name'], 'remotes/'));
+        // Get local branch names for comparison
+        $localBranchNames = collect($this->branches)
+            ->filter(fn ($b) => ! $b['isRemote'] && ! str_contains($b['name'], 'remotes/'))
+            ->pluck('name')
+            ->toArray();
+
+        // Filter remote branches
+        $remote = collect($this->branches)
+            ->filter(fn ($b) => $b['isRemote'] || str_contains($b['name'], 'remotes/'))
+            ->filter(function ($b) use ($localBranchNames) {
+                // Strip remote prefix (e.g., "origin/main" -> "main", "remotes/origin/feature/xyz" -> "feature/xyz")
+                $cleanName = preg_replace('/^(remotes\/)?[^\/]+\//', '', $b['name']);
+
+                // Only show remote branches that don't have a corresponding local branch
+                return ! in_array($cleanName, $localBranchNames);
+            });
 
         if (! empty($this->branchQuery)) {
             $remote = $remote->filter(fn ($b) => str_contains(strtolower($b['name']), strtolower($this->branchQuery)));

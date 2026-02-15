@@ -1,15 +1,14 @@
 @props(['tree', 'staged' => false, 'level' => 0])
 
-<div class="divide-y divide-[#ccd0da]">
+<div>
     @foreach($tree as $node)
         @if($node['type'] === 'directory')
             <div 
                 x-data="{ expanded: true }"
-                class="border-b border-[#dce0e8]"
             >
                 <div 
                     @click="expanded = !expanded"
-                    class="group px-4 py-1.5 hover:bg-[#dce0e8] cursor-pointer transition-colors flex items-center gap-2"
+                    class="group px-4 py-1.5 hover:bg-[#eff1f5] cursor-pointer transition-colors flex items-center gap-2"
                     style="padding-left: {{ ($level * 16) + 16 }}px"
                 >
                     <div 
@@ -18,7 +17,7 @@
                     >
                         <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
                     </div>
-                    <div class="text-[#df8e1d]/60 text-sm">◆</div>
+                    <x-phosphor-folder-simple class="w-3.5 h-3.5 text-[#9ca0b0]" />
                     <div class="text-sm font-medium text-[#5c5f77] group-hover:text-[#4c4f69] transition-colors">
                         {{ $node['name'] }}
                     </div>
@@ -32,7 +31,7 @@
         @else
             <div 
                 wire:click="selectFile('{{ $node['path'] }}', {{ $staged ? 'true' : 'false' }})"
-                class="group px-4 py-1.5 hover:bg-[#dce0e8] cursor-pointer transition-colors flex items-center justify-between gap-3"
+                class="group px-4 py-1.5 hover:bg-[#eff1f5] cursor-pointer transition-colors flex items-center justify-between gap-3"
                 style="padding-left: {{ ($level * 16) + 16 }}px"
             >
                 <div class="flex items-center gap-2.5 flex-1 min-w-0">
