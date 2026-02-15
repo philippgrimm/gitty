@@ -64,7 +64,7 @@
                             <x-phosphor-magnifying-glass-light class="w-3 h-3 text-[var(--text-tertiary)] shrink-0" />
                             <input
                                 type="text"
-                                wire:model.live="branchQuery"
+                                wire:model.live.debounce.300ms="branchQuery"
                                 placeholder="Search…"
                                 class="w-full bg-transparent border-none outline-none text-[11px] text-[var(--text-primary)] placeholder-[var(--text-tertiary)] font-mono p-0 focus:ring-0"
                                 @keydown.arrow-down.prevent="$event.target.blur(); navigate('down')"

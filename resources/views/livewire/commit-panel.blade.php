@@ -1,5 +1,6 @@
 <div 
-    x-data="{ showDropdown: false, commitFlash: false }" 
+    x-data="{ showDropdown: false, commitFlash: false, charCount: 0 }" 
+    x-init="charCount = $wire.message?.length || 0"
     x-on:committed.window="commitFlash = true; setTimeout(() => commitFlash = false, 200)"
     class="flex flex-col bg-[#eff1f5] text-[#4c4f69] font-mono border-t border-[#ccd0da] p-4 space-y-3"
 >
@@ -11,7 +12,8 @@
 
     <div class="space-y-2">
         <flux:textarea 
-            wire:model.live="message" 
+            wire:model.blur="message" 
+            x-on:input="charCount = $event.target.value.length"
             placeholder="Commit message"
             rows="auto"
             resize="vertical"
@@ -26,7 +28,7 @@
                 class="text-[#9ca0b0] font-mono"
             />
             <div class="text-[#8c8fa1] font-mono">
-                {{ strlen($message) }} characters
+                <span x-text="charCount"></span> characters
             </div>
         </div>
     </div>
