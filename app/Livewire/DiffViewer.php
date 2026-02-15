@@ -23,8 +23,6 @@ class DiffViewer extends Component
 
     public ?array $files = null;
 
-    public string $renderedHtml = '';
-
     public bool $isEmpty = true;
 
     public bool $isBinary = false;
@@ -62,7 +60,6 @@ class DiffViewer extends Component
                 $this->isBinary = false;
                 $this->diffData = null;
                 $this->files = null;
-                $this->renderedHtml = '';
 
                 return;
             }
@@ -77,7 +74,6 @@ class DiffViewer extends Component
                 $this->isBinary = false;
                 $this->diffData = null;
                 $this->files = null;
-                $this->renderedHtml = '';
 
                 return;
             }
@@ -96,6 +92,9 @@ class DiffViewer extends Component
             ];
 
             $this->files = $diffResult->files->map(function ($file) {
+                $extension = pathinfo($file->getDisplayPath(), PATHINFO_EXTENSION);
+                $language = $this->mapExtensionToLanguage($extension);
+
                 return [
                     'oldPath' => $file->oldPath,
                     'newPath' => $file->newPath,
@@ -103,6 +102,7 @@ class DiffViewer extends Component
                     'isBinary' => $file->isBinary,
                     'additions' => $file->additions,
                     'deletions' => $file->deletions,
+                    'language' => $language,
                     'hunks' => $file->hunks->map(function ($hunk) {
                         return [
                             'oldStart' => $hunk->oldStart,
@@ -122,11 +122,6 @@ class DiffViewer extends Component
                     })->toArray(),
                 ];
             })->toArray();
-
-            if (! $diffFile->isBinary) {
-                $diffService = new DiffService($this->repoPath);
-                $this->renderedHtml = $diffService->renderDiffHtml($diffResult, $this->isStaged);
-            }
         } catch (\Exception $e) {
             $this->error = GitErrorHandler::translate($e->getMessage());
             $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
@@ -244,5 +239,32 @@ class DiffViewer extends Component
         $result = Process::path($this->repoPath)->run("git cat-file -s HEAD:\"{$file}\" 2>/dev/null || echo 0");
 
         return (int) trim($result->output());
+    }
+
+    private function mapExtensionToLanguage(string $extension): string
+    {
+        return match ($extension) {
+            'php' => 'php',
+            'js' => 'javascript',
+            'ts' => 'typescript',
+            'jsx' => 'jsx',
+            'tsx' => 'tsx',
+            'py' => 'python',
+            'rb' => 'ruby',
+            'go' => 'go',
+            'rs' => 'rust',
+            'java' => 'java',
+            'c' => 'c',
+            'cpp', 'cc', 'cxx' => 'cpp',
+            'cs' => 'csharp',
+            'html' => 'html',
+            'css' => 'css',
+            'scss' => 'scss',
+            'json' => 'json',
+            'yaml', 'yml' => 'yaml',
+            'md' => 'markdown',
+            'sh', 'bash' => 'bash',
+            default => 'text',
+        };
     }
 }

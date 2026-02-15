@@ -78,7 +78,44 @@
 
         <div class="flex-1 overflow-auto">
             <div class="diff-container">
-                {!! $renderedHtml !!}
+                @if($files)
+                    @foreach($files as $fileIndex => $diffFile)
+                        <div class="diff-file" data-language="{{ $diffFile['language'] ?? 'text' }}">
+                            @if($diffFile['isBinary'])
+                                <div class="diff-binary">Binary file</div>
+                            @else
+                                @foreach($diffFile['hunks'] as $hunkIndex => $hunk)
+                                    <div class="diff-hunk" wire:key="hunk-{{ $fileIndex }}-{{ $hunkIndex }}">
+                                        <div class="diff-hunk-header group">
+                                            <span class="flex-1">{{ $hunk['header'] }}</span>
+                                            @if($isStaged)
+                                                <button wire:click="unstageHunk({{ $fileIndex }}, {{ $hunkIndex }})"
+                                                    class="hunk-action-btn opacity-0 group-hover:opacity-100 transition-opacity duration-200 px-3 py-1 text-xs font-bold uppercase tracking-wider bg-red-900/50 hover:bg-red-900 text-red-100 border border-red-700 rounded"
+                                                    title="Unstage this hunk">
+                                                    − Unstage
+                                                </button>
+                                            @else
+                                                <button wire:click="stageHunk({{ $fileIndex }}, {{ $hunkIndex }})"
+                                                    class="hunk-action-btn opacity-0 group-hover:opacity-100 transition-opacity duration-200 px-3 py-1 text-xs font-bold uppercase tracking-wider bg-green-900/50 hover:bg-green-900 text-green-100 border border-green-700 rounded"
+                                                    title="Stage this hunk">
+                                                    + Stage
+                                                </button>
+                                            @endif
+                                        </div>
+
+                                        @foreach($hunk['lines'] as $line)
+                                            <div class="{{ match($line['type']) { 'addition' => 'diff-line-addition', 'deletion' => 'diff-line-deletion', default => 'diff-line-context' } }}">
+                                                <span class="line-number">{{ $line['oldLineNumber'] ?? '' }}</span>
+                                                <span class="line-number">{{ $line['newLineNumber'] ?? '' }}</span>
+                                                <span class="line-content">{{ $line['content'] }}</span>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                @endforeach
+                            @endif
+                        </div>
+                    @endforeach
+                @endif
             </div>
         </div>
     @endif

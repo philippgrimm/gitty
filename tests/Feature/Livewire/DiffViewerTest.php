@@ -122,7 +122,10 @@ it('renders diff html with syntax highlighting', function () {
         ->assertSet('isEmpty', false)
         ->assertSet('isBinary', false);
 
-    expect($component->get('renderedHtml'))->not->toBeEmpty();
+    $files = $component->get('files');
+    expect($files)->not->toBeEmpty();
+    expect($files[0])->toHaveKey('language');
+    expect($files[0])->toHaveKey('hunks');
 
     $component->assertSee('Hello, Gitty!');
 });
