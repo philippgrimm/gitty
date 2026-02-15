@@ -23,7 +23,7 @@
             </div>
         </div>
     @else
-        <div class="border-b border-[#ccd0da] px-4 py-2 flex items-center justify-between">
+        <div class="border-b border-[#ccd0da] px-4 h-10 flex items-center justify-between">
             <flux:button 
                 wire:click="toggleView"
                 variant="ghost" 
