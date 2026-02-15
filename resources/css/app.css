@@ -11,35 +11,51 @@
     /* Typography */
     --font-sans: 'Instrument Sans', 'Inter', system-ui, ui-sans-serif, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
     --font-mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', ui-monospace, monospace;
+    
+    /* Flux Accent Colors - Zed Blue */
+    --color-accent: #084CCF;
+    --color-accent-content: #084CCF;
+    --color-accent-foreground: #ffffff;
 }
 
 /* Design Tokens - CSS Custom Properties */
 :root {
-    /* Surface Colors */
-    --surface-0: #09090b;        /* zinc-950 - deepest background */
-    --surface-1: #18181b;        /* zinc-900 - elevated panels, headers */
-    --surface-2: rgba(39, 39, 42, 0.5);  /* zinc-800/50 - hover states, subtle elevation */
-    --surface-3: #27272a;        /* zinc-800 - highest elevation, active states */
+    /* Catppuccin Latte - Background Colors */
+    --surface-0: #eff1f5;        /* Base - main background */
+    --surface-1: #e6e9ef;        /* Mantle - elevated panels, headers */
+    --surface-2: #dce0e8;        /* Crust - hover states, subtle elevation */
+    --surface-3: #ccd0da;        /* Surface 0 - highest elevation, active states */
     
-    /* Border Colors */
-    --border-default: #27272a;   /* zinc-800 - standard 1px borders */
-    --border-subtle: rgba(39, 39, 42, 0.5);  /* zinc-800/50 - dividers within sections */
-    --border-strong: #3f3f46;    /* zinc-700 - emphasis borders (header bottom) */
+    /* Catppuccin Latte - Border Colors */
+    --border-default: #ccd0da;   /* Surface 0 */
+    --border-subtle: #dce0e8;    /* Crust */
+    --border-strong: #bcc0cc;    /* Surface 1 */
     
-    /* Text Colors */
-    --text-primary: #f4f4f5;     /* zinc-100 */
-    --text-secondary: #a1a1aa;   /* zinc-400 */
-    --text-tertiary: #71717a;    /* zinc-500 */
+    /* Catppuccin Latte - Text Colors */
+    --text-primary: #4c4f69;     /* Text */
+    --text-secondary: #6c6f85;   /* Subtext 0 */
+    --text-tertiary: #8c8fa1;    /* Overlay 1 */
     
-    /* Accent Colors */
-    --accent: #f59e0b;           /* amber-500 - primary accent */
-    --accent-muted: rgba(245, 158, 11, 0.2);  /* amber-500/20 - subtle accent backgrounds */
-    --accent-text: #fbbf24;      /* amber-400 - accent text on dark */
+    /* Accent Colors - Zed's Brand Blue */
+    --accent: #084CCF;           /* Zed blue - primary accent */
+    --accent-muted: rgba(8, 76, 207, 0.15);  /* Zed blue/15 */
+    --accent-text: #084CCF;      /* Zed blue */
     
-    /* Shadows */
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
-    --shadow-glow: 0 0 20px rgba(245, 158, 11, 0.08);
+    /* Catppuccin Latte - Semantic Colors */
+    --color-green: #40a02b;      /* Green - added/staged */
+    --color-red: #d20f39;        /* Red - deleted/errors */
+    --color-yellow: #df8e1d;     /* Yellow - modified/warnings */
+    --color-peach: #fe640b;      /* Peach - untracked */
+    --color-blue: #084CCF;       /* Zed blue - primary */
+    --color-mauve: #8839ef;      /* Mauve - special */
+    --color-teal: #179299;       /* Teal */
+    --color-sky: #04a5e5;        /* Sky */
+    --color-lavender: #7287fd;   /* Lavender */
+    
+    /* Shadows - softer for light theme */
+    --shadow-sm: 0 1px 2px rgba(76, 79, 105, 0.06);
+    --shadow-md: 0 4px 12px rgba(76, 79, 105, 0.08);
+    --shadow-glow: none;
     
     /* Transitions */
     --transition-fast: 100ms ease;
@@ -87,16 +103,24 @@
     font-family: var(--font-mono);
     font-size: 0.75rem;
     line-height: 1.625;
-    border-bottom: 1px solid rgba(24, 24, 27, 0.5);
+    border-bottom: 1px solid rgba(228, 228, 231, 0.5);
     transition: background-color var(--transition-fast);
 }
 
 .diff-line-addition {
-    @apply bg-green-950/40 hover:bg-green-950/60;
+    background-color: rgba(64, 160, 43, 0.1);
+}
+
+.diff-line-addition:hover {
+    background-color: rgba(64, 160, 43, 0.15);
 }
 
 .diff-line-deletion {
-    @apply bg-red-950/40 hover:bg-red-950/60;
+    background-color: rgba(210, 15, 57, 0.1);
+}
+
+.diff-line-deletion:hover {
+    background-color: rgba(210, 15, 57, 0.15);
 }
 
 .diff-line-context {
@@ -108,11 +132,11 @@
 }
 
 .diff-line-addition .line-number {
-    @apply text-green-400/60;
+    color: rgba(64, 160, 43, 0.6);
 }
 
 .diff-line-deletion .line-number {
-    @apply text-red-400/60;
+    color: rgba(210, 15, 57, 0.6);
 }
 
 .diff-line-context .line-number {
@@ -130,15 +154,15 @@
 }
 
 .diff-line-addition .line-content {
-    @apply text-green-100;
+    color: #40a02b;
 }
 
 .diff-line-deletion .line-content {
-    @apply text-red-100;
+    color: #d20f39;
 }
 
 .diff-line-context .line-content {
-    @apply text-zinc-300;
+    color: #5c5f77;
 }
 
 .line-content pre {
@@ -164,10 +188,10 @@
 
 @keyframes commitFlash {
     0% {
-        box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4);
+        box-shadow: 0 0 0 0 rgba(8, 76, 207, 0.4);
     }
     100% {
-        box-shadow: 0 0 0 8px rgba(245, 158, 11, 0);
+        box-shadow: 0 0 0 8px rgba(8, 76, 207, 0);
     }
 }
 
