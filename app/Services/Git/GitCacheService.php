@@ -16,6 +16,7 @@ class GitCacheService
         'branches' => ['branches'],
         'remotes' => ['remotes'],
         'stashes' => ['stashes'],
+        'tags' => ['tags'],
     ];
 
     public function get(string $repoPath, string $key, callable $callback, int $ttl): mixed
@@ -34,20 +35,20 @@ class GitCacheService
     public function invalidateAll(string $repoPath): void
     {
         $hash = md5($repoPath);
-        $prefix = self::CACHE_PREFIX . ":{$hash}:";
+        $prefix = self::CACHE_PREFIX.":{$hash}:";
 
         $allKeys = array_merge(
-            ['status', 'diff', 'log', 'branches', 'remotes', 'stashes']
+            ['status', 'diff', 'log', 'branches', 'remotes', 'stashes', 'tags']
         );
 
         foreach ($allKeys as $key) {
-            Cache::forget($prefix . $key);
+            Cache::forget($prefix.$key);
         }
     }
 
     public function invalidateGroup(string $repoPath, string $group): void
     {
-        if (!isset(self::GROUPS[$group])) {
+        if (! isset(self::GROUPS[$group])) {
             return;
         }
 
@@ -61,6 +62,6 @@ class GitCacheService
     {
         $hash = md5($repoPath);
 
-        return self::CACHE_PREFIX . ":{$hash}:{$key}";
+        return self::CACHE_PREFIX.":{$hash}:{$key}";
     }
 }

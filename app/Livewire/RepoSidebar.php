@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Livewire;
 
 use App\Services\Git\BranchService;
+use App\Services\Git\GitCacheService;
 use App\Services\Git\GitService;
 use App\Services\Git\RemoteService;
 use App\Services\Git\StashService;
@@ -101,22 +102,26 @@ class RepoSidebar extends Component
 
     private function fetchTags(): array
     {
-        $result = Process::path($this->repoPath)->run('git tag -l --format=%(refname:short) %(objectname:short)');
+        $cache = new GitCacheService;
 
-        if ($result->exitCode() !== 0) {
-            return [];
-        }
+        return $cache->get($this->repoPath, 'tags', function () {
+            $result = Process::path($this->repoPath)->run('git tag -l --format=%(refname:short) %(objectname:short)');
 
-        $lines = array_filter(explode("\n", trim($result->output())));
+            if ($result->exitCode() !== 0) {
+                return [];
+            }
 
-        return collect($lines)->map(function ($line) {
-            $parts = preg_split('/\s+/', trim($line), 2);
+            $lines = array_filter(explode("\n", trim($result->output())));
 
-            return [
-                'name' => $parts[0] ?? '',
-                'sha' => $parts[1] ?? '',
-            ];
-        })->toArray();
+            return collect($lines)->map(function ($line) {
+                $parts = preg_split('/\s+/', trim($line), 2);
+
+                return [
+                    'name' => $parts[0] ?? '',
+                    'sha' => $parts[1] ?? '',
+                ];
+            })->toArray();
+        }, 60);
     }
 
     public function render()
