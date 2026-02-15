@@ -1,21 +1,47 @@
-<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-  <!-- Left document -->
-  <rect x="20" y="30" width="30" height="60" rx="2" 
-        fill="none" stroke="#71717a" stroke-width="1.5"/>
-  <line x1="26" y1="40" x2="44" y2="40" stroke="#71717a" stroke-width="1.5" stroke-linecap="round"/>
-  <line x1="26" y1="50" x2="44" y2="50" stroke="#71717a" stroke-width="1.5" stroke-linecap="round"/>
-  <line x1="26" y1="60" x2="44" y2="60" stroke="#71717a" stroke-width="1.5" stroke-linecap="round"/>
-  <line x1="26" y1="70" x2="44" y2="70" stroke="#71717a" stroke-width="1.5" stroke-linecap="round"/>
+<svg viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Layer 1: Backdrop -->
+  <g>
+    <circle cx="80" cy="80" r="58" fill="#eff1f5"/>
+  </g>
   
-  <!-- Right document -->
-  <rect x="70" y="30" width="30" height="60" rx="2" 
-        fill="none" stroke="#71717a" stroke-width="1.5"/>
-  <line x1="76" y1="40" x2="94" y2="40" stroke="#71717a" stroke-width="1.5" stroke-linecap="round"/>
-  <line x1="76" y1="50" x2="94" y2="50" stroke="#71717a" stroke-width="1.5" stroke-linecap="round"/>
-  <line x1="76" y1="60" x2="94" y2="60" stroke="#71717a" stroke-width="1.5" stroke-linecap="round"/>
-  <line x1="76" y1="70" x2="94" y2="70" stroke="#71717a" stroke-width="1.5" stroke-linecap="round"/>
+  <!-- Layer 2: Ground/Shadow -->
+  <g>
+    <ellipse cx="80" cy="115" rx="32" ry="5" fill="#dce0e8" opacity="0.3"/>
+  </g>
   
-  <!-- Equals sign -->
-  <line x1="54" y1="54" x2="66" y2="54" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round"/>
-  <line x1="54" y1="66" x2="66" y2="66" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round"/>
+  <!-- Layer 3: Subject - Twin Documents -->
+  <g>
+    <!-- Back document (offset right/down) -->
+    <rect x="70" y="60" width="50" height="65" rx="6" 
+          fill="#e6e9ef" stroke="#ccd0da" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <!-- Back document content lines -->
+    <line x1="76" y1="72" x2="105" y2="72" stroke="#ccd0da" stroke-width="1" stroke-linecap="round"/>
+    <line x1="76" y1="80" x2="114" y2="80" stroke="#ccd0da" stroke-width="1" stroke-linecap="round"/>
+    <line x1="76" y1="88" x2="102" y2="88" stroke="#ccd0da" stroke-width="1" stroke-linecap="round"/>
+    
+    <!-- Front document (offset left/up) -->
+    <rect x="40" y="35" width="50" height="65" rx="6" 
+          fill="#ffffff" stroke="#ccd0da" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <!-- Front document content lines (matching positions) -->
+    <line x1="46" y1="47" x2="75" y2="47" stroke="#ccd0da" stroke-width="1" stroke-linecap="round"/>
+    <line x1="46" y1="55" x2="84" y2="55" stroke="#ccd0da" stroke-width="1" stroke-linecap="round"/>
+    <line x1="46" y1="63" x2="72" y2="63" stroke="#ccd0da" stroke-width="1" stroke-linecap="round"/>
+  </g>
+  
+  <!-- Layer 4: Detail & Accent -->
+  <g>
+    <!-- Match indicator pill -->
+    <rect x="66" y="74" width="28" height="16" rx="8" fill="#084CCF" opacity="0.15"/>
+    
+    <!-- Equals sign inside pill -->
+    <line x1="72" y1="79" x2="88" y2="79" stroke="#084CCF" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="72" y1="85" x2="88" y2="85" stroke="#084CCF" stroke-width="1.5" stroke-linecap="round"/>
+    
+    <!-- Decorative dots -->
+    <circle cx="35" cy="48" r="1.5" fill="#ccd0da"/>
+    <circle cx="122" cy="112" r="2" fill="#ccd0da"/>
+    <circle cx="115" cy="42" r="1.5" fill="#9ca0b0"/>
+  </g>
 </svg>

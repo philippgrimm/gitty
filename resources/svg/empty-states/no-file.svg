@@ -1,16 +1,39 @@
-<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-  <!-- Document with folded corner -->
-  <path d="M35 25 L35 95 L85 95 L85 40 L70 25 Z" 
-        fill="none" stroke="#71717a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M70 25 L70 40 L85 40" 
-        fill="none" stroke="#71717a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<svg viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Layer 1: Backdrop -->
+  <g>
+    <rect x="30" y="25" width="100" height="110" rx="12" fill="#eff1f5"/>
+  </g>
   
-  <!-- Text lines inside document -->
-  <line x1="45" y1="50" x2="75" y2="50" stroke="#71717a" stroke-width="1.5" stroke-linecap="round"/>
-  <line x1="45" y1="60" x2="70" y2="60" stroke="#71717a" stroke-width="1.5" stroke-linecap="round"/>
-  <line x1="45" y1="70" x2="75" y2="70" stroke="#71717a" stroke-width="1.5" stroke-linecap="round"/>
+  <!-- Layer 2: Ground/Shadow -->
+  <g>
+    <ellipse cx="80" cy="118" rx="28" ry="5" fill="#dce0e8" opacity="0.4"/>
+  </g>
   
-  <!-- Cursor pointer -->
-  <path d="M50 80 L50 90 L54 86 L57 92 L60 90 L57 84 L62 84 Z" 
-        fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Layer 3: Subject - Document -->
+  <g>
+    <!-- Main document body -->
+    <path d="M55 50 L55 105 C55 107.2 56.8 109 59 109 L101 109 C103.2 109 105 107.2 105 105 L105 59 L96 50 Z" 
+          fill="#e6e9ef" stroke="#ccd0da" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <!-- Corner fold -->
+    <path d="M96 50 L96 59 L105 59" 
+          fill="#dce0e8" stroke="#ccd0da" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <!-- Content lines -->
+    <line x1="63" y1="68" x2="92" y2="68" stroke="#ccd0da" stroke-width="1" stroke-linecap="round"/>
+    <line x1="63" y1="76" x2="97" y2="76" stroke="#ccd0da" stroke-width="1" stroke-linecap="round"/>
+    <line x1="63" y1="84" x2="88" y2="84" stroke="#ccd0da" stroke-width="1" stroke-linecap="round"/>
+    <line x1="63" y1="92" x2="94" y2="92" stroke="#ccd0da" stroke-width="1" stroke-linecap="round"/>
+  </g>
+  
+  <!-- Layer 4: Detail & Accent -->
+  <g>
+    <!-- Cursor hint - Zed Blue -->
+    <path d="M108 65 L113 70 L110 70 L112 75 L109 75 L107 72 L107 70 Z" 
+          fill="#084CCF" opacity="0.6"/>
+    
+    <!-- Decorative dots -->
+    <circle cx="48" cy="58" r="1.5" fill="#ccd0da"/>
+    <circle cx="112" cy="95" r="2" fill="#ccd0da"/>
+  </g>
 </svg>

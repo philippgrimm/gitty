@@ -1,18 +1,66 @@
-<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-  <!-- Container frame -->
-  <rect x="30" y="30" width="60" height="60" rx="2" 
-        fill="none" stroke="#71717a" stroke-width="1.5"/>
+<svg viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Layer 1: Backdrop -->
+  <g>
+    <circle cx="80" cy="80" r="58" fill="#eff1f5"/>
+  </g>
   
-  <!-- Abstract binary data representation -->
-  <rect x="40" y="40" width="12" height="12" fill="none" stroke="#71717a" stroke-width="1.5"/>
-  <rect x="54" y="40" width="12" height="12" fill="none" stroke="#f59e0b" stroke-width="1.5"/>
-  <rect x="68" y="40" width="12" height="12" fill="none" stroke="#71717a" stroke-width="1.5"/>
+  <!-- Layer 2: Ground/Shadow -->
+  <g>
+    <ellipse cx="80" cy="118" rx="30" ry="5" fill="#dce0e8" opacity="0.3"/>
+  </g>
   
-  <rect x="40" y="54" width="12" height="12" fill="none" stroke="#f59e0b" stroke-width="1.5"/>
-  <rect x="54" y="54" width="12" height="12" fill="none" stroke="#71717a" stroke-width="1.5"/>
-  <rect x="68" y="54" width="12" height="12" fill="none" stroke="#f59e0b" stroke-width="1.5"/>
+  <!-- Layer 3: Subject - Document with Data Blocks -->
+  <g>
+    <!-- Main document body -->
+    <rect x="50" y="45" width="60" height="75" rx="6" 
+          fill="#e6e9ef" stroke="#ccd0da" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <!-- Data block rows (fragmented, varying widths) -->
+    <!-- Row 1 -->
+    <rect x="58" y="58" width="8" height="4" rx="1" fill="#ccd0da"/>
+    <rect x="68" y="58" width="12" height="4" rx="1" fill="#084CCF" opacity="0.2"/>
+    <rect x="82" y="58" width="6" height="4" rx="1" fill="#ccd0da"/>
+    <rect x="90" y="58" width="14" height="4" rx="1" fill="#dce0e8"/>
+    
+    <!-- Row 2 -->
+    <rect x="58" y="66" width="10" height="4" rx="1" fill="#084CCF" opacity="0.2"/>
+    <rect x="70" y="66" width="6" height="4" rx="1" fill="#ccd0da"/>
+    <rect x="78" y="66" width="16" height="4" rx="1" fill="#dce0e8"/>
+    <rect x="96" y="66" width="8" height="4" rx="1" fill="#ccd0da"/>
+    
+    <!-- Row 3 -->
+    <rect x="58" y="74" width="14" height="4" rx="1" fill="#dce0e8"/>
+    <rect x="74" y="74" width="8" height="4" rx="1" fill="#ccd0da"/>
+    <rect x="84" y="74" width="12" height="4" rx="1" fill="#084CCF" opacity="0.2"/>
+    <rect x="98" y="74" width="6" height="4" rx="1" fill="#ccd0da"/>
+    
+    <!-- Row 4 -->
+    <rect x="58" y="82" width="6" height="4" rx="1" fill="#ccd0da"/>
+    <rect x="66" y="82" width="16" height="4" rx="1" fill="#dce0e8"/>
+    <rect x="84" y="82" width="10" height="4" rx="1" fill="#084CCF" opacity="0.2"/>
+    <rect x="96" y="82" width="8" height="4" rx="1" fill="#ccd0da"/>
+    
+    <!-- Row 5 -->
+    <rect x="58" y="90" width="12" height="4" rx="1" fill="#084CCF" opacity="0.2"/>
+    <rect x="72" y="90" width="8" height="4" rx="1" fill="#ccd0da"/>
+    <rect x="82" y="90" width="6" height="4" rx="1" fill="#dce0e8"/>
+    <rect x="90" y="90" width="14" height="4" rx="1" fill="#ccd0da"/>
+    
+    <!-- Row 6 -->
+    <rect x="58" y="98" width="10" height="4" rx="1" fill="#dce0e8"/>
+    <rect x="70" y="98" width="14" height="4" rx="1" fill="#ccd0da"/>
+    <rect x="86" y="98" width="8" height="4" rx="1" fill="#084CCF" opacity="0.2"/>
+    <rect x="96" y="98" width="8" height="4" rx="1" fill="#ccd0da"/>
+  </g>
   
-  <rect x="40" y="68" width="12" height="12" fill="none" stroke="#71717a" stroke-width="1.5"/>
-  <rect x="54" y="68" width="12" height="12" fill="none" stroke="#f59e0b" stroke-width="1.5"/>
-  <rect x="68" y="68" width="12" height="12" fill="none" stroke="#71717a" stroke-width="1.5"/>
+  <!-- Layer 4: Detail & Accent -->
+  <g>
+    <!-- Diagonal slash indicator - Zed Blue -->
+    <line x1="45" y1="40" x2="115" y2="125" stroke="#084CCF" stroke-width="1.5" opacity="0.4" stroke-linecap="round"/>
+    
+    <!-- Decorative dots -->
+    <circle cx="42" cy="68" r="1.5" fill="#ccd0da"/>
+    <circle cx="118" cy="95" r="2" fill="#ccd0da"/>
+    <circle cx="115" cy="52" r="1.5" fill="#9ca0b0"/>
+  </g>
 </svg>

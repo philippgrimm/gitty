@@ -1,14 +1,39 @@
-<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-  <!-- Folder outline -->
-  <path d="M25 35 L25 85 L95 85 L95 40 L70 40 L65 35 Z" 
-        fill="none" stroke="#71717a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<svg viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Layer 1: Backdrop -->
+  <g>
+    <circle cx="80" cy="80" r="58" fill="#e6e9ef"/>
+  </g>
   
-  <!-- Git branch icon -->
-  <circle cx="50" cy="55" r="4" fill="none" stroke="#f59e0b" stroke-width="1.5"/>
-  <circle cx="70" cy="55" r="4" fill="none" stroke="#f59e0b" stroke-width="1.5"/>
-  <circle cx="60" cy="70" r="4" fill="none" stroke="#f59e0b" stroke-width="1.5"/>
+  <!-- Layer 2: Ground/Shadow -->
+  <g>
+    <ellipse cx="80" cy="108" rx="32" ry="6" fill="#dce0e8" opacity="0.5"/>
+  </g>
   
-  <!-- Branch connections -->
-  <path d="M54 55 L56 60 M66 55 L64 60" 
-        fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round"/>
+  <!-- Layer 3: Subject - Folder -->
+  <g>
+    <!-- Folder body -->
+    <path d="M52 72 L52 100 C52 102.2 53.8 104 56 104 L104 104 C106.2 104 108 102.2 108 100 L108 72 Z" 
+          fill="#dce0e8" stroke="#ccd0da" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <!-- Folder tab -->
+    <path d="M52 72 L52 66 C52 63.8 53.8 62 56 62 L68 62 L72 66 L80 66 C82.2 66 84 67.8 84 70 L84 72" 
+          fill="#dce0e8" stroke="#ccd0da" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <!-- Interior shade (folder opening) -->
+    <rect x="54" y="74" width="52" height="12" rx="1" fill="#ccd0da" opacity="0.3"/>
+  </g>
+  
+  <!-- Layer 4: Detail & Accent -->
+  <g>
+    <!-- Git branch icon - Zed Blue -->
+    <circle cx="90" cy="54" r="3" fill="#084CCF" stroke="#084CCF" stroke-width="1"/>
+    <circle cx="100" cy="54" r="3" fill="#084CCF" stroke="#084CCF" stroke-width="1"/>
+    <path d="M93 54 C95 54 97 54 97 54" stroke="#084CCF" stroke-width="1.5" stroke-linecap="round"/>
+    
+    <!-- Decorative dots -->
+    <circle cx="65" cy="55" r="1.5" fill="#ccd0da"/>
+    <circle cx="115" cy="75" r="1.5" fill="#9ca0b0"/>
+    <circle cx="45" cy="88" r="2" fill="#ccd0da"/>
+    <circle cx="118" cy="95" r="1.5" fill="#9ca0b0"/>
+  </g>
 </svg>

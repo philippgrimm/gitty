@@ -1,20 +1,38 @@
-<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-  <!-- Outer circle -->
-  <circle cx="60" cy="60" r="35" fill="none" stroke="#71717a" stroke-width="1.5"/>
+<svg viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Layer 1: Backdrop -->
+  <g>
+    <circle cx="80" cy="80" r="65" fill="#eff1f5"/>
+  </g>
   
-  <!-- Checkmark -->
-  <path d="M45 60 L55 70 L75 48" 
-        fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Layer 2: Concentric Rings -->
+  <g>
+    <circle cx="80" cy="80" r="50" fill="#e6e9ef"/>
+    <circle cx="80" cy="80" r="35" fill="#dce0e8"/>
+  </g>
   
-  <!-- Decorative radiating lines -->
-  <line x1="60" y1="15" x2="60" y2="20" stroke="#71717a" stroke-width="1.5" stroke-linecap="round"/>
-  <line x1="60" y1="100" x2="60" y2="105" stroke="#71717a" stroke-width="1.5" stroke-linecap="round"/>
-  <line x1="15" y1="60" x2="20" y2="60" stroke="#71717a" stroke-width="1.5" stroke-linecap="round"/>
-  <line x1="100" y1="60" x2="105" y2="60" stroke="#71717a" stroke-width="1.5" stroke-linecap="round"/>
+  <!-- Layer 3: Ring Accents -->
+  <g>
+    <!-- Partial arcs between rings -->
+    <path d="M80 30 A50 50 0 0 1 110 45" stroke="#ccd0da" stroke-width="1" fill="none" stroke-linecap="round"/>
+    <path d="M50 45 A50 50 0 0 0 30 80" stroke="#ccd0da" stroke-width="1" fill="none" stroke-linecap="round"/>
+    <path d="M80 130 A50 50 0 0 1 50 115" stroke="#ccd0da" stroke-width="1" fill="none" stroke-linecap="round"/>
+  </g>
   
-  <!-- Diagonal rays -->
-  <line x1="25" y1="25" x2="29" y2="29" stroke="#71717a" stroke-width="1.5" stroke-linecap="round"/>
-  <line x1="91" y1="91" x2="95" y2="95" stroke="#71717a" stroke-width="1.5" stroke-linecap="round"/>
-  <line x1="91" y1="25" x2="95" y2="29" stroke="#71717a" stroke-width="1.5" stroke-linecap="round"/>
-  <line x1="25" y1="91" x2="29" y2="95" stroke="#71717a" stroke-width="1.5" stroke-linecap="round"/>
+  <!-- Layer 4: Detail & Accent -->
+  <g>
+    <!-- Checkmark - Zed Blue -->
+    <path d="M65 80 L75 90 L95 68" 
+          stroke="#084CCF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <!-- Cardinal direction dots -->
+    <circle cx="80" cy="30" r="2" fill="#ccd0da"/>
+    <circle cx="130" cy="80" r="2" fill="#ccd0da"/>
+    <circle cx="80" cy="130" r="2" fill="#ccd0da"/>
+    <circle cx="30" cy="80" r="2" fill="#ccd0da"/>
+    
+    <!-- Sparkle dots -->
+    <circle cx="110" cy="110" r="1.5" fill="#9ca0b0"/>
+    <circle cx="50" cy="50" r="1" fill="#9ca0b0"/>
+    <circle cx="115" cy="65" r="1.5" fill="#9ca0b0"/>
+  </g>
 </svg>
