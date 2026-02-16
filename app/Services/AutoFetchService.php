@@ -25,7 +25,7 @@ class AutoFetchService
 
     public function start(string $repoPath, int $intervalSeconds = 180): void
     {
-        $gitDir = rtrim($repoPath, '/') . '/.git';
+        $gitDir = rtrim($repoPath, '/').'/.git';
         if (! is_dir($gitDir)) {
             throw new \InvalidArgumentException("Not a valid git repository: {$repoPath}");
         }

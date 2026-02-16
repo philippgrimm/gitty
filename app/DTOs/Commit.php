@@ -68,7 +68,7 @@ readonly class Commit
                 break;
             } elseif (str_starts_with($line, '    ') && $sha !== '') {
                 // Message line (indented with 4 spaces)
-                $message .= trim(substr($line, 4)) . "\n";
+                $message .= trim(substr($line, 4))."\n";
             }
         }
 

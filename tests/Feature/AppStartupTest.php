@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 use App\Livewire\AppLayout;
 use App\Models\Repository;
-use App\Services\Git\GitConfigValidator;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Process;
 use Livewire\Livewire;
@@ -13,8 +12,8 @@ uses(RefreshDatabase::class);
 
 beforeEach(function () {
     $this->testRepoPath = '/tmp/gitty-test-repo';
-    if (!is_dir($this->testRepoPath . '/.git')) {
-        mkdir($this->testRepoPath . '/.git', 0755, true);
+    if (! is_dir($this->testRepoPath.'/.git')) {
+        mkdir($this->testRepoPath.'/.git', 0755, true);
     }
 });
 
@@ -64,7 +63,7 @@ test('loads most recent repo even when invalid repo path provided', function () 
     ]);
 
     $invalidPath = '/tmp/invalid-repo';
-    if (!is_dir($invalidPath)) {
+    if (! is_dir($invalidPath)) {
         mkdir($invalidPath, 0755, true);
     }
 
@@ -74,8 +73,8 @@ test('loads most recent repo even when invalid repo path provided', function () 
 
 test('skips auto-load when valid repo path provided', function () {
     $otherRepoPath = '/tmp/gitty-other-repo';
-    if (!is_dir($otherRepoPath . '/.git')) {
-        mkdir($otherRepoPath . '/.git', 0755, true);
+    if (! is_dir($otherRepoPath.'/.git')) {
+        mkdir($otherRepoPath.'/.git', 0755, true);
     }
 
     $repo = Repository::create([

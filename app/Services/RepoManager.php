@@ -12,7 +12,7 @@ class RepoManager
 {
     public function openRepo(string $path): Repository
     {
-        $gitDir = rtrim($path, '/') . '/.git';
+        $gitDir = rtrim($path, '/').'/.git';
         if (! is_dir($gitDir)) {
             throw new \InvalidArgumentException("Not a valid git repository: {$path}");
         }
@@ -48,7 +48,7 @@ class RepoManager
     public function currentRepo(): ?Repository
     {
         $repoId = Cache::get('current_repo_id');
-        
+
         if ($repoId === null) {
             return null;
         }

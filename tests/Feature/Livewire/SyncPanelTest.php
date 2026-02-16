@@ -9,8 +9,8 @@ use Tests\Mocks\GitOutputFixtures;
 
 beforeEach(function () {
     $this->testRepoPath = '/tmp/gitty-test-repo';
-    if (! is_dir($this->testRepoPath . '/.git')) {
-        mkdir($this->testRepoPath . '/.git', 0755, true);
+    if (! is_dir($this->testRepoPath.'/.git')) {
+        mkdir($this->testRepoPath.'/.git', 0755, true);
     }
 });
 

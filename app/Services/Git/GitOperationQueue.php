@@ -14,7 +14,7 @@ class GitOperationQueue
     public function __construct(
         protected string $repoPath,
     ) {
-        $this->lockKey = 'git-op-' . md5($this->repoPath);
+        $this->lockKey = 'git-op-'.md5($this->repoPath);
     }
 
     public function execute(callable $operation): mixed

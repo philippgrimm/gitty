@@ -46,7 +46,7 @@ class SettingsModal extends Component
 
     public function save(): void
     {
-        $service = new SettingsService();
+        $service = new SettingsService;
 
         $service->set('auto_fetch_interval', $this->autoFetchInterval);
         $service->set('external_editor', $this->externalEditor);
@@ -63,7 +63,7 @@ class SettingsModal extends Component
 
     public function resetToDefaults(): void
     {
-        $service = new SettingsService();
+        $service = new SettingsService;
         $service->reset();
 
         $this->loadSettings();
@@ -76,7 +76,7 @@ class SettingsModal extends Component
 
     private function loadSettings(): void
     {
-        $service = new SettingsService();
+        $service = new SettingsService;
 
         $this->autoFetchInterval = $service->get('auto_fetch_interval');
         $this->externalEditor = $service->get('external_editor');

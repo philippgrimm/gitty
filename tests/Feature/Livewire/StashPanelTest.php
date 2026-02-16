@@ -9,8 +9,8 @@ use Tests\Mocks\GitOutputFixtures;
 
 beforeEach(function () {
     $this->testRepoPath = '/tmp/gitty-test-repo';
-    if (! is_dir($this->testRepoPath . '/.git')) {
-        mkdir($this->testRepoPath . '/.git', 0755, true);
+    if (! is_dir($this->testRepoPath.'/.git')) {
+        mkdir($this->testRepoPath.'/.git', 0755, true);
     }
 });
 
@@ -114,7 +114,7 @@ test('component converts stash DTOs to arrays for Livewire', function () {
     $component = Livewire::test(StashPanel::class, ['repoPath' => $this->testRepoPath]);
 
     $stashes = $component->get('stashes');
-    
+
     expect($stashes)->toBeArray();
     expect($stashes)->toHaveCount(3);
     expect($stashes[0])->toHaveKeys(['index', 'message', 'branch', 'sha']);

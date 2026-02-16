@@ -11,20 +11,20 @@ uses(RefreshDatabase::class);
 
 beforeEach(function () {
     $this->testRepoPath = '/tmp/gitty-test-repo';
-    if (! is_dir($this->testRepoPath . '/.git')) {
-        mkdir($this->testRepoPath . '/.git', 0755, true);
+    if (! is_dir($this->testRepoPath.'/.git')) {
+        mkdir($this->testRepoPath.'/.git', 0755, true);
     }
 });
 
 test('it validates .git directory exists when opening repo', function () {
-    $service = new RepoManager();
-    
+    $service = new RepoManager;
+
     expect(fn () => $service->openRepo('/invalid/path'))
         ->toThrow(InvalidArgumentException::class, 'Not a valid git repository');
 });
 
 test('it creates a new repository record when opening a repo for the first time', function () {
-    $service = new RepoManager();
+    $service = new RepoManager;
     $repo = $service->openRepo($this->testRepoPath);
 
     expect($repo)->toBeInstanceOf(Repository::class)
@@ -49,7 +49,7 @@ test('it updates last_opened_at when opening an existing repo', function () {
 
     sleep(1); // Ensure timestamp difference
 
-    $service = new RepoManager();
+    $service = new RepoManager;
     $updatedRepo = $service->openRepo($this->testRepoPath);
 
     expect($updatedRepo->id)->toBe($repo->id)
@@ -62,20 +62,20 @@ test('it returns recent repositories sorted by last_opened_at descending', funct
         'name' => 'repo1',
         'last_opened_at' => now()->subDays(5),
     ]);
-    
+
     Repository::create([
         'path' => '/path/repo2',
         'name' => 'repo2',
         'last_opened_at' => now()->subDays(1),
     ]);
-    
+
     Repository::create([
         'path' => '/path/repo3',
         'name' => 'repo3',
         'last_opened_at' => now()->subDays(10),
     ]);
 
-    $service = new RepoManager();
+    $service = new RepoManager;
     $recent = $service->recentRepos();
 
     expect($recent)->toHaveCount(3)
@@ -92,7 +92,7 @@ test('it limits recent repositories to specified count', function () {
         ]);
     }
 
-    $service = new RepoManager();
+    $service = new RepoManager;
     $recent = $service->recentRepos(20);
 
     expect($recent)->toHaveCount(20);
@@ -105,7 +105,7 @@ test('it removes a repository from the database', function () {
         'last_opened_at' => now(),
     ]);
 
-    $service = new RepoManager();
+    $service = new RepoManager;
     $service->removeRepo($repo->id);
 
     $this->assertDatabaseMissing('repositories', [
@@ -120,7 +120,7 @@ test('it stores current repo in cache', function () {
         'last_opened_at' => now(),
     ]);
 
-    $service = new RepoManager();
+    $service = new RepoManager;
     $service->setCurrentRepo($repo);
 
     expect(Cache::get('current_repo_id'))->toBe($repo->id);
@@ -135,7 +135,7 @@ test('it retrieves current repo from cache', function () {
 
     Cache::put('current_repo_id', $repo->id);
 
-    $service = new RepoManager();
+    $service = new RepoManager;
     $currentRepo = $service->currentRepo();
 
     expect($currentRepo)->toBeInstanceOf(Repository::class)
@@ -143,7 +143,7 @@ test('it retrieves current repo from cache', function () {
 });
 
 test('it returns null when no current repo is set', function () {
-    $service = new RepoManager();
+    $service = new RepoManager;
     $currentRepo = $service->currentRepo();
 
     expect($currentRepo)->toBeNull();

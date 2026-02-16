@@ -13,9 +13,9 @@ uses(RefreshDatabase::class);
 
 beforeEach(function () {
     $testRepoPath = '/tmp/gitty-test-repo';
-    if (!is_dir($testRepoPath . '/.git')) {
+    if (! is_dir($testRepoPath.'/.git')) {
         mkdir($testRepoPath, 0755, true);
-        mkdir($testRepoPath . '/.git', 0755, true);
+        mkdir($testRepoPath.'/.git', 0755, true);
     }
     $this->testRepoPath = $testRepoPath;
 });

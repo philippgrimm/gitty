@@ -9,8 +9,8 @@ use Livewire\Livewire;
 
 beforeEach(function () {
     $this->testRepoPath = '/tmp/gitty-test-repo';
-    if (! is_dir($this->testRepoPath . '/.git')) {
-        mkdir($this->testRepoPath . '/.git', 0755, true);
+    if (! is_dir($this->testRepoPath.'/.git')) {
+        mkdir($this->testRepoPath.'/.git', 0755, true);
     }
     Cache::flush();
 });
@@ -23,7 +23,7 @@ test('component mounts with repo path', function () {
 });
 
 test('component shows active status when auto-fetch is running', function () {
-    Cache::put('auto-fetch:' . md5($this->testRepoPath) . ':interval', 180);
+    Cache::put('auto-fetch:'.md5($this->testRepoPath).':interval', 180);
 
     Livewire::test(AutoFetchIndicator::class, ['repoPath' => $this->testRepoPath])
         ->call('refreshStatus')
@@ -35,8 +35,8 @@ test('checkAndFetch executes fetch when should fetch returns true', function () 
         'git fetch --all' => Process::result("Fetching origin\nFetching upstream"),
     ]);
 
-    Cache::put('auto-fetch:' . md5($this->testRepoPath) . ':interval', 60);
-    Cache::put('auto-fetch:' . md5($this->testRepoPath) . ':last-fetch', now()->subSeconds(61)->timestamp);
+    Cache::put('auto-fetch:'.md5($this->testRepoPath).':interval', 60);
+    Cache::put('auto-fetch:'.md5($this->testRepoPath).':last-fetch', now()->subSeconds(61)->timestamp);
 
     Livewire::test(AutoFetchIndicator::class, ['repoPath' => $this->testRepoPath])
         ->call('checkAndFetch')
@@ -49,8 +49,8 @@ test('checkAndFetch executes fetch when should fetch returns true', function () 
 test('checkAndFetch skips fetch when should fetch returns false', function () {
     Process::fake();
 
-    Cache::put('auto-fetch:' . md5($this->testRepoPath) . ':interval', 180);
-    Cache::put('auto-fetch:' . md5($this->testRepoPath) . ':last-fetch', now()->subSeconds(10)->timestamp);
+    Cache::put('auto-fetch:'.md5($this->testRepoPath).':interval', 180);
+    Cache::put('auto-fetch:'.md5($this->testRepoPath).':last-fetch', now()->subSeconds(10)->timestamp);
 
     Livewire::test(AutoFetchIndicator::class, ['repoPath' => $this->testRepoPath])
         ->call('checkAndFetch')
@@ -64,8 +64,8 @@ test('checkAndFetch sets error when fetch fails', function () {
         'git fetch --all' => Process::result('fatal: Could not read from remote repository', exitCode: 1),
     ]);
 
-    Cache::put('auto-fetch:' . md5($this->testRepoPath) . ':interval', 60);
-    Cache::put('auto-fetch:' . md5($this->testRepoPath) . ':last-fetch', now()->subSeconds(61)->timestamp);
+    Cache::put('auto-fetch:'.md5($this->testRepoPath).':interval', 60);
+    Cache::put('auto-fetch:'.md5($this->testRepoPath).':last-fetch', now()->subSeconds(61)->timestamp);
 
     Livewire::test(AutoFetchIndicator::class, ['repoPath' => $this->testRepoPath])
         ->call('checkAndFetch')
@@ -73,8 +73,8 @@ test('checkAndFetch sets error when fetch fails', function () {
 });
 
 test('component shows last fetch time as relative string', function () {
-    Cache::put('auto-fetch:' . md5($this->testRepoPath) . ':interval', 180);
-    Cache::put('auto-fetch:' . md5($this->testRepoPath) . ':last-fetch', now()->subMinutes(5)->timestamp);
+    Cache::put('auto-fetch:'.md5($this->testRepoPath).':interval', 180);
+    Cache::put('auto-fetch:'.md5($this->testRepoPath).':last-fetch', now()->subMinutes(5)->timestamp);
 
     Livewire::test(AutoFetchIndicator::class, ['repoPath' => $this->testRepoPath])
         ->call('refreshStatus')
@@ -83,11 +83,11 @@ test('component shows last fetch time as relative string', function () {
 
 test('component clears error after successful fetch', function () {
     Process::fake([
-        'git fetch --all' => Process::result("Fetching origin"),
+        'git fetch --all' => Process::result('Fetching origin'),
     ]);
 
-    Cache::put('auto-fetch:' . md5($this->testRepoPath) . ':interval', 60);
-    Cache::put('auto-fetch:' . md5($this->testRepoPath) . ':last-fetch', now()->subSeconds(61)->timestamp);
+    Cache::put('auto-fetch:'.md5($this->testRepoPath).':interval', 60);
+    Cache::put('auto-fetch:'.md5($this->testRepoPath).':last-fetch', now()->subSeconds(61)->timestamp);
 
     $component = Livewire::test(AutoFetchIndicator::class, ['repoPath' => $this->testRepoPath]);
     $component->set('lastError', 'Previous error');
@@ -96,8 +96,8 @@ test('component clears error after successful fetch', function () {
 });
 
 test('component detects queue lock status', function () {
-    Cache::put('auto-fetch:' . md5($this->testRepoPath) . ':interval', 180);
-    Cache::lock('git-op-' . md5($this->testRepoPath), 30)->get();
+    Cache::put('auto-fetch:'.md5($this->testRepoPath).':interval', 180);
+    Cache::lock('git-op-'.md5($this->testRepoPath), 30)->get();
 
     Livewire::test(AutoFetchIndicator::class, ['repoPath' => $this->testRepoPath])
         ->call('refreshStatus')

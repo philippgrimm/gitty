@@ -11,8 +11,8 @@ uses(RefreshDatabase::class);
 
 beforeEach(function () {
     $this->testRepoPath = '/tmp/gitty-test-repo';
-    if (! is_dir($this->testRepoPath . '/.git')) {
-        mkdir($this->testRepoPath . '/.git', 0755, true);
+    if (! is_dir($this->testRepoPath.'/.git')) {
+        mkdir($this->testRepoPath.'/.git', 0755, true);
     }
 });
 
@@ -70,7 +70,7 @@ test('component switches to a different repository', function () {
         'last_opened_at' => now()->subDays(2),
     ]);
 
-    if (!is_dir('/tmp/other-repo/.git')) {
+    if (! is_dir('/tmp/other-repo/.git')) {
         mkdir('/tmp/other-repo/.git', 0755, true);
     }
 
