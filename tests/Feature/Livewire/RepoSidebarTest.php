@@ -243,3 +243,77 @@ test('handleStashCreated listener refreshes sidebar', function () {
     // Verify refreshSidebar was called (stash count should be re-fetched)
     expect($component->get('stashes'))->toBeArray();
 });
+
+test('switchBranch catches dirty tree error and shows auto-stash modal', function () {
+    Process::fake([
+        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git branch -a -vv' => Process::result(GitOutputFixtures::branchList()),
+        'git remote -v' => Process::result(GitOutputFixtures::remoteList()),
+        'git tag -l --format=%(refname:short) %(objectname:short)' => Process::result(''),
+        'git stash list' => Process::result(''),
+        'git checkout develop' => function () {
+            return Process::result(
+                output: '',
+                errorOutput: "error: Your local changes to the following files would be overwritten by checkout\nPlease commit your changes or stash them before you switch branches.",
+                exitCode: 1
+            );
+        },
+    ]);
+
+    Livewire::test(RepoSidebar::class, ['repoPath' => $this->testRepoPath])
+        ->call('switchBranch', 'develop')
+        ->assertSet('showAutoStashModal', true)
+        ->assertSet('autoStashTargetBranch', 'develop');
+});
+
+test('switchBranch catches non-dirty errors and shows error toast', function () {
+    Process::fake([
+        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git branch -a -vv' => Process::result(GitOutputFixtures::branchList()),
+        'git remote -v' => Process::result(GitOutputFixtures::remoteList()),
+        'git tag -l --format=%(refname:short) %(objectname:short)' => Process::result(''),
+        'git stash list' => Process::result(''),
+        'git checkout nonexistent' => function () {
+            return Process::result(
+                output: '',
+                errorOutput: "pathspec 'nonexistent' did not match any file(s) known to git",
+                exitCode: 1
+            );
+        },
+    ]);
+
+    Livewire::test(RepoSidebar::class, ['repoPath' => $this->testRepoPath])
+        ->call('switchBranch', 'nonexistent')
+        ->assertSet('showAutoStashModal', false)
+        ->assertDispatched('show-error');
+});
+
+test('confirmAutoStash performs full stash-switch-restore flow', function () {
+    Process::fake([
+        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git branch -a -vv' => Process::result(GitOutputFixtures::branchList()),
+        'git remote -v' => Process::result(GitOutputFixtures::remoteList()),
+        'git tag -l --format=%(refname:short) %(objectname:short)' => Process::result(''),
+        'git stash list' => Process::result(''),
+        'git stash push *' => Process::result('Saved working directory and index state'),
+        'git checkout develop' => Process::result('Switched to branch \'develop\''),
+        'git stash apply stash@{0}' => Process::result('On branch develop\nChanges not staged for commit:\n  modified:   README.md'),
+        'git stash drop stash@{0}' => Process::result('Dropped stash@{0}'),
+    ]);
+
+    Livewire::test(RepoSidebar::class, ['repoPath' => $this->testRepoPath])
+        ->set('autoStashTargetBranch', 'develop')
+        ->call('confirmAutoStash')
+        ->assertDispatched('status-updated')
+        ->assertDispatched('refresh-staging')
+        ->assertDispatched('show-error', function (string $event, array $params): bool {
+            return $params['type'] === 'success'
+                && str_contains($params['message'], 'develop')
+                && str_contains($params['message'], 'changes restored');
+        });
+
+    Process::assertRan(fn ($process) => str_contains($process->command, 'git stash push'));
+    Process::assertRan('git checkout develop');
+    Process::assertRan('git stash apply stash@{0}');
+    Process::assertRan('git stash drop stash@{0}');
+});

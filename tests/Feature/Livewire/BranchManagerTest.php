@@ -206,3 +206,113 @@ test('component does not dispatch success toast when merge has conflicts', funct
             return $params['type'] === 'success';
         });
 });
+
+test('switchBranch shows auto-stash modal when checkout fails due to dirty tree', function () {
+    Process::fake([
+        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
+        'git checkout feature/new-ui' => function () {
+            return Process::result(
+                output: '',
+                errorOutput: "error: Your local changes to the following files would be overwritten by checkout\nPlease commit your changes or stash them before you switch branches.",
+                exitCode: 1
+            );
+        },
+    ]);
+
+    Livewire::test(BranchManager::class, ['repoPath' => $this->testRepoPath])
+        ->call('switchBranch', 'feature/new-ui')
+        ->assertSet('showAutoStashModal', true)
+        ->assertSet('autoStashTargetBranch', 'feature/new-ui')
+        ->assertNotDispatched('show-error');
+});
+
+test('switchBranch shows error toast for non-dirty-tree errors', function () {
+    Process::fake([
+        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
+        'git checkout feature/nonexistent' => function () {
+            return Process::result(
+                output: '',
+                errorOutput: "pathspec 'feature/nonexistent' did not match any file(s) known to git",
+                exitCode: 1
+            );
+        },
+    ]);
+
+    Livewire::test(BranchManager::class, ['repoPath' => $this->testRepoPath])
+        ->call('switchBranch', 'feature/nonexistent')
+        ->assertSet('showAutoStashModal', false)
+        ->assertDispatched('show-error');
+});
+
+test('confirmAutoStash stashes switches and restores changes', function () {
+    Process::fake([
+        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
+        'git stash push *' => Process::result('Saved working directory and index state'),
+        'git checkout feature/new-ui' => Process::result('Switched to branch \'feature/new-ui\''),
+        'git stash apply stash@{0}' => Process::result('On branch feature/new-ui\nChanges not staged for commit:\n  modified:   README.md'),
+        'git stash drop stash@{0}' => Process::result('Dropped stash@{0}'),
+    ]);
+
+    Livewire::test(BranchManager::class, ['repoPath' => $this->testRepoPath])
+        ->set('autoStashTargetBranch', 'feature/new-ui')
+        ->set('showAutoStashModal', true)
+        ->call('confirmAutoStash')
+        ->assertSet('showAutoStashModal', false)
+        ->assertDispatched('status-updated')
+        ->assertDispatched('show-error', function (string $event, array $params): bool {
+            return $params['type'] === 'success'
+                && str_contains($params['message'], 'feature/new-ui')
+                && str_contains($params['message'], 'changes restored');
+        });
+
+    Process::assertRan(fn ($process) => str_contains($process->command, 'git stash push'));
+    Process::assertRan('git checkout feature/new-ui');
+    Process::assertRan('git stash apply stash@{0}');
+    Process::assertRan('git stash drop stash@{0}');
+});
+
+test('confirmAutoStash shows warning when stash apply conflicts', function () {
+    Process::fake([
+        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
+        'git stash push *' => Process::result('Saved working directory and index state'),
+        'git checkout feature/new-ui' => Process::result('Switched to branch \'feature/new-ui\''),
+        'git stash apply stash@{0}' => function () {
+            return Process::result(
+                output: 'CONFLICT (content): Merge conflict in file.txt',
+                errorOutput: '',
+                exitCode: 1
+            );
+        },
+    ]);
+
+    Livewire::test(BranchManager::class, ['repoPath' => $this->testRepoPath])
+        ->set('autoStashTargetBranch', 'feature/new-ui')
+        ->set('showAutoStashModal', true)
+        ->call('confirmAutoStash')
+        ->assertDispatched('show-error', function (string $event, array $params): bool {
+            return $params['type'] === 'warning'
+                && $params['persistent'] === true
+                && str_contains($params['message'], 'conflicted')
+                && str_contains($params['message'], 'stash preserved');
+        });
+
+    Process::assertNotRan('git stash drop stash@{0}');
+});
+
+test('cancelAutoStash resets state without action', function () {
+    Process::fake([
+        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
+    ]);
+
+    Livewire::test(BranchManager::class, ['repoPath' => $this->testRepoPath])
+        ->set('showAutoStashModal', true)
+        ->set('autoStashTargetBranch', 'feature/new-ui')
+        ->call('cancelAutoStash')
+        ->assertSet('showAutoStashModal', false)
+        ->assertSet('autoStashTargetBranch', '');
+});
