@@ -59,4 +59,16 @@ class GitErrorHandler
         // Return original error if no pattern matches
         return $gitError;
     }
+
+    /**
+     * Check if the error message indicates uncommitted changes blocking checkout.
+     *
+     * @param  string  $errorMessage  The git error message to check
+     * @return bool True if the error is due to uncommitted changes, false otherwise
+     */
+    public static function isDirtyTreeError(string $errorMessage): bool
+    {
+        return str_contains($errorMessage, 'error: Your local changes to the following files would be overwritten by checkout')
+            || str_contains($errorMessage, 'Please commit your changes or stash them before you switch branches');
+    }
 }
