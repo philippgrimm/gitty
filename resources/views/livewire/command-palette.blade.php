@@ -1,6 +1,7 @@
 {{-- Command Palette Overlay --}}
 <div 
     x-show="$wire.isOpen"
+    @keydown.escape.prevent.stop="$wire.mode === 'input' ? $wire.cancelInput() : $wire.close()"
     x-transition:enter="transition ease-out duration-150"
     x-transition:enter-start="opacity-0"
     x-transition:enter-end="opacity-100"
@@ -77,7 +78,6 @@
                         type="text"
                         wire:model="inputValue"
                         wire:keydown.enter.prevent="submitInput"
-                        wire:keydown.escape.prevent="cancelInput"
                         placeholder="Branch name (e.g., feature/my-feature)"
                         class="w-full bg-transparent border border-[#ccd0da] rounded-lg outline-none text-sm text-[#4c4f69] placeholder-[#8c8fa1] font-mono px-3 py-2 focus:ring-1 focus:ring-[#084CCF] focus:border-[#084CCF]"
                         x-ref="inputField"
