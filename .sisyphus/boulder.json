@@ -1,9 +1,9 @@
 {
-  "active_plan": "/Users/philipp.grimm/workspace/gitty/.sisyphus/plans/branch-merge-context-menu.md",
-  "started_at": "2026-02-16T10:27:52.004Z",
+  "active_plan": "/Users/philipp.grimm/workspace/gitty/.sisyphus/plans/command-palette.md",
+  "started_at": "2026-02-16T13:59:02.596Z",
   "session_ids": [
-    "ses_39a14c20dffetYOcQJw0sU6gj0"
+    "ses_39983ea22ffeuWiCH6I2rJ0YBg"
   ],
-  "plan_name": "branch-merge-context-menu",
+  "plan_name": "command-palette",
   "agent": "atlas"
 }

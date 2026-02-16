@@ -22,12 +22,26 @@ class CommandPalette extends Component
 
     public ?string $inputError = null;
 
+    public string $repoPath = '';
+
+    public int $stagedCount = 0;
+
     #[On('open-command-palette')]
     public function open(): void
     {
         $this->isOpen = true;
         $this->mode = 'search';
         $this->query = '';
+    }
+
+    #[On('toggle-command-palette')]
+    public function toggle(): void
+    {
+        if ($this->isOpen) {
+            $this->close();
+        } else {
+            $this->open();
+        }
     }
 
     public function close(): void
@@ -38,6 +52,41 @@ class CommandPalette extends Component
         $this->inputValue = '';
         $this->inputCommand = null;
         $this->inputError = null;
+    }
+
+    #[On('status-updated')]
+    public function handleStatusUpdated(int $stagedCount = 0, array $aheadBehind = []): void
+    {
+        $this->stagedCount = $stagedCount;
+    }
+
+    #[On('repo-switched')]
+    public function handleRepoSwitched(string $path): void
+    {
+        $this->repoPath = $path;
+    }
+
+    public function getDisabledCommands(): array
+    {
+        $disabled = [];
+        $hasRepo = ! empty($this->repoPath);
+
+        // All git commands disabled without a repo
+        $gitCommands = ['stage-all', 'unstage-all', 'discard-all', 'stash-all', 'toggle-view', 'commit', 'commit-push', 'toggle-amend', 'push', 'pull', 'fetch', 'fetch-all', 'force-push', 'create-branch', 'select-all'];
+
+        if (! $hasRepo) {
+            foreach ($gitCommands as $cmd) {
+                $disabled[$cmd] = true;
+            }
+        }
+
+        // Commit/commit-push disabled if no staged files
+        if ($this->stagedCount === 0) {
+            $disabled['commit'] = true;
+            $disabled['commit-push'] = true;
+        }
+
+        return $disabled;
     }
 
     public static function getCommands(): array
@@ -212,6 +261,14 @@ class CommandPalette extends Component
     public function filteredCommands(): array
     {
         $commands = self::getCommands();
+        $disabled = $this->getDisabledCommands();
+
+        // Add disabled flag to each command
+        $commands = array_map(function ($command) use ($disabled) {
+            $command['disabled'] = isset($disabled[$command['id']]);
+
+            return $command;
+        }, $commands);
 
         if (empty($this->query)) {
             return $commands;
@@ -241,6 +298,12 @@ class CommandPalette extends Component
         $command = collect(self::getCommands())->firstWhere('id', $commandId);
 
         if (! $command) {
+            return;
+        }
+
+        // Check if command is disabled
+        $disabled = $this->getDisabledCommands();
+        if (isset($disabled[$commandId])) {
             return;
         }
 

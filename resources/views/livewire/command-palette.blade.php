@@ -114,21 +114,29 @@
                         @foreach($this->filteredCommands as $index => $command)
                             <div
                                 data-command-item
-                                wire:click="executeCommand('{{ $command['id'] }}')"
-                                class="flex items-center justify-between gap-3 px-4 py-2 cursor-pointer hover:bg-[#eff1f5] transition-colors duration-75"
-                                :class="{ 'bg-[#eff1f5]': activeIndex === {{ $index }} }"
+                                @if(!($command['disabled'] ?? false))
+                                    wire:click="executeCommand('{{ $command['id'] }}')"
+                                @endif
+                                class="flex items-center justify-between gap-3 px-4 py-2 transition-colors duration-75
+                                    {{ ($command['disabled'] ?? false) ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer hover:bg-[#eff1f5]' }}"
+                                x-bind:style="activeIndex === {{ $index }} && !{{ ($command['disabled'] ?? false) ? 'true' : 'false' }} ? 'background-color: rgba(8, 76, 207, 0.08)' : ''"
                             >
                                 <div class="flex items-center gap-3">
                                     <x-dynamic-component :component="$command['icon']" class="w-4 h-4 text-[#9ca0b0] shrink-0" />
                                     <span class="text-[13px] text-[#4c4f69]">{{ $command['label'] }}</span>
                                 </div>
                                 @if($command['shortcut'])
-                                    <kbd class="text-[10px] text-[#6c6f85] bg-[#eff1f5] border border-[#ccd0da] rounded px-1.5 py-0.5 font-mono">
+                                    <kbd class="text-[10px] text-[#6c6f85] bg-[#eff1f5] border border-[#ccd0da] rounded px-1.5 py-0.5 font-mono shrink-0">
                                         {{ $command['shortcut'] }}
                                     </kbd>
                                 @endif
                             </div>
                         @endforeach
+                    </div>
+
+                    {{-- Footer hints --}}
+                    <div class="px-4 py-2 border-t border-[#dce0e8] text-[10px] text-[#8c8fa1]">
+                        ↑↓ navigate · ↵ select · esc close
                     </div>
                 @else
                     <div class="py-8 text-center text-sm text-[#8c8fa1]">

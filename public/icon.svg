@@ -1,0 +1,48 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Background gradient: deep navy to bright blue (top-to-bottom) -->
+    <linearGradient id="bg-gradient" x1="0" y1="0" x2="0" y2="1024" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#052B80"/>
+      <stop offset="100%" stop-color="#1A6AE8"/>
+    </linearGradient>
+
+    <!-- Subtle upper highlight for depth -->
+    <radialGradient id="highlight" cx="0.45" cy="0.3" r="0.55">
+      <stop offset="0%" stop-color="rgba(255,255,255,0.10)"/>
+      <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+    </radialGradient>
+
+    <!-- Bottom edge shadow for depth -->
+    <linearGradient id="bottom-shadow" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="80%" stop-color="rgba(0,0,0,0)"/>
+      <stop offset="100%" stop-color="rgba(0,0,0,0.10)"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background rounded square -->
+  <rect x="0" y="0" width="1024" height="1024" rx="224" fill="url(#bg-gradient)"/>
+
+  <!-- Highlight overlay -->
+  <rect x="0" y="0" width="1024" height="1024" rx="224" fill="url(#highlight)"/>
+
+  <!-- Bottom shadow overlay -->
+  <rect x="0" y="0" width="1024" height="1024" rx="224" fill="url(#bottom-shadow)"/>
+
+  <!-- Git branch graphic (white) -->
+  <!-- Main trunk: x=365, Branch: x=659, Center: 512 -->
+  <g fill="none" stroke="white" stroke-width="36" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Main trunk line -->
+    <line x1="365" y1="240" x2="365" y2="784"/>
+
+    <!-- Branch out: quarter-circle arc from trunk (342) to feature commit (512) -->
+    <path d="M 365 342 C 512 342, 659 427, 659 512"/>
+
+    <!-- Branch back: quarter-circle arc from feature commit (512) to merge (682) -->
+    <path d="M 659 512 C 659 597, 512 682, 365 682"/>
+  </g>
+
+  <!-- Commit nodes -->
+  <circle cx="365" cy="240" r="46" fill="white"/>
+  <circle cx="659" cy="512" r="46" fill="white"/>
+  <circle cx="365" cy="784" r="46" fill="white"/>
+</svg>
