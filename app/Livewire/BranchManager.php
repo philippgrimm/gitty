@@ -24,12 +24,6 @@ class BranchManager extends Component
 
     public array $aheadBehind;
 
-    public bool $showCreateModal = false;
-
-    public string $newBranchName = '';
-
-    public string $baseBranch = '';
-
     public bool $isDetachedHead = false;
 
     public string $error = '';
@@ -66,10 +60,6 @@ class BranchManager extends Component
                 ])
                 ->toArray();
 
-            if (empty($this->baseBranch)) {
-                $this->baseBranch = $this->currentBranch;
-            }
-
             $this->error = '';
         } catch (\Exception $e) {
             $this->error = GitErrorHandler::translate($e->getMessage());
@@ -98,37 +88,19 @@ class BranchManager extends Component
         }
     }
 
-    public function createBranch(): void
+    #[On('palette-create-branch')]
+    public function handlePaletteCreateBranch(string $name): void
     {
-        $this->error = '';
-
         try {
             $branchService = new BranchService($this->repoPath);
-            $branchService->createBranch($this->newBranchName, $this->baseBranch);
+            $branchService->createBranch($name, $this->currentBranch);
 
-            $this->showCreateModal = false;
-            $this->newBranchName = '';
             $this->refreshBranches();
             $this->dispatch('status-updated');
         } catch (\Exception $e) {
             $this->error = GitErrorHandler::translate($e->getMessage());
             $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
         }
-    }
-
-    public function openCreateModal(): void
-    {
-        $this->newBranchName = 'feature/';
-        $this->baseBranch = $this->currentBranch;
-        $this->showCreateModal = true;
-    }
-
-    #[On('palette-create-branch')]
-    public function handlePaletteCreateBranch(string $name): void
-    {
-        $this->newBranchName = $name;
-        $this->baseBranch = $this->currentBranch;
-        $this->createBranch();
     }
 
     public function deleteBranch(string $name): void

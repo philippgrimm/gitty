@@ -55,7 +55,7 @@ test('component switches to another branch', function () {
     Process::assertRan('git checkout main');
 });
 
-test('component creates new branch', function () {
+test('component creates new branch via palette event', function () {
     Process::fake([
         'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
@@ -63,11 +63,7 @@ test('component creates new branch', function () {
     ]);
 
     Livewire::test(BranchManager::class, ['repoPath' => $this->testRepoPath])
-        ->set('newBranchName', 'feature/new-feature')
-        ->set('baseBranch', 'main')
-        ->call('createBranch')
-        ->assertSet('showCreateModal', false)
-        ->assertSet('newBranchName', '')
+        ->call('handlePaletteCreateBranch', 'feature/new-feature')
         ->assertDispatched('status-updated');
 
     Process::assertRan('git checkout -b feature/new-feature main');
@@ -315,17 +311,4 @@ test('cancelAutoStash resets state without action', function () {
         ->call('cancelAutoStash')
         ->assertSet('showAutoStashModal', false)
         ->assertSet('autoStashTargetBranch', '');
-});
-
-test('openCreateModal prefills feature/ in branch name', function () {
-    Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
-        'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
-    ]);
-
-    Livewire::test(BranchManager::class, ['repoPath' => $this->testRepoPath])
-        ->call('openCreateModal')
-        ->assertSet('newBranchName', 'feature/')
-        ->assertSet('showCreateModal', true)
-        ->assertSet('baseBranch', 'main');
 });

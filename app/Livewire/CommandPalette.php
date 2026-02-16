@@ -302,7 +302,7 @@ class CommandPalette extends Component
         if ($command['requiresInput']) {
             $this->mode = 'input';
             $this->inputCommand = $commandId;
-            $this->inputValue = '';
+            $this->inputValue = $commandId === 'create-branch' ? 'feature/' : '';
             $this->inputError = null;
 
             return;
@@ -335,6 +335,16 @@ class CommandPalette extends Component
             $this->dispatch('palette-create-branch', name: $name);
             $this->close();
         }
+    }
+
+    #[On('open-command-palette-create-branch')]
+    public function openCreateBranch(): void
+    {
+        $this->isOpen = true;
+        $this->mode = 'input';
+        $this->inputCommand = 'create-branch';
+        $this->inputValue = 'feature/';
+        $this->inputError = null;
     }
 
     public function cancelInput(): void

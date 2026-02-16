@@ -6,7 +6,7 @@
         <div class="flex items-center gap-2 px-3 py-1.5 bg-[#fe640b]/10 border border-[#fe640b]/30 rounded text-[#fe640b]">
             <span class="text-xs uppercase tracking-wider font-semibold">HEAD detached at {{ substr($currentBranch, 0, 7) }}</span>
             <flux:button 
-                @click="$wire.openCreateModal()"
+                @click="$dispatch('open-command-palette-create-branch')"
                 variant="ghost" 
                 size="xs"
                 class="text-xs uppercase tracking-wider"
@@ -188,7 +188,7 @@
                     {{-- New Branch button --}}
                     <div class="border-t border-[var(--border-subtle)] p-2 sticky bottom-0 bg-white">
                         <button
-                            @click="$wire.openCreateModal()"
+                            @click="$el.closest('[popover]')?.hidePopover(); $dispatch('open-command-palette-create-branch')"
                             type="button"
                             class="w-full flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs uppercase tracking-wider text-[var(--text-secondary)] hover:bg-[#eff1f5] transition-colors rounded"
                         >
@@ -200,45 +200,6 @@
             </flux:menu>
         </flux:dropdown>
     @endif
-
-    <flux:modal wire:model="showCreateModal" class="space-y-6">
-        <div>
-            <flux:heading size="lg" class="font-mono uppercase tracking-wider">Create New Branch</flux:heading>
-            <flux:subheading class="font-mono">
-                Create a new branch from an existing branch
-            </flux:subheading>
-        </div>
-
-        <flux:input 
-            wire:model="newBranchName"
-            label="Branch name"
-            placeholder="feature/my-feature"
-            class="font-mono"
-        />
-
-        <div>
-            <flux:field>
-                <flux:label class="font-mono">Base branch</flux:label>
-                <flux:select wire:model="baseBranch">
-                    @foreach($this->filteredLocalBranches as $branch)
-                        <flux:select.option value="{{ $branch['name'] }}">{{ $branch['name'] }}</flux:select.option>
-                    @endforeach
-                </flux:select>
-            </flux:field>
-        </div>
-
-        <div class="flex gap-2 justify-end">
-            <flux:button variant="ghost" wire:click="$set('showCreateModal', false)">Cancel</flux:button>
-            <flux:button 
-                variant="primary" 
-                wire:click="createBranch"
-                :disabled="empty(trim($newBranchName))"
-                class="uppercase tracking-wider"
-            >
-                Create Branch
-            </flux:button>
-        </div>
-    </flux:modal>
 
     <flux:modal wire:model="showAutoStashModal" class="space-y-6">
         <div>

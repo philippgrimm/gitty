@@ -81,7 +81,7 @@
                         placeholder="Branch name (e.g., feature/my-feature)"
                         class="w-full bg-transparent border border-[#ccd0da] rounded-lg outline-none text-sm text-[#4c4f69] placeholder-[#8c8fa1] font-mono px-3 py-2 focus:ring-1 focus:ring-[#084CCF] focus:border-[#084CCF]"
                         x-ref="inputField"
-                        x-effect="if($wire.mode === 'input') $nextTick(() => $refs.inputField?.focus())"
+                        x-effect="if($wire.mode === 'input') $nextTick(() => { $refs.inputField?.focus(); const len = $refs.inputField?.value?.length || 0; $refs.inputField?.setSelectionRange(len, len); })"
                     />
                     @if($inputError)
                         <p class="text-[#d20f39] text-xs mt-1">{{ $inputError }}</p>

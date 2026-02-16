@@ -158,3 +158,20 @@ test('disabled commands cannot be executed', function () {
         ->call('executeCommand', 'stage-all')
         ->assertNotDispatched('keyboard-stage-all');
 });
+
+test('create-branch input mode prefills feature/ in input value', function () {
+    Livewire::test(CommandPalette::class)
+        ->dispatch('open-command-palette')
+        ->set('repoPath', '/tmp/test-repo')
+        ->call('executeCommand', 'create-branch')
+        ->assertSet('inputValue', 'feature/');
+});
+
+test('open-command-palette-create-branch event opens palette in create-branch input mode', function () {
+    Livewire::test(CommandPalette::class)
+        ->dispatch('open-command-palette-create-branch')
+        ->assertSet('isOpen', true)
+        ->assertSet('mode', 'input')
+        ->assertSet('inputCommand', 'create-branch')
+        ->assertSet('inputValue', 'feature/');
+});
