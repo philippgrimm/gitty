@@ -619,7 +619,7 @@ Parallel Speedup: ~40% faster than sequential
 
 ---
 
-- [ ] 4. Right-Click Context Menu
+- [x] 4. Right-Click Context Menu
 
   **What to do**:
 
@@ -821,7 +821,7 @@ Parallel Speedup: ~40% faster than sequential
 
 ---
 
-- [ ] 5. Stash Toolbar Button in Staging Panel
+- [x] 5. Stash Toolbar Button in Staging Panel
 
   **What to do**:
 

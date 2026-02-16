@@ -1,9 +1,9 @@
 {
-  "active_plan": "/Users/philipp.grimm/workspace/gitty/.sisyphus/plans/stash-multiselect.md",
-  "started_at": "2026-02-16T07:48:16.678Z",
+  "active_plan": "/Users/philipp.grimm/workspace/gitty/.sisyphus/plans/branch-merge-context-menu.md",
+  "started_at": "2026-02-16T10:27:52.004Z",
   "session_ids": [
-    "ses_39aaca8fbffeglzPHgPP5U9yEl"
+    "ses_39a14c20dffetYOcQJw0sU6gj0"
   ],
-  "plan_name": "stash-multiselect",
+  "plan_name": "branch-merge-context-menu",
   "agent": "atlas"
 }
