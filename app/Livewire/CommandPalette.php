@@ -77,7 +77,7 @@ class CommandPalette extends Component
                 'event' => 'keyboard-stash',
                 'keywords' => ['stash', 'save', 'shelve'],
                 'requiresInput' => false,
-                'icon' => 'phosphor-archive-box',
+                'icon' => 'phosphor-archive',
             ],
             [
                 'id' => 'toggle-view',
