@@ -5,8 +5,12 @@ declare(strict_types=1);
 namespace App\Livewire;
 
 use App\Services\Git\BranchService;
+use App\Services\Git\GitCacheService;
 use App\Services\Git\GitErrorHandler;
 use App\Services\Git\GitService;
+use App\Services\Git\StashService;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Process;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
@@ -31,6 +35,10 @@ class BranchManager extends Component
     public string $error = '';
 
     public string $branchQuery = '';
+
+    public bool $showAutoStashModal = false;
+
+    public string $autoStashTargetBranch = '';
 
     public function mount(): void
     {
@@ -80,8 +88,13 @@ class BranchManager extends Component
             $this->refreshBranches();
             $this->dispatch('status-updated');
         } catch (\Exception $e) {
-            $this->error = GitErrorHandler::translate($e->getMessage());
-            $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
+            if (GitErrorHandler::isDirtyTreeError($e->getMessage())) {
+                $this->autoStashTargetBranch = $name;
+                $this->showAutoStashModal = true;
+            } else {
+                $this->error = GitErrorHandler::translate($e->getMessage());
+                $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
+            }
         }
     }
 
@@ -156,6 +169,52 @@ class BranchManager extends Component
             $this->error = GitErrorHandler::translate($e->getMessage());
             $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
         }
+    }
+
+    public function confirmAutoStash(): void
+    {
+        $this->showAutoStashModal = false;
+
+        try {
+            // Create stash with untracked files
+            $stashService = new StashService($this->repoPath);
+            $stashService->stash("Auto-stash: switching to {$this->autoStashTargetBranch}", true);
+
+            // Switch branch
+            $branchService = new BranchService($this->repoPath);
+            $branchService->switchBranch($this->autoStashTargetBranch);
+
+            // Try to restore stashed changes
+            $applyResult = Process::path($this->repoPath)->run('git stash apply stash@{0}');
+
+            if ($applyResult->exitCode() === 0) {
+                // Success - drop the stash
+                $stashService->stashDrop(0);
+                $this->dispatch('show-error', message: "Switched to {$this->autoStashTargetBranch} (changes restored)", type: 'success', persistent: false);
+            } else {
+                // Conflict - preserve stash
+                $this->dispatch('show-error', message: "Switched to {$this->autoStashTargetBranch}. Some stashed changes conflicted — stash preserved in stash list.", type: 'warning', persistent: true);
+            }
+
+            // Invalidate cache
+            $cache = new GitCacheService;
+            $cache->invalidateGroup($this->repoPath, 'branches');
+            $cache->invalidateGroup($this->repoPath, 'status');
+            $cache->invalidateGroup($this->repoPath, 'stashes');
+
+            $this->refreshBranches();
+            $this->dispatch('status-updated');
+        } catch (\Exception $e) {
+            $this->dispatch('show-error', message: GitErrorHandler::translate($e->getMessage()), type: 'error', persistent: false);
+        } finally {
+            $this->autoStashTargetBranch = '';
+        }
+    }
+
+    public function cancelAutoStash(): void
+    {
+        $this->showAutoStashModal = false;
+        $this->autoStashTargetBranch = '';
     }
 
     /**

@@ -23,6 +23,16 @@
             >
                 <x-phosphor-git-branch-light class="w-3.5 h-3.5 text-[#6c6f85] shrink-0" />
                 <span class="font-semibold text-[#4c4f69]">{{ $currentBranch }}</span>
+                @if($aheadBehind['ahead'] > 0 || $aheadBehind['behind'] > 0)
+                    <div class="flex items-center gap-1">
+                        @if($aheadBehind['ahead'] > 0)
+                            <span class="font-mono text-xs text-[#40a02b]">↑{{ $aheadBehind['ahead'] }}</span>
+                        @endif
+                        @if($aheadBehind['behind'] > 0)
+                            <span class="font-mono text-xs text-[#d20f39]">↓{{ $aheadBehind['behind'] }}</span>
+                        @endif
+                    </div>
+                @endif
                 <svg class="w-3 h-3 text-[#6c6f85]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
             </flux:button>
 
@@ -226,6 +236,26 @@
                 class="uppercase tracking-wider"
             >
                 Create Branch
+            </flux:button>
+        </div>
+    </flux:modal>
+
+    <flux:modal wire:model="showAutoStashModal" class="space-y-6">
+        <div>
+            <flux:heading size="lg" class="font-mono uppercase tracking-wider">Stash & Switch?</flux:heading>
+            <flux:subheading class="font-mono">
+                You have uncommitted changes that conflict with <span class="text-[var(--text-primary)] font-bold">{{ $autoStashTargetBranch }}</span>. Stash them and switch?
+            </flux:subheading>
+        </div>
+
+        <div class="flex gap-2 justify-end">
+            <flux:button variant="ghost" wire:click="cancelAutoStash">Cancel</flux:button>
+            <flux:button 
+                variant="primary" 
+                wire:click="confirmAutoStash"
+                class="uppercase tracking-wider"
+            >
+                Stash & Switch
             </flux:button>
         </div>
     </flux:modal>
