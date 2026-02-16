@@ -8,7 +8,9 @@ use App\Helpers\FileTreeBuilder;
 use App\Services\Git\GitErrorHandler;
 use App\Services\Git\GitService;
 use App\Services\Git\StagingService;
+use App\Services\Git\StashService;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Process;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -188,6 +190,116 @@ class StagingPanel extends Component
     public function selectFile(string $file, bool $staged): void
     {
         $this->dispatch('file-selected', file: $file, staged: $staged);
+    }
+
+    public function stageSelected(array $files): void
+    {
+        if (empty($files)) {
+            return;
+        }
+
+        try {
+            $stagingService = new StagingService($this->repoPath);
+            $stagingService->stageFiles($files);
+            $this->refreshStatus();
+            $this->dispatch('status-updated',
+                stagedCount: $this->stagedFiles->count(),
+                aheadBehind: $this->lastAheadBehind ?? ['ahead' => 0, 'behind' => 0],
+            );
+            $this->error = '';
+        } catch (\Exception $e) {
+            $this->error = GitErrorHandler::translate($e->getMessage());
+            $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
+        }
+    }
+
+    public function unstageSelected(array $files): void
+    {
+        if (empty($files)) {
+            return;
+        }
+
+        try {
+            $stagingService = new StagingService($this->repoPath);
+            $stagingService->unstageFiles($files);
+            $this->refreshStatus();
+            $this->dispatch('status-updated',
+                stagedCount: $this->stagedFiles->count(),
+                aheadBehind: $this->lastAheadBehind ?? ['ahead' => 0, 'behind' => 0],
+            );
+            $this->error = '';
+        } catch (\Exception $e) {
+            $this->error = GitErrorHandler::translate($e->getMessage());
+            $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
+        }
+    }
+
+    public function discardSelected(array $files): void
+    {
+        if (empty($files)) {
+            return;
+        }
+
+        try {
+            $stagingService = new StagingService($this->repoPath);
+            $stagingService->discardFiles($files);
+            $this->refreshStatus();
+            $this->dispatch('status-updated',
+                stagedCount: $this->stagedFiles->count(),
+                aheadBehind: $this->lastAheadBehind ?? ['ahead' => 0, 'behind' => 0],
+            );
+            $this->error = '';
+        } catch (\Exception $e) {
+            $this->error = GitErrorHandler::translate($e->getMessage());
+            $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
+        }
+    }
+
+    public function stashSelected(array $files): void
+    {
+        if (empty($files)) {
+            return;
+        }
+
+        try {
+            $stashService = new StashService($this->repoPath);
+            $stashService->stashFiles($files);
+            $this->refreshStatus();
+            $this->dispatch('stash-created');
+            $this->dispatch('status-updated',
+                stagedCount: $this->stagedFiles->count(),
+                aheadBehind: $this->lastAheadBehind ?? ['ahead' => 0, 'behind' => 0],
+            );
+            $this->error = '';
+        } catch (\Exception $e) {
+            $this->error = GitErrorHandler::translate($e->getMessage());
+            $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
+        }
+    }
+
+    public function stashAll(): void
+    {
+        try {
+            $stashService = new StashService($this->repoPath);
+            $stashService->stash('WIP on '.$this->getCurrentBranch(), true);
+            $this->refreshStatus();
+            $this->dispatch('stash-created');
+            $this->dispatch('status-updated',
+                stagedCount: $this->stagedFiles->count(),
+                aheadBehind: $this->lastAheadBehind ?? ['ahead' => 0, 'behind' => 0],
+            );
+            $this->error = '';
+        } catch (\Exception $e) {
+            $this->error = GitErrorHandler::translate($e->getMessage());
+            $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
+        }
+    }
+
+    private function getCurrentBranch(): string
+    {
+        $result = Process::path($this->repoPath)->run('git rev-parse --abbrev-ref HEAD');
+
+        return trim($result->output());
     }
 
     public function toggleView(): void

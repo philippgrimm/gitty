@@ -4,6 +4,8 @@
     @keydown.window.meta.shift.enter.prevent="if (!$wire.repoPath) return; $wire.$dispatch('keyboard-commit-push')"
     @keydown.window.meta.shift.k.prevent="if (!$wire.repoPath) return; $wire.$dispatch('keyboard-stage-all')"
     @keydown.window.meta.shift.u.prevent="if (!$wire.repoPath) return; $wire.$dispatch('keyboard-unstage-all')"
+    @keydown.window.meta.shift.s.prevent="if (!$wire.repoPath) return; $wire.$dispatch('keyboard-stash')"
+    @keydown.window.meta.a.prevent="if (!$wire.repoPath) return; $wire.$dispatch('keyboard-select-all')"
     @keydown.window.meta.b.prevent="if (!$wire.repoPath) return; $wire.toggleSidebar()"
     @keydown.window.escape.prevent="$wire.$dispatch('keyboard-escape')"
 >
@@ -114,7 +116,7 @@
                     <div class="flex-1 overflow-hidden">
                         @livewire('staging-panel', ['repoPath' => $repoPath], key('staging-panel-' . $repoPath))
                     </div>
-                    <div class="h-64 border-t border-[#dce0e8] overflow-hidden">
+                    <div class="border-t border-[#dce0e8]">
                         @livewire('commit-panel', ['repoPath' => $repoPath], key('commit-panel-' . $repoPath))
                     </div>
                 </div>

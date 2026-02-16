@@ -162,3 +162,101 @@ test('staging panel renders smaller 8px status dots', function () {
         ->assertSeeHtml('w-2 h-2 rounded-full')
         ->assertDontSeeHtml('w-2.5 h-2.5');
 });
+
+test('component stages selected files', function () {
+    Process::fake([
+        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithUnstagedChanges()),
+        'git add *' => Process::result(''),
+    ]);
+
+    Livewire::test(StagingPanel::class, ['repoPath' => $this->testRepoPath])
+        ->call('stageSelected', ['README.md', 'src/index.php'])
+        ->assertDispatched('status-updated');
+
+    Process::assertRan(fn ($process) => str_contains($process->command, 'git add') && str_contains($process->command, 'README.md'));
+});
+
+test('component unstages selected files', function () {
+    Process::fake([
+        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
+        'git reset HEAD -- *' => Process::result(''),
+    ]);
+
+    Livewire::test(StagingPanel::class, ['repoPath' => $this->testRepoPath])
+        ->call('unstageSelected', ['README.md', 'new-file.txt'])
+        ->assertDispatched('status-updated');
+
+    Process::assertRan(fn ($process) => str_contains($process->command, 'git reset HEAD --') && str_contains($process->command, 'README.md'));
+});
+
+test('component discards selected files', function () {
+    Process::fake([
+        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithUnstagedChanges()),
+        'git checkout -- *' => Process::result(''),
+    ]);
+
+    Livewire::test(StagingPanel::class, ['repoPath' => $this->testRepoPath])
+        ->call('discardSelected', ['README.md', 'src/index.php'])
+        ->assertDispatched('status-updated');
+
+    Process::assertRan(fn ($process) => str_contains($process->command, 'git checkout --') && str_contains($process->command, 'README.md'));
+});
+
+test('component stashes selected files', function () {
+    Process::fake([
+        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithUnstagedChanges()),
+        'git stash push *' => Process::result(''),
+        'git rev-parse --abbrev-ref HEAD' => Process::result("main\n"),
+    ]);
+
+    Livewire::test(StagingPanel::class, ['repoPath' => $this->testRepoPath])
+        ->call('stashSelected', ['README.md'])
+        ->assertDispatched('stash-created')
+        ->assertDispatched('status-updated');
+
+    Process::assertRan(fn ($process) => str_contains($process->command, 'git stash push') && str_contains($process->command, '-u'));
+});
+
+test('component stashes all files', function () {
+    Process::fake([
+        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithUnstagedChanges()),
+        'git stash push *' => Process::result(''),
+        'git rev-parse --abbrev-ref HEAD' => Process::result("main\n"),
+    ]);
+
+    Livewire::test(StagingPanel::class, ['repoPath' => $this->testRepoPath])
+        ->call('stashAll')
+        ->assertDispatched('stash-created')
+        ->assertDispatched('status-updated');
+
+    Process::assertRan(fn ($process) => str_contains($process->command, 'git stash push') && str_contains($process->command, 'WIP on main'));
+});
+
+test('bulk methods handle empty array gracefully', function () {
+    Process::fake([
+        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithUnstagedChanges()),
+    ]);
+
+    Livewire::test(StagingPanel::class, ['repoPath' => $this->testRepoPath])
+        ->call('stageSelected', [])
+        ->assertOk();
+
+    Livewire::test(StagingPanel::class, ['repoPath' => $this->testRepoPath])
+        ->call('unstageSelected', [])
+        ->assertOk();
+
+    Livewire::test(StagingPanel::class, ['repoPath' => $this->testRepoPath])
+        ->call('discardSelected', [])
+        ->assertOk();
+
+    Livewire::test(StagingPanel::class, ['repoPath' => $this->testRepoPath])
+        ->call('stashSelected', [])
+        ->assertOk();
+
+    // Only git status should run (from mount), no git add/reset/checkout/stash commands
+    Process::assertRan('git status --porcelain=v2 --branch');
+    Process::assertDidntRun(fn ($process) => str_contains($process->command, 'git add'));
+    Process::assertDidntRun(fn ($process) => str_contains($process->command, 'git reset'));
+    Process::assertDidntRun(fn ($process) => str_contains($process->command, 'git checkout'));
+    Process::assertDidntRun(fn ($process) => str_contains($process->command, 'git stash'));
+});

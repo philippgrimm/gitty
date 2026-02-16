@@ -32,8 +32,11 @@
         @else
             <div 
                 wire:key="file-{{ $node['path'] }}-{{ $staged ? 'staged' : 'unstaged' }}"
-                wire:click="selectFile('{{ $node['path'] }}', {{ $staged ? 'true' : 'false' }})"
-                class="group px-4 py-1.5 hover:bg-[#eff1f5] cursor-pointer transition-colors duration-150 flex items-center gap-3 relative"
+                data-file-path="{{ $node['path'] }}"
+                @click="handleFileClick('{{ $node['path'] }}', {{ $staged ? 'true' : 'false' }}, $event)"
+                @contextmenu="showContextMenu('{{ $node['path'] }}', {{ $staged ? 'true' : 'false' }}, $event)"
+                class="group px-4 py-1.5 cursor-pointer flex items-center gap-3 relative"
+                :class="{ 'bg-[rgba(8,76,207,0.15)]': isSelected('{{ $node['path'] }}'), 'bg-white hover:bg-[#eff1f5] transition-colors duration-150': !isSelected('{{ $node['path'] }}') }"
                 style="padding-left: {{ ($level * 16) + 16 }}px"
             >
                 <div class="flex items-center gap-2.5 flex-1 min-w-0">
@@ -50,47 +53,59 @@
                         };
                     @endphp
                     <div class="w-2 h-2 rounded-full shrink-0 {{ match($statusConfig['color']) { 'yellow' => 'bg-[#df8e1d]', 'green' => 'bg-[#40a02b]', 'red' => 'bg-[#d20f39]', 'blue' => 'bg-[#084CCF]', 'orange' => 'bg-[#fe640b]', default => 'bg-[#9ca0b0]' } }}"></div>
-                    <flux:tooltip :content="$node['path']" class="min-w-0">
-                        <div class="text-sm truncate text-[#5c5f77] group-hover:text-[#4c4f69] transition-colors">
+                    <flux:tooltip :content="$node['path']" class="min-w-0 flex-1">
+                        <div class="text-sm truncate text-[#5c5f77] group-hover:text-[#4c4f69] transition-colors duration-150">
                             {{ $node['name'] }}
                         </div>
                     </flux:tooltip>
                 </div>
                 
                 @if($staged)
-                    <div class="absolute right-0 inset-y-0 hidden group-hover:flex items-center pr-4 pl-2 bg-[#eff1f5]">
-                        <flux:button 
-                            wire:click.stop="unstageFile('{{ $node['path'] }}')"
-                            wire:loading.attr="disabled"
-                            wire:target="unstageFile"
-                            variant="ghost" 
-                            size="xs"
-                            square
-                        >
-                            <x-phosphor-minus class="w-3.5 h-3.5" />
-                        </flux:button>
+                    <div 
+                        class="absolute right-0 inset-y-0 flex items-center pr-4 pl-2 opacity-0 group-hover:opacity-100 transition-opacity duration-150"
+                        :class="{ 'bg-[rgba(8,76,207,0.15)]': isSelected('{{ $node['path'] }}'), 'bg-[#eff1f5]': !isSelected('{{ $node['path'] }}') }"
+                    >
+                        <flux:tooltip content="Unstage">
+                            <flux:button 
+                                wire:click.stop="unstageFile('{{ $node['path'] }}')"
+                                wire:loading.attr="disabled"
+                                wire:target="unstageFile"
+                                variant="ghost" 
+                                size="xs"
+                                square
+                            >
+                                <x-phosphor-minus class="w-3.5 h-3.5" />
+                            </flux:button>
+                        </flux:tooltip>
                     </div>
                 @else
-                    <div class="absolute right-0 inset-y-0 hidden group-hover:flex items-center gap-1 pr-4 pl-2 bg-[#eff1f5]">
-                        <flux:button 
-                            wire:click.stop="stageFile('{{ $node['path'] }}')"
-                            wire:loading.attr="disabled"
-                            wire:target="stageFile"
-                            variant="ghost" 
-                            size="xs"
-                            square
-                        >
-                            <x-phosphor-plus class="w-3.5 h-3.5" />
-                        </flux:button>
-                        <flux:button 
-                            @click.stop="showDiscardModal = true; discardAll = false; discardTarget = '{{ $node['path'] }}'"
-                            variant="ghost" 
-                            size="xs"
-                            square
-                            class="text-[#d20f39] hover:text-[#d20f39]"
-                        >
-                            <x-phosphor-arrow-counter-clockwise class="w-3.5 h-3.5" />
-                        </flux:button>
+                    <div 
+                        class="absolute right-0 inset-y-0 flex items-center gap-1 pr-4 pl-2 opacity-0 group-hover:opacity-100 transition-opacity duration-150"
+                        :class="{ 'bg-[rgba(8,76,207,0.15)]': isSelected('{{ $node['path'] }}'), 'bg-[#eff1f5]': !isSelected('{{ $node['path'] }}') }"
+                    >
+                        <flux:tooltip content="Stage">
+                            <flux:button 
+                                wire:click.stop="stageFile('{{ $node['path'] }}')"
+                                wire:loading.attr="disabled"
+                                wire:target="stageFile"
+                                variant="ghost" 
+                                size="xs"
+                                square
+                            >
+                                <x-phosphor-plus class="w-3.5 h-3.5" />
+                            </flux:button>
+                        </flux:tooltip>
+                        <flux:tooltip content="Discard">
+                            <flux:button 
+                                @click.stop="showDiscardModal = true; discardAll = false; discardTarget = '{{ $node['path'] }}'"
+                                variant="ghost" 
+                                size="xs"
+                                square
+                                class="text-[#d20f39] hover:text-[#d20f39]"
+                            >
+                                <x-phosphor-arrow-counter-clockwise class="w-3.5 h-3.5" />
+                            </flux:button>
+                        </flux:tooltip>
                     </div>
                 @endif
             </div>

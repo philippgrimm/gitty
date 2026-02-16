@@ -6,10 +6,12 @@ namespace App\Livewire;
 
 use App\Services\Git\BranchService;
 use App\Services\Git\GitCacheService;
+use App\Services\Git\GitErrorHandler;
 use App\Services\Git\GitService;
 use App\Services\Git\RemoteService;
 use App\Services\Git\StashService;
 use Illuminate\Support\Facades\Process;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class RepoSidebar extends Component
@@ -98,6 +100,50 @@ class RepoSidebar extends Component
 
         $this->refreshSidebar();
         $this->dispatch('status-updated');
+    }
+
+    public function applyStash(int $index): void
+    {
+        try {
+            $stashService = new StashService($this->repoPath);
+            $stashService->stashApply($index);
+            $this->refreshSidebar();
+            $this->dispatch('status-updated');
+            $this->dispatch('refresh-staging');
+        } catch (\Exception $e) {
+            $this->dispatch('show-error', message: GitErrorHandler::translate($e->getMessage()), type: 'error', persistent: false);
+        }
+    }
+
+    public function popStash(int $index): void
+    {
+        try {
+            $stashService = new StashService($this->repoPath);
+            $stashService->stashPop($index);
+            $this->refreshSidebar();
+            $this->dispatch('status-updated');
+            $this->dispatch('refresh-staging');
+        } catch (\Exception $e) {
+            $this->dispatch('show-error', message: GitErrorHandler::translate($e->getMessage()), type: 'error', persistent: false);
+        }
+    }
+
+    public function dropStash(int $index): void
+    {
+        try {
+            $stashService = new StashService($this->repoPath);
+            $stashService->stashDrop($index);
+            $this->refreshSidebar();
+            $this->dispatch('status-updated');
+        } catch (\Exception $e) {
+            $this->dispatch('show-error', message: GitErrorHandler::translate($e->getMessage()), type: 'error', persistent: false);
+        }
+    }
+
+    #[On('stash-created')]
+    public function handleStashCreated(): void
+    {
+        $this->refreshSidebar();
     }
 
     private function fetchTags(): array
