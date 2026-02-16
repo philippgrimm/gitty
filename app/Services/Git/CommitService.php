@@ -22,40 +22,31 @@ class CommitService
 
     public function commit(string $message): void
     {
-        $result = Process::path($this->repoPath)->run("git commit -m \"{$message}\"");
-
-        if ($result->exitCode() !== 0) {
-            throw new \RuntimeException('Git commit failed: '.$result->errorOutput());
-        }
-
-        $this->cache->invalidateGroup($this->repoPath, 'status');
-        $this->cache->invalidateGroup($this->repoPath, 'history');
+        $this->runCommit("git commit -m \"{$message}\"", 'Git commit failed');
     }
 
     public function commitAmend(string $message): void
     {
-        $result = Process::path($this->repoPath)->run("git commit --amend -m \"{$message}\"");
-
-        if ($result->exitCode() !== 0) {
-            throw new \RuntimeException('Git commit amend failed: '.$result->errorOutput());
-        }
-
-        $this->cache->invalidateGroup($this->repoPath, 'status');
-        $this->cache->invalidateGroup($this->repoPath, 'history');
+        $this->runCommit("git commit --amend -m \"{$message}\"", 'Git commit amend failed');
     }
 
     public function commitAndPush(string $message): void
     {
-        $result = Process::path($this->repoPath)->run("git commit -m \"{$message}\"");
-
-        if ($result->exitCode() !== 0) {
-            throw new \RuntimeException('Git commit failed: '.$result->errorOutput());
-        }
+        $this->runCommit("git commit -m \"{$message}\"", 'Git commit failed');
 
         $pushResult = Process::path($this->repoPath)->run('git push');
 
         if ($pushResult->exitCode() !== 0) {
             throw new \RuntimeException('Git push failed: '.$pushResult->errorOutput());
+        }
+    }
+
+    private function runCommit(string $command, string $errorPrefix): void
+    {
+        $result = Process::path($this->repoPath)->run($command);
+
+        if ($result->exitCode() !== 0) {
+            throw new \RuntimeException($errorPrefix.': '.$result->errorOutput());
         }
 
         $this->cache->invalidateGroup($this->repoPath, 'status');

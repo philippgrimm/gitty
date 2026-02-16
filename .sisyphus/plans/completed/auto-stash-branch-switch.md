@@ -150,7 +150,7 @@ Wave 4 (After Wave 3):
 
 ## TODOs
 
-- [ ] 1. Add dirty-tree error detection helper to GitErrorHandler
+- [x] 1. Add dirty-tree error detection helper to GitErrorHandler
 
   **What to do**:
   - Add a static method `GitErrorHandler::isDirtyTreeError(string $errorMessage): bool` that returns `true` when the error matches the uncommitted-changes patterns already identified in `translate()` (lines 54-56).
@@ -216,7 +216,7 @@ Wave 4 (After Wave 3):
 
 ---
 
-- [ ] 2. Add auto-stash flow and confirmation modal to BranchManager
+- [x] 2. Add auto-stash flow and confirmation modal to BranchManager
 
   **What to do**:
 
@@ -325,7 +325,7 @@ Wave 4 (After Wave 3):
 
 ---
 
-- [ ] 3. Fix RepoSidebar error handling and add auto-stash flow
+- [x] 3. Fix RepoSidebar error handling and add auto-stash flow
 
   **What to do**:
 
@@ -422,7 +422,7 @@ Wave 4 (After Wave 3):
 
 ---
 
-- [ ] 4. Add Pest tests for auto-stash branch switching
+- [x] 4. Add Pest tests for auto-stash branch switching
 
   **What to do**:
 
@@ -541,7 +541,7 @@ Wave 4 (After Wave 3):
 
 ---
 
-- [ ] 5. Final verification — run full test suite
+- [x] 5. Final verification — run full test suite
 
   **What to do**:
   - Run the complete test suite: `php artisan test --compact`

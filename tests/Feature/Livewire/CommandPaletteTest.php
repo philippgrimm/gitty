@@ -41,7 +41,7 @@ test('command registry returns all expected commands', function () {
 
     expect($commands)->toHaveCount(18);
 
-    $ids = collect($commands)->pluck('id')->toArray();
+    $ids = collect($commands)->pluck('id');
 
     expect($ids)->toContain('stage-all')
         ->toContain('commit')
@@ -55,8 +55,7 @@ test('search filters commands by label', function () {
     $component = Livewire::test(CommandPalette::class)
         ->set('query', 'push');
 
-    $commands = $component->get('filteredCommands');
-    $labels = collect($commands)->pluck('label')->toArray();
+    $labels = collect($component->get('filteredCommands'))->pluck('label');
 
     expect($labels)->toContain('Push')
         ->toContain('Commit and Push')
@@ -67,8 +66,7 @@ test('search filters commands by keywords', function () {
     $component = Livewire::test(CommandPalette::class)
         ->set('query', 'add');
 
-    $commands = $component->get('filteredCommands');
-    $labels = collect($commands)->pluck('label')->toArray();
+    $labels = collect($component->get('filteredCommands'))->pluck('label');
 
     expect($labels)->toContain('Stage All');
 });
@@ -78,18 +76,14 @@ test('empty search query returns all commands', function () {
         ->set('repoPath', '/tmp/test-repo')
         ->set('query', '');
 
-    $commands = $component->get('filteredCommands');
-
-    expect($commands)->toHaveCount(18);
+    expect($component->get('filteredCommands'))->toHaveCount(18);
 });
 
 test('search with no matches returns empty', function () {
     $component = Livewire::test(CommandPalette::class)
         ->set('query', 'xyznonexistent');
 
-    $commands = $component->get('filteredCommands');
-
-    expect($commands)->toHaveCount(0);
+    expect($component->get('filteredCommands'))->toHaveCount(0);
 });
 
 test('execute command dispatches correct event', function () {

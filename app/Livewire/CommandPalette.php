@@ -69,18 +69,15 @@ class CommandPalette extends Component
     public function getDisabledCommands(): array
     {
         $disabled = [];
-        $hasRepo = ! empty($this->repoPath);
 
-        // All git commands disabled without a repo
-        $gitCommands = ['stage-all', 'unstage-all', 'discard-all', 'stash-all', 'toggle-view', 'commit', 'commit-push', 'toggle-amend', 'push', 'pull', 'fetch', 'fetch-all', 'force-push', 'create-branch', 'select-all'];
-
-        if (! $hasRepo) {
-            foreach ($gitCommands as $cmd) {
-                $disabled[$cmd] = true;
-            }
+        if (empty($this->repoPath)) {
+            $disabled = array_fill_keys([
+                'stage-all', 'unstage-all', 'discard-all', 'stash-all', 'toggle-view',
+                'commit', 'commit-push', 'toggle-amend', 'push', 'pull', 'fetch',
+                'fetch-all', 'force-push', 'create-branch', 'select-all',
+            ], true);
         }
 
-        // Commit/commit-push disabled if no staged files
         if ($this->stagedCount === 0) {
             $disabled['commit'] = true;
             $disabled['commit-push'] = true;
@@ -260,23 +257,21 @@ class CommandPalette extends Component
     #[Computed]
     public function filteredCommands(): array
     {
-        $commands = self::getCommands();
         $disabled = $this->getDisabledCommands();
 
-        // Add disabled flag to each command
-        $commands = array_map(function ($command) use ($disabled) {
+        $commands = collect(self::getCommands())->map(function (array $command) use ($disabled): array {
             $command['disabled'] = isset($disabled[$command['id']]);
 
             return $command;
-        }, $commands);
+        });
 
         if (empty($this->query)) {
-            return $commands;
+            return $commands->all();
         }
 
         $query = mb_strtolower($this->query);
 
-        $filtered = collect($commands)->filter(function ($command) use ($query) {
+        return $commands->filter(function (array $command) use ($query): bool {
             if (str_contains(mb_strtolower($command['label']), $query)) {
                 return true;
             }
@@ -288,9 +283,7 @@ class CommandPalette extends Component
             }
 
             return false;
-        });
-
-        return array_values($filtered->toArray());
+        })->values()->all();
     }
 
     public function executeCommand(string $commandId): void
@@ -301,7 +294,6 @@ class CommandPalette extends Component
             return;
         }
 
-        // Check if command is disabled
         $disabled = $this->getDisabledCommands();
         if (isset($disabled[$commandId])) {
             return;

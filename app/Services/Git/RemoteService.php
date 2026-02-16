@@ -59,14 +59,18 @@ class RemoteService
     {
         Process::path($this->repoPath)->run("git fetch {$remote}");
 
-        $this->cache->invalidateGroup($this->repoPath, 'branches');
-        $this->cache->invalidateGroup($this->repoPath, 'history');
+        $this->invalidateRemoteGroups();
     }
 
     public function fetchAll(): void
     {
         Process::path($this->repoPath)->run('git fetch --all');
 
+        $this->invalidateRemoteGroups();
+    }
+
+    private function invalidateRemoteGroups(): void
+    {
         $this->cache->invalidateGroup($this->repoPath, 'branches');
         $this->cache->invalidateGroup($this->repoPath, 'history');
     }

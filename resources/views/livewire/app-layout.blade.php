@@ -7,7 +7,7 @@
     @keydown.window.meta.shift.s.prevent="if (!$wire.repoPath) return; $wire.$dispatch('keyboard-stash')"
     @keydown.window.meta.a.prevent="if (!$wire.repoPath) return; $wire.$dispatch('keyboard-select-all')"
     @keydown.window.meta.b.prevent="if (!$wire.repoPath) return; $wire.toggleSidebar()"
-    @keydown.window.meta.k.prevent="if(!$event.shiftKey) $wire.$dispatch('toggle-command-palette')"
+    @keydown.window.meta.k.prevent="if (!$event.shiftKey) $wire.$dispatch('toggle-command-palette')"
     @keydown.window.meta.shift.p.prevent="$wire.$dispatch('toggle-command-palette')"
     @keydown.window.escape.prevent="$wire.$dispatch('keyboard-escape')"
 >
@@ -59,7 +59,6 @@
             </div>
         </div>
     @else
-
         <div class="flex-1 flex overflow-hidden">
             <div 
                 class="border-r border-[#ccd0da] bg-[#eff1f5] transition-all duration-200 ease-out overflow-hidden"
@@ -139,7 +138,5 @@
                 </div>
             </div>
         </div>
-
-
     @endif
 </div>

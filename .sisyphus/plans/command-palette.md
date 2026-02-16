@@ -67,15 +67,15 @@ Build a command palette overlay component that provides keyboard-first access to
 - `tests/Feature/Livewire/CommandPaletteTest.php` — Pest feature tests
 
 ### Definition of Done
-- [ ] ⌘K and ⌘⇧P both open the palette overlay
-- [ ] All ~20 app actions appear in the flat list
-- [ ] Typing filters the list by label and keywords
-- [ ] ↑↓ navigates, ↵ executes, Esc closes
-- [ ] Keyboard shortcuts display right-aligned (e.g., "⌘⇧K" next to "Stage All")
-- [ ] "Create Branch" enters inline input mode (name field → Enter to create)
-- [ ] Disabled actions appear greyed out and cannot be executed
-- [ ] All Pest tests pass: `php artisan test --filter=CommandPalette --compact`
-- [ ] `vendor/bin/pint --dirty --format agent` passes
+- [x] ⌘K and ⌘⇧P both open the palette overlay
+- [x] All ~20 app actions appear in the flat list
+- [x] Typing filters the list by label and keywords
+- [x] ↑↓ navigates, ↵ executes, Esc closes
+- [x] Keyboard shortcuts display right-aligned (e.g., "⌘⇧K" next to "Stage All")
+- [x] "Create Branch" enters inline input mode (name field → Enter to create)
+- [x] Disabled actions appear greyed out and cannot be executed
+- [x] All Pest tests pass: `php artisan test --filter=CommandPalette --compact`
+- [x] `vendor/bin/pint --dirty --format agent` passes
 
 ### Must Have
 - Search/filter working across all commands
@@ -192,7 +192,7 @@ Task 6: Pint + final verification
 
 ## TODOs
 
-- [ ] 1. Scaffold CommandPalette component, mount in layout, register keyboard shortcuts
+- [x] 1. Scaffold CommandPalette component, mount in layout, register keyboard shortcuts
 
   **What to do**:
   - Create `app/Livewire/CommandPalette.php` using `php artisan make:livewire CommandPalette --no-interaction`
@@ -297,7 +297,7 @@ Task 6: Pint + final verification
 
 ---
 
-- [ ] 2. Build command registry, search/filter, keyboard navigation, and command execution
+- [x] 2. Build command registry, search/filter, keyboard navigation, and command execution
 
   **What to do**:
   - In `CommandPalette.php`, add a static method `getCommands(): array` that returns the full command registry. Each command is an array:
@@ -443,7 +443,7 @@ Task 6: Pint + final verification
 
 ---
 
-- [ ] 3. Implement inline input mode for "Create Branch"
+- [x] 3. Implement inline input mode for "Create Branch"
 
   **What to do**:
   - In `CommandPalette.php`:
@@ -563,7 +563,7 @@ Task 6: Pint + final verification
 
 ---
 
-- [ ] 4. Add disabled command states, edge cases, and visual polish
+- [x] 4. Add disabled command states, edge cases, and visual polish
 
   **What to do**:
   - In `CommandPalette.php`:
@@ -667,7 +667,7 @@ Task 6: Pint + final verification
 
 ---
 
-- [ ] 5. Write Pest feature tests for CommandPalette
+- [x] 5. Write Pest feature tests for CommandPalette
 
   **What to do**:
   - Create `tests/Feature/Livewire/CommandPaletteTest.php` via `php artisan make:test --pest Livewire/CommandPaletteTest --no-interaction`
@@ -759,7 +759,7 @@ Task 6: Pint + final verification
 
 ---
 
-- [ ] 6. Run Pint, full test suite, and final verification
+- [x] 6. Run Pint, full test suite, and final verification
 
   **What to do**:
   - Run `vendor/bin/pint --dirty --format agent` across all modified files

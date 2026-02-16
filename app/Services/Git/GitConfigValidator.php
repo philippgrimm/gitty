@@ -48,15 +48,11 @@ class GitConfigValidator
 
     public function validateAll(): array
     {
-        $issues = [];
-
         if (! self::checkGitBinary()) {
-            $issues[] = 'Git is not installed or not in PATH';
-
-            return $issues;
+            return ['Git is not installed or not in PATH'];
         }
 
-        return array_merge($issues, $this->validate());
+        return $this->validate();
     }
 
     protected function getConfig(string $key): string

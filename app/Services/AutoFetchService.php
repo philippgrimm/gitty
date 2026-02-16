@@ -38,17 +38,12 @@ class AutoFetchService
             return;
         }
 
-        if ($intervalSeconds < 60) {
-            $intervalSeconds = 60;
-        }
+        $intervalSeconds = max(60, $intervalSeconds);
 
         $this->interval = $intervalSeconds;
 
-        $cacheKey = $this->getCacheKey('interval');
-        Cache::put($cacheKey, $intervalSeconds);
-
-        $cacheKey = $this->getCacheKey('repo-path');
-        Cache::put($cacheKey, $repoPath);
+        Cache::put($this->getCacheKey('interval'), $intervalSeconds);
+        Cache::put($this->getCacheKey('repo-path'), $repoPath);
     }
 
     public function stop(): void
@@ -68,8 +63,7 @@ class AutoFetchService
             return false;
         }
 
-        $intervalKey = $this->getCacheKey('interval');
-        $interval = Cache::get($intervalKey);
+        $interval = Cache::get($this->getCacheKey('interval'));
 
         return $interval !== null && $interval > 0;
     }
@@ -90,8 +84,7 @@ class AutoFetchService
             return true;
         }
 
-        $intervalKey = $this->getCacheKey('interval');
-        $interval = Cache::get($intervalKey, 180);
+        $interval = Cache::get($this->getCacheKey('interval'), 180);
 
         return now()->diffInSeconds($lastFetchTime, true) >= $interval;
     }
@@ -113,8 +106,7 @@ class AutoFetchService
         $error = $success ? '' : trim($result->errorOutput() ?: $result->output());
 
         if ($success) {
-            $lastFetchKey = $this->getCacheKey('last-fetch');
-            Cache::put($lastFetchKey, now()->timestamp);
+            Cache::put($this->getCacheKey('last-fetch'), now()->timestamp);
         }
 
         return [
@@ -130,8 +122,7 @@ class AutoFetchService
             return null;
         }
 
-        $lastFetchKey = $this->getCacheKey('last-fetch');
-        $timestamp = Cache::get($lastFetchKey);
+        $timestamp = Cache::get($this->getCacheKey('last-fetch'));
 
         return $timestamp !== null ? Carbon::createFromTimestamp($timestamp) : null;
     }
@@ -147,8 +138,7 @@ class AutoFetchService
             return now();
         }
 
-        $intervalKey = $this->getCacheKey('interval');
-        $interval = Cache::get($intervalKey, 180);
+        $interval = Cache::get($this->getCacheKey('interval'), 180);
 
         return $lastFetchTime->copy()->addSeconds($interval);
     }
@@ -162,7 +152,6 @@ class AutoFetchService
 
     protected function loadConfigFromCache(): void
     {
-        $intervalKey = $this->getCacheKey('interval');
-        $this->interval = Cache::get($intervalKey, 180);
+        $this->interval = Cache::get($this->getCacheKey('interval'), 180);
     }
 }

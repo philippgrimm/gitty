@@ -15,7 +15,8 @@ class FileTreeBuilder
             $parts = explode('/', $path);
             $current = &$tree;
 
-            for ($i = 0; $i < count($parts) - 1; $i++) {
+            $depth = count($parts) - 1;
+            for ($i = 0; $i < $depth; $i++) {
                 $dirName = $parts[$i];
                 $dirPath = implode('/', array_slice($parts, 0, $i + 1)).'/';
 

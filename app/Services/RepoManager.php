@@ -24,8 +24,7 @@ class RepoManager
             ['name' => $name]
         );
 
-        $repo->update(['last_opened_at' => now()]);
-        $repo->refresh();
+        $repo->forceFill(['last_opened_at' => now()])->save();
 
         $this->setCurrentRepo($repo);
 
@@ -47,13 +46,7 @@ class RepoManager
 
     public function currentRepo(): ?Repository
     {
-        $repoId = Cache::get('current_repo_id');
-
-        if ($repoId === null) {
-            return null;
-        }
-
-        return Repository::find($repoId);
+        return Repository::find(Cache::get('current_repo_id'));
     }
 
     public function setCurrentRepo(Repository $repo): void

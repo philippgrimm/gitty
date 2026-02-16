@@ -115,11 +115,11 @@ test('component converts stash DTOs to arrays for Livewire', function () {
 
     $stashes = $component->get('stashes');
 
-    expect($stashes)->toBeArray();
-    expect($stashes)->toHaveCount(3);
-    expect($stashes[0])->toHaveKeys(['index', 'message', 'branch', 'sha']);
-    expect($stashes[0]['index'])->toBe(0);
-    expect($stashes[0]['message'])->toBe('feat: add new feature');
+    expect($stashes)->toBeArray()
+        ->and($stashes)->toHaveCount(3)
+        ->and($stashes[0])->toHaveKeys(['index', 'message', 'branch', 'sha'])
+        ->and($stashes[0]['index'])->toBe(0)
+        ->and($stashes[0]['message'])->toBe('feat: add new feature');
 });
 
 test('component refreshes stash list on demand', function () {

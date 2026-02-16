@@ -1,10 +1,9 @@
 {
-  "active_plan": "/Users/philipp.grimm/workspace/gitty/.sisyphus/plans/command-palette.md",
-  "started_at": "2026-02-16T13:59:02.596Z",
+  "active_plan": "/Users/philipp.grimm/workspace/gitty/.sisyphus/plans/qol-commit-branch.md",
+  "started_at": "2026-02-16T16:55:41.159Z",
   "session_ids": [
-    "ses_39983ea22ffeuWiCH6I2rJ0YBg",
-    "ses_39981bd89ffeMhSfTWcv5gY32F"
+    "ses_398c3277dffeHIEkob0zc1jsyJ"
   ],
-  "plan_name": "command-palette",
+  "plan_name": "qol-commit-branch",
   "agent": "atlas"
 }
