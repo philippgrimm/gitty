@@ -7,9 +7,12 @@
     @keydown.window.meta.shift.s.prevent="if (!$wire.repoPath) return; $wire.$dispatch('keyboard-stash')"
     @keydown.window.meta.a.prevent="if (!$wire.repoPath) return; $wire.$dispatch('keyboard-select-all')"
     @keydown.window.meta.b.prevent="if (!$wire.repoPath) return; $wire.toggleSidebar()"
+    @keydown.window.meta.k.prevent="$wire.$dispatch('open-command-palette')"
+    @keydown.window.meta.shift.p.prevent="$wire.$dispatch('open-command-palette')"
     @keydown.window.escape.prevent="$wire.$dispatch('keyboard-escape')"
 >
     @livewire('error-banner', key('error-banner'))
+    @livewire('command-palette', key('command-palette'))
     
     <div class="border-b border-[#ccd0da] bg-[#e6e9ef] px-3 flex items-center gap-2 h-9" style="box-shadow: var(--shadow-sm); -webkit-app-region: drag;">
         {{-- Traffic light drag spacer (macOS window controls) --}}
