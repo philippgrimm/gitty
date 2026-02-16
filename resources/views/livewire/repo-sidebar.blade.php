@@ -177,4 +177,24 @@
             </flux:button>
         </div>
     </flux:modal>
+
+    <flux:modal wire:model="showAutoStashModal" class="space-y-6">
+        <div>
+            <flux:heading size="lg" class="font-mono uppercase tracking-wider">Stash & Switch?</flux:heading>
+            <flux:subheading class="font-mono">
+                You have uncommitted changes that conflict with <span class="text-[var(--text-primary)] font-bold">{{ $autoStashTargetBranch }}</span>. Stash them and switch?
+            </flux:subheading>
+        </div>
+
+        <div class="flex gap-2 justify-end">
+            <flux:button variant="ghost" wire:click="cancelAutoStash">Cancel</flux:button>
+            <flux:button 
+                variant="primary" 
+                wire:click="confirmAutoStash"
+                class="uppercase tracking-wider"
+            >
+                Stash & Switch
+            </flux:button>
+        </div>
+    </flux:modal>
 </div>

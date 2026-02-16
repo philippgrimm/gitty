@@ -28,6 +28,10 @@ class RepoSidebar extends Component
 
     public string $currentBranch = '';
 
+    public bool $showAutoStashModal = false;
+
+    public string $autoStashTargetBranch = '';
+
     private ?string $lastSidebarHash = null;
 
     public function mount(): void
@@ -95,11 +99,19 @@ class RepoSidebar extends Component
 
     public function switchBranch(string $name): void
     {
-        $branchService = new BranchService($this->repoPath);
-        $branchService->switchBranch($name);
-
-        $this->refreshSidebar();
-        $this->dispatch('status-updated');
+        try {
+            $branchService = new BranchService($this->repoPath);
+            $branchService->switchBranch($name);
+            $this->refreshSidebar();
+            $this->dispatch('status-updated');
+        } catch (\Exception $e) {
+            if (GitErrorHandler::isDirtyTreeError($e->getMessage())) {
+                $this->autoStashTargetBranch = $name;
+                $this->showAutoStashModal = true;
+            } else {
+                $this->dispatch('show-error', message: GitErrorHandler::translate($e->getMessage()), type: 'error', persistent: false);
+            }
+        }
     }
 
     public function applyStash(int $index): void
@@ -138,6 +150,53 @@ class RepoSidebar extends Component
         } catch (\Exception $e) {
             $this->dispatch('show-error', message: GitErrorHandler::translate($e->getMessage()), type: 'error', persistent: false);
         }
+    }
+
+    public function confirmAutoStash(): void
+    {
+        $this->showAutoStashModal = false;
+
+        try {
+            // Create stash with untracked files
+            $stashService = new StashService($this->repoPath);
+            $stashService->stash("Auto-stash: switching to {$this->autoStashTargetBranch}", true);
+
+            // Switch branch
+            $branchService = new BranchService($this->repoPath);
+            $branchService->switchBranch($this->autoStashTargetBranch);
+
+            // Try to restore stashed changes
+            $applyResult = Process::path($this->repoPath)->run('git stash apply stash@{0}');
+
+            if ($applyResult->exitCode() === 0) {
+                // Success - drop the stash
+                $stashService->stashDrop(0);
+                $this->dispatch('show-error', message: "Switched to {$this->autoStashTargetBranch} (changes restored)", type: 'success', persistent: false);
+            } else {
+                // Conflict - preserve stash
+                $this->dispatch('show-error', message: "Switched to {$this->autoStashTargetBranch}. Some stashed changes conflicted — stash preserved in stash list.", type: 'warning', persistent: true);
+            }
+
+            // Invalidate cache
+            $cache = new GitCacheService;
+            $cache->invalidateGroup($this->repoPath, 'branches');
+            $cache->invalidateGroup($this->repoPath, 'status');
+            $cache->invalidateGroup($this->repoPath, 'stashes');
+
+            $this->refreshSidebar();
+            $this->dispatch('status-updated');
+            $this->dispatch('refresh-staging');
+        } catch (\Exception $e) {
+            $this->dispatch('show-error', message: GitErrorHandler::translate($e->getMessage()), type: 'error', persistent: false);
+        } finally {
+            $this->autoStashTargetBranch = '';
+        }
+    }
+
+    public function cancelAutoStash(): void
+    {
+        $this->showAutoStashModal = false;
+        $this->autoStashTargetBranch = '';
     }
 
     #[On('stash-created')]
