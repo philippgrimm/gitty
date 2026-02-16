@@ -43,7 +43,20 @@ class SyncPanel extends Component
     #[On('remote-updated')]
     public function refreshAheadBehind(int $stagedCount = 0, array $aheadBehind = []): void
     {
-        $this->aheadBehind = $aheadBehind;
+        if (! empty($aheadBehind)) {
+            $this->aheadBehind = $aheadBehind;
+        }
+    }
+
+    private function refreshAheadBehindData(): void
+    {
+        try {
+            $gitService = new GitService($this->repoPath);
+            $status = $gitService->status();
+            $this->aheadBehind = $status->aheadBehind;
+        } catch (\Exception $e) {
+            $this->aheadBehind = ['ahead' => 0, 'behind' => 0];
+        }
     }
 
     public function syncPush(): void
@@ -76,7 +89,8 @@ class SyncPanel extends Component
             $this->operationOutput = trim($result->output());
             $this->lastOperation = 'push';
             $this->isOperationRunning = false;
-            $this->dispatch('status-updated');
+            $this->refreshAheadBehindData();
+            $this->dispatch('status-updated', stagedCount: 0, aheadBehind: $this->aheadBehind);
         } catch (\Exception $e) {
             $this->error = GitErrorHandler::translate($e->getMessage());
             $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
@@ -114,7 +128,8 @@ class SyncPanel extends Component
             $this->operationOutput = trim($result->output());
             $this->lastOperation = 'pull';
             $this->isOperationRunning = false;
-            $this->dispatch('status-updated');
+            $this->refreshAheadBehindData();
+            $this->dispatch('status-updated', stagedCount: 0, aheadBehind: $this->aheadBehind);
         } catch (\Exception $e) {
             $this->error = GitErrorHandler::translate($e->getMessage());
             $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
@@ -142,7 +157,8 @@ class SyncPanel extends Component
             $this->operationOutput = trim($result->output());
             $this->lastOperation = 'fetch';
             $this->isOperationRunning = false;
-            $this->dispatch('status-updated');
+            $this->refreshAheadBehindData();
+            $this->dispatch('status-updated', stagedCount: 0, aheadBehind: $this->aheadBehind);
         } catch (\Exception $e) {
             $this->error = GitErrorHandler::translate($e->getMessage());
             $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
@@ -170,7 +186,8 @@ class SyncPanel extends Component
             $this->operationOutput = trim($result->output());
             $this->lastOperation = 'fetch-all';
             $this->isOperationRunning = false;
-            $this->dispatch('status-updated');
+            $this->refreshAheadBehindData();
+            $this->dispatch('status-updated', stagedCount: 0, aheadBehind: $this->aheadBehind);
         } catch (\Exception $e) {
             $this->error = GitErrorHandler::translate($e->getMessage());
             $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
@@ -208,7 +225,8 @@ class SyncPanel extends Component
             $this->operationOutput = trim($result->output());
             $this->lastOperation = 'force-push';
             $this->isOperationRunning = false;
-            $this->dispatch('status-updated');
+            $this->refreshAheadBehindData();
+            $this->dispatch('status-updated', stagedCount: 0, aheadBehind: $this->aheadBehind);
         } catch (\Exception $e) {
             $this->error = GitErrorHandler::translate($e->getMessage());
             $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);

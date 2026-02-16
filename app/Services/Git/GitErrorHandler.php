@@ -21,7 +21,7 @@ class GitErrorHandler
         }
 
         // File not found
-        if (str_contains($gitError, "error: pathspec") && str_contains($gitError, "did not match")) {
+        if (str_contains($gitError, 'error: pathspec') && str_contains($gitError, 'did not match')) {
             return 'File not found in repository';
         }
 
@@ -48,6 +48,12 @@ class GitErrorHandler
         // Corrupted repository
         if (str_contains($gitError, 'fatal: bad object') || str_contains($gitError, 'fatal: loose object')) {
             return "Repository may be corrupted. Try running 'git fsck'.";
+        }
+
+        // Uncommitted changes blocking checkout
+        if (str_contains($gitError, 'error: Your local changes to the following files would be overwritten by checkout')
+            || str_contains($gitError, 'Please commit your changes or stash them before you switch branches')) {
+            return 'Cannot switch branches: You have uncommitted changes. Commit or stash them first.';
         }
 
         // Return original error if no pattern matches

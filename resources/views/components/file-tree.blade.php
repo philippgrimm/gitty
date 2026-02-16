@@ -39,7 +39,7 @@
                 :class="{ 'bg-[rgba(8,76,207,0.15)]': isSelected('{{ $node['path'] }}'), 'bg-white hover:bg-[#eff1f5] transition-colors duration-150': !isSelected('{{ $node['path'] }}') }"
                 style="padding-left: {{ ($level * 16) + 16 }}px"
             >
-                <div class="flex items-center gap-2.5 flex-1 min-w-0">
+                <div class="flex items-center gap-2.5 flex-1 min-w-0 pr-0 {{ $staged ? 'group-hover:pr-10' : 'group-hover:pr-16' }} transition-all duration-150">
                     @php
                         $status = $staged ? $node['indexStatus'] : ($node['worktreeStatus'] ?? $node['indexStatus']);
                         $statusConfig = match($status) {
@@ -53,7 +53,7 @@
                         };
                     @endphp
                     <div class="w-2 h-2 rounded-full shrink-0 {{ match($statusConfig['color']) { 'yellow' => 'bg-[#df8e1d]', 'green' => 'bg-[#40a02b]', 'red' => 'bg-[#d20f39]', 'blue' => 'bg-[#084CCF]', 'orange' => 'bg-[#fe640b]', default => 'bg-[#9ca0b0]' } }}"></div>
-                    <flux:tooltip :content="$node['path']" class="min-w-0 flex-1">
+                    <flux:tooltip :content="$node['path']" delay="1000" class="min-w-0 flex-1">
                         <div class="text-sm truncate text-[#5c5f77] group-hover:text-[#4c4f69] transition-colors duration-150">
                             {{ $node['name'] }}
                         </div>
@@ -61,13 +61,10 @@
                 </div>
                 
                 @if($staged)
-                    <div 
-                        class="absolute right-0 inset-y-0 flex items-center pr-4 pl-2 opacity-0 group-hover:opacity-100 transition-opacity duration-150"
-                        :class="{ 'bg-[rgba(8,76,207,0.15)]': isSelected('{{ $node['path'] }}'), 'bg-[#eff1f5]': !isSelected('{{ $node['path'] }}') }"
-                    >
+                    <div class="absolute right-0 inset-y-0 flex items-center pr-4 pl-2 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
                         <flux:tooltip content="Unstage">
                             <flux:button 
-                                wire:click.stop="unstageFile('{{ $node['path'] }}')"
+                                @click.stop="isSelected('{{ $node['path'] }}') && selectedFiles.length > 1 ? $wire.unstageSelected(selectedFiles).then(() => clearSelection()) : $wire.unstageFile('{{ $node['path'] }}')"
                                 wire:loading.attr="disabled"
                                 wire:target="unstageFile"
                                 variant="ghost" 
@@ -79,13 +76,10 @@
                         </flux:tooltip>
                     </div>
                 @else
-                    <div 
-                        class="absolute right-0 inset-y-0 flex items-center gap-1 pr-4 pl-2 opacity-0 group-hover:opacity-100 transition-opacity duration-150"
-                        :class="{ 'bg-[rgba(8,76,207,0.15)]': isSelected('{{ $node['path'] }}'), 'bg-[#eff1f5]': !isSelected('{{ $node['path'] }}') }"
-                    >
+                    <div class="absolute right-0 inset-y-0 flex items-center gap-1 pr-4 pl-2 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
                         <flux:tooltip content="Stage">
                             <flux:button 
-                                wire:click.stop="stageFile('{{ $node['path'] }}')"
+                                @click.stop="isSelected('{{ $node['path'] }}') && selectedFiles.length > 1 ? $wire.stageSelected(selectedFiles).then(() => clearSelection()) : $wire.stageFile('{{ $node['path'] }}')"
                                 wire:loading.attr="disabled"
                                 wire:target="stageFile"
                                 variant="ghost" 
@@ -97,7 +91,7 @@
                         </flux:tooltip>
                         <flux:tooltip content="Discard">
                             <flux:button 
-                                @click.stop="showDiscardModal = true; discardAll = false; discardTarget = '{{ $node['path'] }}'"
+                                @click.stop="if (isSelected('{{ $node['path'] }}') && selectedFiles.length > 1) { discardTarget = [...selectedFiles]; discardAll = false; showDiscardModal = true; } else { showDiscardModal = true; discardAll = false; discardTarget = '{{ $node['path'] }}'; }"
                                 variant="ghost" 
                                 size="xs"
                                 square

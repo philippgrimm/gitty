@@ -5,7 +5,7 @@
     }"
     class="flex items-center gap-1 font-mono"
 >
-    <flux:tooltip :content="$aheadBehind['ahead'] > 0 ? 'Push (' . $aheadBehind['ahead'] . ')' : 'Push'" position="bottom">
+    <flux:tooltip :content="($aheadBehind['ahead'] ?? 0) > 0 ? 'Push (' . $aheadBehind['ahead'] . ')' : 'Push'" position="bottom">
         <div class="relative">
             <flux:button 
                 wire:click="syncPush" 
@@ -21,13 +21,13 @@
                     <x-phosphor-arrow-up-light class="w-4 h-4" />
                 @endif
             </flux:button>
-            @if($aheadBehind['ahead'] > 0)
+            @if(($aheadBehind['ahead'] ?? 0) > 0)
                 <span style="top: 2px; right: 2px;" class="absolute w-2 h-2 rounded-full bg-[#40a02b] pointer-events-none ring-1 ring-[#eff1f5]"></span>
             @endif
         </div>
     </flux:tooltip>
 
-    <flux:tooltip :content="$aheadBehind['behind'] > 0 ? 'Pull (' . $aheadBehind['behind'] . ')' : 'Pull'" position="bottom">
+    <flux:tooltip :content="($aheadBehind['behind'] ?? 0) > 0 ? 'Pull (' . $aheadBehind['behind'] . ')' : 'Pull'" position="bottom">
         <div class="relative">
         <flux:button 
             wire:click="syncPull" 
@@ -43,7 +43,7 @@
                 <x-phosphor-arrow-down-light class="w-4 h-4" />
             @endif
         </flux:button>
-            @if($aheadBehind['behind'] > 0)
+            @if(($aheadBehind['behind'] ?? 0) > 0)
                 <span style="top: 2px; right: 2px;" class="absolute w-2 h-2 rounded-full bg-[#fe640b] pointer-events-none ring-1 ring-[#eff1f5]"></span>
             @endif
         </div>

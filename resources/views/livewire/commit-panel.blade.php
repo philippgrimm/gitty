@@ -2,7 +2,7 @@
     x-data="{ showDropdown: false, commitFlash: false, charCount: 0 }" 
     x-init="charCount = $wire.message?.length || 0"
     x-on:committed.window="commitFlash = true; setTimeout(() => commitFlash = false, 200)"
-    class="flex flex-col bg-[#eff1f5] text-[#4c4f69] font-mono border-t border-[#ccd0da] p-4 space-y-3"
+    class="flex flex-col bg-[#eff1f5] text-[#4c4f69] font-mono border-t border-[#ccd0da] p-3 gap-2"
 >
     @if($error)
         <div class="bg-[#d20f39]/10 border border-[#d20f39]/30 text-[#d20f39] px-3 py-2 text-xs font-mono uppercase tracking-wider font-semibold">
@@ -10,34 +10,23 @@
         </div>
     @endif
 
-    <div class="space-y-2">
+    <div class="relative">
         <flux:textarea 
             wire:model.live.debounce.300ms="message" 
             x-on:input="charCount = $event.target.value.length"
             placeholder="Commit message"
             rows="auto"
             resize="vertical"
-            class="bg-[#e6e9ef] border-[#ccd0da] text-[#4c4f69] placeholder-[#9ca0b0] font-mono text-sm"
+            class="bg-[#e6e9ef] border-[#ccd0da] text-[#4c4f69] placeholder-[#9ca0b0] font-mono text-sm focus:outline-none focus:ring-2 focus:ring-[#084CCF]/30 focus:border-[#084CCF]"
         />
-        
-        <div class="flex items-center justify-between text-xs">
-            <flux:checkbox 
-                wire:click="toggleAmend"
-                :checked="$isAmend"
-                label="Amend previous commit"
-                class="text-[#9ca0b0] font-mono"
-            />
-            <div class="text-[#8c8fa1] font-mono">
-                <span x-text="charCount"></span> characters
-            </div>
-        </div>
+        <div class="absolute bottom-2 right-2 text-[10px] text-[#9ca0b0] font-mono pointer-events-none select-none" x-text="charCount"></div>
     </div>
 
     <flux:button.group class="w-full">
         <flux:button 
             wire:click="commit"
             wire:loading.attr="disabled"
-            wire:target="commit,commitAndPush"
+            wire:target="commit,commitAndPush,toggleAmend"
             variant="primary"
             size="sm"
             :disabled="$stagedCount === 0 || empty(trim($message))"
@@ -65,17 +54,11 @@
                 <flux:menu.item wire:click="commitAndPush" icon="arrow-up-tray">
                     Commit & Push (⌘⇧↵)
                 </flux:menu.item>
+                <flux:menu.separator />
+                <flux:menu.item wire:click="toggleAmend" :icon="$isAmend ? 'check' : ''">
+                    Amend Previous Commit
+                </flux:menu.item>
             </flux:menu>
         </flux:dropdown>
     </flux:button.group>
-
-    @if($stagedCount === 0)
-        <div class="text-xs text-[#9ca0b0] uppercase tracking-wider text-center font-medium">
-            No staged files
-        </div>
-    @else
-        <div class="text-xs text-[#9ca0b0] font-mono text-center">
-            {{ $stagedCount }} {{ Str::plural('file', $stagedCount) }} staged
-        </div>
-    @endif
 </div>

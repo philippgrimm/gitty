@@ -1,9 +1,9 @@
 {
-  "active_plan": "/Users/philipp.grimm/workspace/gitty/.sisyphus/plans/staging-panel-polish.md",
-  "started_at": "2026-02-15T21:23:57.932Z",
+  "active_plan": "/Users/philipp.grimm/workspace/gitty/.sisyphus/plans/stash-multiselect.md",
+  "started_at": "2026-02-16T07:48:16.678Z",
   "session_ids": [
-    "ses_39cda4749ffeCd0F6xzYxVjy95"
+    "ses_39aaca8fbffeglzPHgPP5U9yEl"
   ],
-  "plan_name": "staging-panel-polish",
+  "plan_name": "stash-multiselect",
   "agent": "atlas"
 }
