@@ -52,7 +52,13 @@
                             if (this.activeIndex >= 0 && this.items[this.activeIndex]) {
                                 this.items[this.activeIndex].click();
                             }
-                        }
+                        },
+                        contextMenu: { show: false, branch: '', x: 0, y: 0 },
+                        showBranchContextMenu(branchName, event) {
+                            event.preventDefault();
+                            this.contextMenu = { show: true, branch: branchName, x: event.clientX, y: event.clientY };
+                        },
+                        hideBranchContextMenu() { this.contextMenu.show = false; },
                     }"
                     @keydown.arrow-down.prevent="navigate('down')"
                     @keydown.arrow-up.prevent="navigate('up')"
@@ -85,6 +91,9 @@
                                 data-branch-item
                                 wire:click="switchBranch('{{ $branch['name'] }}')"
                                 x-on:click="$el.closest('[popover]')?.hidePopover()"
+                                @if(!$branch['isCurrent'])
+                                    x-on:contextmenu="showBranchContextMenu('{{ $branch['name'] }}', $event)"
+                                @endif
                             >
                                 <div class="flex items-center gap-2 flex-1 min-w-0">
                                     <div class="w-4 flex items-center justify-center shrink-0">
@@ -134,6 +143,37 @@
                             @endforeach
                         @endif
                     </div>
+
+                    {{-- Right-click context menu for branches --}}
+                    <template x-if="contextMenu.show">
+                        <div
+                            @click.outside="hideBranchContextMenu()"
+                            @keydown.escape.window="hideBranchContextMenu()"
+                            @scroll.window="hideBranchContextMenu()"
+                            :style="`position: fixed; left: ${contextMenu.x}px; top: ${contextMenu.y}px; z-index: 50;`"
+                            class="bg-white border border-[#ccd0da] rounded-lg shadow-lg py-1 min-w-[200px] font-mono text-sm"
+                        >
+                            <button
+                                @click="$wire.switchBranch(contextMenu.branch); hideBranchContextMenu(); $el.closest('[popover]')?.hidePopover()"
+                                class="w-full px-3 py-1.5 text-left hover:bg-[#eff1f5] text-[#4c4f69]"
+                            >
+                                Switch to Branch
+                            </button>
+                            <button
+                                @click="$wire.mergeBranch(contextMenu.branch); hideBranchContextMenu(); $el.closest('[popover]')?.hidePopover()"
+                                class="w-full px-3 py-1.5 text-left hover:bg-[#eff1f5] text-[#4c4f69]"
+                            >
+                                Merge into {{ $currentBranch }}
+                            </button>
+                            <div class="border-t border-[#dce0e8] my-1"></div>
+                            <button
+                                @click="$wire.deleteBranch(contextMenu.branch); hideBranchContextMenu(); $el.closest('[popover]')?.hidePopover()"
+                                class="w-full px-3 py-1.5 text-left hover:bg-[#eff1f5] text-[#d20f39]"
+                            >
+                                Delete Branch
+                            </button>
+                        </div>
+                    </template>
 
                     {{-- New Branch button --}}
                     <div class="border-t border-[var(--border-subtle)] p-2 sticky bottom-0 bg-white">

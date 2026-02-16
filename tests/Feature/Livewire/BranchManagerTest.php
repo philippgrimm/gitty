@@ -9,8 +9,8 @@ use Tests\Mocks\GitOutputFixtures;
 
 beforeEach(function () {
     $this->testRepoPath = '/tmp/gitty-test-repo';
-    if (! is_dir($this->testRepoPath . '/.git')) {
-        mkdir($this->testRepoPath . '/.git', 0755, true);
+    if (! is_dir($this->testRepoPath.'/.git')) {
+        mkdir($this->testRepoPath.'/.git', 0755, true);
     }
 });
 
@@ -153,4 +153,56 @@ test('component refreshes branches on demand', function () {
         ->assertSee('main');
 
     Process::assertRan('git branch -a -vv');
+});
+
+test('context menu trigger exists on non-current local branches', function () {
+    Process::fake([
+        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
+    ]);
+
+    Livewire::test(BranchManager::class, ['repoPath' => $this->testRepoPath])
+        ->assertSeeHtml('x-on:contextmenu');
+});
+
+test('context menu contains merge action for current branch', function () {
+    Process::fake([
+        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
+    ]);
+
+    Livewire::test(BranchManager::class, ['repoPath' => $this->testRepoPath])
+        ->assertSee('Merge into main');
+});
+
+test('component dispatches success toast on successful merge', function () {
+    Process::fake([
+        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
+        'git merge feature/new-ui' => Process::result('Fast-forward merge completed'),
+    ]);
+
+    Livewire::test(BranchManager::class, ['repoPath' => $this->testRepoPath])
+        ->call('mergeBranch', 'feature/new-ui')
+        ->assertDispatched('show-error', function (string $event, array $params): bool {
+            return $params['type'] === 'success'
+                && str_contains($params['message'], 'feature/new-ui')
+                && str_contains($params['message'], 'main');
+        });
+});
+
+test('component does not dispatch success toast when merge has conflicts', function () {
+    Process::fake([
+        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
+        'git merge feature/new-ui' => function () {
+            return Process::result('CONFLICT (content): Merge conflict in README.md', exitCode: 1);
+        },
+    ]);
+
+    Livewire::test(BranchManager::class, ['repoPath' => $this->testRepoPath])
+        ->call('mergeBranch', 'feature/new-ui')
+        ->assertNotDispatched('show-error', function (string $event, array $params): bool {
+            return $params['type'] === 'success';
+        });
 });

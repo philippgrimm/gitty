@@ -62,3 +62,16 @@ test('component handles empty message', function () {
         ->assertSet('visible', true)
         ->assertSet('message', '');
 });
+
+test('component shows success message', function () {
+    Livewire::test(ErrorBanner::class)
+        ->dispatch('show-error', message: 'Success message', type: 'success', persistent: false)
+        ->assertSet('type', 'success')
+        ->assertSee('Success message');
+});
+
+test('component renders success title', function () {
+    Livewire::test(ErrorBanner::class)
+        ->dispatch('show-error', message: 'Operation completed', type: 'success', persistent: false)
+        ->assertSee('Success');
+});

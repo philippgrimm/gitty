@@ -140,6 +140,8 @@ class BranchManager extends Component
                 $conflictList = implode(', ', $mergeResult->conflictFiles);
                 $this->error = "Merge conflicts detected in: {$conflictList}";
                 $this->dispatch('show-error', message: $this->error, type: 'warning', persistent: true);
+            } else {
+                $this->dispatch('show-error', message: "Merged {$name} into {$this->currentBranch}", type: 'success', persistent: false);
             }
         } catch (\Exception $e) {
             $this->error = GitErrorHandler::translate($e->getMessage());

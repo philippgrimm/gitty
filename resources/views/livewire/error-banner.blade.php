@@ -20,7 +20,8 @@
         :class="{
             'border-[#d20f39]/30 border-l-[#d20f39]': '{{ $type }}' === 'error',
             'border-[#fe640b]/30 border-l-[#fe640b]': '{{ $type }}' === 'warning',
-            'border-[#084CCF]/30 border-l-[#084CCF]': '{{ $type }}' === 'info'
+            'border-[#084CCF]/30 border-l-[#084CCF]': '{{ $type }}' === 'info',
+            'border-[#40a02b]/30 border-l-[#40a02b]': '{{ $type }}' === 'success'
         }"
         style="display: none;"
     >
@@ -39,6 +40,12 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
                         </svg>
                     </div>
+                @elseif($type === 'success')
+                    <div class="w-5 h-5 rounded-full bg-[#40a02b] flex items-center justify-center">
+                        <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                    </div>
                 @else
                     <div class="w-5 h-5 rounded-full bg-[#084CCF] flex items-center justify-center">
                         <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -54,13 +61,16 @@
                      :class="{
                          'text-[#d20f39]': '{{ $type }}' === 'error',
                          'text-[#fe640b]': '{{ $type }}' === 'warning',
-                         'text-[#084CCF]': '{{ $type }}' === 'info'
+                         'text-[#084CCF]': '{{ $type }}' === 'info',
+                         'text-[#40a02b]': '{{ $type }}' === 'success'
                      }"
                 >
                     @if($type === 'error')
                         Error
                     @elseif($type === 'warning')
                         Warning
+                    @elseif($type === 'success')
+                        Success
                     @else
                         Info
                     @endif
