@@ -245,6 +245,11 @@ class CommandPalette extends Component
         }
 
         if ($command['requiresInput']) {
+            $this->mode = 'input';
+            $this->inputCommand = $commandId;
+            $this->inputValue = '';
+            $this->inputError = null;
+
             return;
         }
 
@@ -253,6 +258,36 @@ class CommandPalette extends Component
         }
 
         $this->close();
+    }
+
+    public function submitInput(): void
+    {
+        if ($this->inputCommand === 'create-branch') {
+            $name = trim($this->inputValue);
+
+            if (empty($name)) {
+                $this->inputError = 'Branch name is required';
+
+                return;
+            }
+
+            if (str_contains($name, ' ')) {
+                $this->inputError = 'Branch name cannot contain spaces';
+
+                return;
+            }
+
+            $this->dispatch('palette-create-branch', name: $name);
+            $this->close();
+        }
+    }
+
+    public function cancelInput(): void
+    {
+        $this->mode = 'search';
+        $this->inputCommand = null;
+        $this->inputValue = '';
+        $this->inputError = null;
     }
 
     public function render()

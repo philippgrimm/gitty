@@ -60,47 +60,81 @@
             @keydown.arrow-up.prevent="navigate('up')"
             @keydown.enter.prevent="selectActive()"
         >
-            {{-- Search Input Area --}}
-            <div class="px-4 py-2.5 border-b border-[#dce0e8]">
-                <div class="flex items-center gap-2">
-                    <x-phosphor-magnifying-glass-light class="w-4 h-4 text-[#8c8fa1] shrink-0" />
+            @if($mode === 'input')
+                {{-- Input Mode Header --}}
+                <div class="px-4 py-2.5 border-b border-[#dce0e8]">
+                    <div class="flex items-center gap-2">
+                        <button wire:click="cancelInput" class="text-[#8c8fa1] hover:text-[#4c4f69] transition-colors">
+                            <x-phosphor-arrow-left class="w-4 h-4" />
+                        </button>
+                        <span class="text-sm text-[#4c4f69] font-medium">Create Branch</span>
+                    </div>
+                </div>
+
+                {{-- Input Field --}}
+                <div class="px-4 py-3">
                     <input
                         type="text"
-                        wire:model.live.debounce.150ms="query"
-                        placeholder="Type a command..."
-                        class="w-full bg-transparent border-none outline-none text-sm text-[#4c4f69] placeholder-[#8c8fa1] font-mono p-0 focus:ring-0"
-                        x-ref="searchInput"
-                        x-effect="if($wire.isOpen) $nextTick(() => $refs.searchInput?.focus())"
+                        wire:model="inputValue"
+                        wire:keydown.enter.prevent="submitInput"
+                        wire:keydown.escape.prevent="cancelInput"
+                        placeholder="Branch name (e.g., feature/my-feature)"
+                        class="w-full bg-transparent border border-[#ccd0da] rounded-lg outline-none text-sm text-[#4c4f69] placeholder-[#8c8fa1] font-mono px-3 py-2 focus:ring-1 focus:ring-[#084CCF] focus:border-[#084CCF]"
+                        x-ref="inputField"
+                        x-effect="if($wire.mode === 'input') $nextTick(() => $refs.inputField?.focus())"
                     />
+                    @if($inputError)
+                        <p class="text-[#d20f39] text-xs mt-1">{{ $inputError }}</p>
+                    @endif
                 </div>
-            </div>
 
-            {{-- Command List --}}
-            @if(count($this->filteredCommands) > 0)
-                <div class="max-h-80 overflow-y-auto">
-                    @foreach($this->filteredCommands as $index => $command)
-                        <div
-                            data-command-item
-                            wire:click="executeCommand('{{ $command['id'] }}')"
-                            class="flex items-center justify-between gap-3 px-4 py-2 cursor-pointer hover:bg-[#eff1f5] transition-colors duration-75"
-                            :class="{ 'bg-[#eff1f5]': activeIndex === {{ $index }} }"
-                        >
-                            <div class="flex items-center gap-3">
-                                <x-dynamic-component :component="$command['icon']" class="w-4 h-4 text-[#9ca0b0] shrink-0" />
-                                <span class="text-[13px] text-[#4c4f69]">{{ $command['label'] }}</span>
-                            </div>
-                            @if($command['shortcut'])
-                                <kbd class="text-[10px] text-[#6c6f85] bg-[#eff1f5] border border-[#ccd0da] rounded px-1.5 py-0.5 font-mono">
-                                    {{ $command['shortcut'] }}
-                                </kbd>
-                            @endif
-                        </div>
-                    @endforeach
+                {{-- Footer hint --}}
+                <div class="px-4 py-2 border-t border-[#dce0e8] text-[10px] text-[#8c8fa1]">
+                    ↵ create · esc back
                 </div>
             @else
-                <div class="py-8 text-center text-sm text-[#8c8fa1]">
-                    No commands found
+                {{-- Search Input Area --}}
+                <div class="px-4 py-2.5 border-b border-[#dce0e8]">
+                    <div class="flex items-center gap-2">
+                        <x-phosphor-magnifying-glass-light class="w-4 h-4 text-[#8c8fa1] shrink-0" />
+                        <input
+                            type="text"
+                            wire:model.live.debounce.150ms="query"
+                            placeholder="Type a command..."
+                            class="w-full bg-transparent border-none outline-none text-sm text-[#4c4f69] placeholder-[#8c8fa1] font-mono p-0 focus:ring-0"
+                            x-ref="searchInput"
+                            x-effect="if($wire.isOpen) $nextTick(() => $refs.searchInput?.focus())"
+                        />
+                    </div>
                 </div>
+
+                {{-- Command List --}}
+                @if(count($this->filteredCommands) > 0)
+                    <div class="max-h-80 overflow-y-auto">
+                        @foreach($this->filteredCommands as $index => $command)
+                            <div
+                                data-command-item
+                                wire:click="executeCommand('{{ $command['id'] }}')"
+                                class="flex items-center justify-between gap-3 px-4 py-2 cursor-pointer hover:bg-[#eff1f5] transition-colors duration-75"
+                                :class="{ 'bg-[#eff1f5]': activeIndex === {{ $index }} }"
+                            >
+                                <div class="flex items-center gap-3">
+                                    <x-dynamic-component :component="$command['icon']" class="w-4 h-4 text-[#9ca0b0] shrink-0" />
+                                    <span class="text-[13px] text-[#4c4f69]">{{ $command['label'] }}</span>
+                                </div>
+                                @if($command['shortcut'])
+                                    <kbd class="text-[10px] text-[#6c6f85] bg-[#eff1f5] border border-[#ccd0da] rounded px-1.5 py-0.5 font-mono">
+                                        {{ $command['shortcut'] }}
+                                    </kbd>
+                                @endif
+                            </div>
+                        @endforeach
+                    </div>
+                @else
+                    <div class="py-8 text-center text-sm text-[#8c8fa1]">
+                        No commands found
+                    </div>
+                @endif
             @endif
         </div>
     </div>

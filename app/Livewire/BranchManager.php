@@ -7,6 +7,7 @@ namespace App\Livewire;
 use App\Services\Git\BranchService;
 use App\Services\Git\GitErrorHandler;
 use App\Services\Git\GitService;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class BranchManager extends Component
@@ -100,6 +101,14 @@ class BranchManager extends Component
             $this->error = GitErrorHandler::translate($e->getMessage());
             $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
         }
+    }
+
+    #[On('palette-create-branch')]
+    public function handlePaletteCreateBranch(string $name): void
+    {
+        $this->newBranchName = $name;
+        $this->baseBranch = $this->currentBranch;
+        $this->createBranch();
     }
 
     public function deleteBranch(string $name): void
