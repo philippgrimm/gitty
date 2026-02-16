@@ -234,6 +234,36 @@ class SyncPanel extends Component
         }
     }
 
+    #[On('palette-push')]
+    public function handlePalettePush(): void
+    {
+        $this->syncPush();
+    }
+
+    #[On('palette-pull')]
+    public function handlePalettePull(): void
+    {
+        $this->syncPull();
+    }
+
+    #[On('palette-fetch')]
+    public function handlePaletteFetch(): void
+    {
+        $this->syncFetch();
+    }
+
+    #[On('palette-fetch-all')]
+    public function handlePaletteFetchAll(): void
+    {
+        $this->syncFetchAll();
+    }
+
+    #[On('palette-force-push')]
+    public function handlePaletteForcePush(): void
+    {
+        $this->syncForcePushWithLease();
+    }
+
     public function render()
     {
         return view('livewire.sync-panel');

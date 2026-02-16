@@ -66,6 +66,12 @@ class AppLayout extends Component
         $this->sidebarCollapsed = ! $this->sidebarCollapsed;
     }
 
+    #[On('palette-toggle-sidebar')]
+    public function handlePaletteToggleSidebar(): void
+    {
+        $this->toggleSidebar();
+    }
+
     #[On('repo-switched')]
     public function handleRepoSwitched(string $path): void
     {

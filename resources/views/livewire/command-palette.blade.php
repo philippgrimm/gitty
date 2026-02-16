@@ -28,6 +28,37 @@
             x-transition:leave-start="opacity-100 scale-100"
             x-transition:leave-end="opacity-0 scale-95"
             @click.stop
+            x-data="{
+                activeIndex: -1,
+                items: [],
+                init() {
+                    this.updateItems();
+                    $watch('$wire.query', () => $nextTick(() => this.updateItems()));
+                },
+                updateItems() {
+                    this.items = Array.from(this.$el.querySelectorAll('[data-command-item]'));
+                    this.activeIndex = -1;
+                },
+                navigate(direction) {
+                    if (this.items.length === 0) return;
+                    
+                    if (direction === 'down') {
+                        this.activeIndex = (this.activeIndex + 1) % this.items.length;
+                    } else {
+                        this.activeIndex = this.activeIndex <= 0 ? this.items.length - 1 : this.activeIndex - 1;
+                    }
+                    
+                    this.items[this.activeIndex]?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+                },
+                selectActive() {
+                    if (this.activeIndex >= 0 && this.items[this.activeIndex]) {
+                        this.items[this.activeIndex].click();
+                    }
+                }
+            }"
+            @keydown.arrow-down.prevent="navigate('down')"
+            @keydown.arrow-up.prevent="navigate('up')"
+            @keydown.enter.prevent="selectActive()"
         >
             {{-- Search Input Area --}}
             <div class="px-4 py-2.5 border-b border-[#dce0e8]">
@@ -44,10 +75,33 @@
                 </div>
             </div>
 
-            {{-- Command List Placeholder --}}
-            <div class="py-8 text-center text-sm text-[#8c8fa1]">
-                {{-- Command list will be populated in next task --}}
-            </div>
+            {{-- Command List --}}
+            @if(count($this->filteredCommands) > 0)
+                <div class="max-h-80 overflow-y-auto">
+                    @foreach($this->filteredCommands as $index => $command)
+                        <div
+                            data-command-item
+                            wire:click="executeCommand('{{ $command['id'] }}')"
+                            class="flex items-center justify-between gap-3 px-4 py-2 cursor-pointer hover:bg-[#eff1f5] transition-colors duration-75"
+                            :class="{ 'bg-[#eff1f5]': activeIndex === {{ $index }} }"
+                        >
+                            <div class="flex items-center gap-3">
+                                <x-dynamic-component :component="$command['icon']" class="w-4 h-4 text-[#9ca0b0] shrink-0" />
+                                <span class="text-[13px] text-[#4c4f69]">{{ $command['label'] }}</span>
+                            </div>
+                            @if($command['shortcut'])
+                                <kbd class="text-[10px] text-[#6c6f85] bg-[#eff1f5] border border-[#ccd0da] rounded px-1.5 py-0.5 font-mono">
+                                    {{ $command['shortcut'] }}
+                                </kbd>
+                            @endif
+                        </div>
+                    @endforeach
+                </div>
+            @else
+                <div class="py-8 text-center text-sm text-[#8c8fa1]">
+                    No commands found
+                </div>
+            @endif
         </div>
     </div>
 </div>

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Livewire;
 
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
@@ -37,6 +38,221 @@ class CommandPalette extends Component
         $this->inputValue = '';
         $this->inputCommand = null;
         $this->inputError = null;
+    }
+
+    public static function getCommands(): array
+    {
+        return [
+            [
+                'id' => 'stage-all',
+                'label' => 'Stage All',
+                'shortcut' => '⌘⇧K',
+                'event' => 'keyboard-stage-all',
+                'keywords' => ['stage', 'add', 'all', 'git add'],
+                'requiresInput' => false,
+                'icon' => 'phosphor-plus',
+            ],
+            [
+                'id' => 'unstage-all',
+                'label' => 'Unstage All',
+                'shortcut' => '⌘⇧U',
+                'event' => 'keyboard-unstage-all',
+                'keywords' => ['unstage', 'remove', 'all', 'reset'],
+                'requiresInput' => false,
+                'icon' => 'phosphor-minus',
+            ],
+            [
+                'id' => 'discard-all',
+                'label' => 'Discard All',
+                'shortcut' => null,
+                'event' => 'palette-discard-all',
+                'keywords' => ['discard', 'revert', 'all', 'checkout'],
+                'requiresInput' => false,
+                'icon' => 'phosphor-trash',
+            ],
+            [
+                'id' => 'stash-all',
+                'label' => 'Stash All',
+                'shortcut' => '⌘⇧S',
+                'event' => 'keyboard-stash',
+                'keywords' => ['stash', 'save', 'shelve'],
+                'requiresInput' => false,
+                'icon' => 'phosphor-archive-box',
+            ],
+            [
+                'id' => 'toggle-view',
+                'label' => 'Toggle File View',
+                'shortcut' => null,
+                'event' => 'palette-toggle-view',
+                'keywords' => ['view', 'tree', 'flat', 'list'],
+                'requiresInput' => false,
+                'icon' => 'phosphor-list-bullets',
+            ],
+            [
+                'id' => 'commit',
+                'label' => 'Commit',
+                'shortcut' => '⌘↵',
+                'event' => 'keyboard-commit',
+                'keywords' => ['commit', 'save', 'check in'],
+                'requiresInput' => false,
+                'icon' => 'phosphor-check',
+            ],
+            [
+                'id' => 'commit-push',
+                'label' => 'Commit and Push',
+                'shortcut' => '⌘⇧↵',
+                'event' => 'keyboard-commit-push',
+                'keywords' => ['commit', 'push', 'save', 'upload'],
+                'requiresInput' => false,
+                'icon' => 'phosphor-check-circle',
+            ],
+            [
+                'id' => 'toggle-amend',
+                'label' => 'Toggle Amend',
+                'shortcut' => null,
+                'event' => 'palette-toggle-amend',
+                'keywords' => ['amend', 'edit', 'last commit'],
+                'requiresInput' => false,
+                'icon' => 'phosphor-pencil-simple',
+            ],
+            [
+                'id' => 'push',
+                'label' => 'Push',
+                'shortcut' => null,
+                'event' => 'palette-push',
+                'keywords' => ['push', 'upload', 'send'],
+                'requiresInput' => false,
+                'icon' => 'phosphor-arrow-up',
+            ],
+            [
+                'id' => 'pull',
+                'label' => 'Pull',
+                'shortcut' => null,
+                'event' => 'palette-pull',
+                'keywords' => ['pull', 'download', 'receive'],
+                'requiresInput' => false,
+                'icon' => 'phosphor-arrow-down',
+            ],
+            [
+                'id' => 'fetch',
+                'label' => 'Fetch',
+                'shortcut' => null,
+                'event' => 'palette-fetch',
+                'keywords' => ['fetch', 'refresh', 'update'],
+                'requiresInput' => false,
+                'icon' => 'phosphor-arrows-clockwise',
+            ],
+            [
+                'id' => 'fetch-all',
+                'label' => 'Fetch All Remotes',
+                'shortcut' => null,
+                'event' => 'palette-fetch-all',
+                'keywords' => ['fetch', 'all', 'remotes', 'update'],
+                'requiresInput' => false,
+                'icon' => 'phosphor-cloud-arrow-down',
+            ],
+            [
+                'id' => 'force-push',
+                'label' => 'Force Push (with Lease)',
+                'shortcut' => null,
+                'event' => 'palette-force-push',
+                'keywords' => ['force', 'push', 'lease', 'overwrite'],
+                'requiresInput' => false,
+                'icon' => 'phosphor-arrow-fat-up',
+            ],
+            [
+                'id' => 'create-branch',
+                'label' => 'Create Branch',
+                'shortcut' => null,
+                'event' => null,
+                'keywords' => ['branch', 'create', 'new', 'checkout -b'],
+                'requiresInput' => true,
+                'icon' => 'phosphor-git-branch',
+            ],
+            [
+                'id' => 'toggle-sidebar',
+                'label' => 'Toggle Sidebar',
+                'shortcut' => '⌘B',
+                'event' => 'palette-toggle-sidebar',
+                'keywords' => ['sidebar', 'panel', 'toggle', 'hide'],
+                'requiresInput' => false,
+                'icon' => 'phosphor-sidebar-simple',
+            ],
+            [
+                'id' => 'open-settings',
+                'label' => 'Open Settings',
+                'shortcut' => null,
+                'event' => 'open-settings',
+                'keywords' => ['settings', 'preferences', 'config'],
+                'requiresInput' => false,
+                'icon' => 'phosphor-gear',
+            ],
+            [
+                'id' => 'open-folder',
+                'label' => 'Open Repository…',
+                'shortcut' => null,
+                'event' => 'palette-open-folder',
+                'keywords' => ['open', 'folder', 'repository', 'browse'],
+                'requiresInput' => false,
+                'icon' => 'phosphor-folder-open',
+            ],
+            [
+                'id' => 'select-all',
+                'label' => 'Select All Files',
+                'shortcut' => '⌘A',
+                'event' => 'keyboard-select-all',
+                'keywords' => ['select', 'all', 'files'],
+                'requiresInput' => false,
+                'icon' => 'phosphor-selection-all',
+            ],
+        ];
+    }
+
+    #[Computed]
+    public function filteredCommands(): array
+    {
+        $commands = self::getCommands();
+
+        if (empty($this->query)) {
+            return $commands;
+        }
+
+        $query = mb_strtolower($this->query);
+
+        $filtered = collect($commands)->filter(function ($command) use ($query) {
+            if (str_contains(mb_strtolower($command['label']), $query)) {
+                return true;
+            }
+
+            foreach ($command['keywords'] as $keyword) {
+                if (str_contains(mb_strtolower($keyword), $query)) {
+                    return true;
+                }
+            }
+
+            return false;
+        });
+
+        return array_values($filtered->toArray());
+    }
+
+    public function executeCommand(string $commandId): void
+    {
+        $command = collect(self::getCommands())->firstWhere('id', $commandId);
+
+        if (! $command) {
+            return;
+        }
+
+        if ($command['requiresInput']) {
+            return;
+        }
+
+        if ($command['event']) {
+            $this->dispatch($command['event']);
+        }
+
+        $this->close();
     }
 
     public function render()

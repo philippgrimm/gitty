@@ -110,6 +110,12 @@ class CommitPanel extends Component
         }
     }
 
+    #[On('palette-toggle-amend')]
+    public function handlePaletteToggleAmend(): void
+    {
+        $this->toggleAmend();
+    }
+
     public function render()
     {
         return view('livewire.commit-panel');

@@ -307,6 +307,18 @@ class StagingPanel extends Component
         $this->treeView = ! $this->treeView;
     }
 
+    #[On('palette-discard-all')]
+    public function handlePaletteDiscardAll(): void
+    {
+        $this->discardAll();
+    }
+
+    #[On('palette-toggle-view')]
+    public function handlePaletteToggleView(): void
+    {
+        $this->toggleView();
+    }
+
     public function render()
     {
         $stagedTree = $this->treeView && $this->stagedFiles->isNotEmpty()

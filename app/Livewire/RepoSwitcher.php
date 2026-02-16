@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Livewire;
 
 use App\Services\RepoManager;
+use Livewire\Attributes\On;
 use Livewire\Component;
 use Native\Desktop\Dialog;
 
@@ -119,11 +120,17 @@ class RepoSwitcher extends Component
                 'last_opened_at' => $repo->last_opened_at?->diffForHumans(),
             ])
             ->sortBy([
-                fn ($a, $b) => ($b['path'] === $this->currentRepoPath) <=> ($a['path'] === $this->currentRepoPath), // Current repo first
-                fn ($a, $b) => $b['last_opened_at'] <=> $a['last_opened_at'], // Then by last opened
+                fn ($a, $b) => ($b['path'] === $this->currentRepoPath) <=> ($a['path'] === $this->currentRepoPath),
+                fn ($a, $b) => $b['last_opened_at'] <=> $a['last_opened_at'],
             ])
             ->values()
             ->toArray();
+    }
+
+    #[On('palette-open-folder')]
+    public function handlePaletteOpenFolder(): void
+    {
+        $this->openFolderDialog();
     }
 
     public function render()

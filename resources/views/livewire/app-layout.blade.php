@@ -7,7 +7,7 @@
     @keydown.window.meta.shift.s.prevent="if (!$wire.repoPath) return; $wire.$dispatch('keyboard-stash')"
     @keydown.window.meta.a.prevent="if (!$wire.repoPath) return; $wire.$dispatch('keyboard-select-all')"
     @keydown.window.meta.b.prevent="if (!$wire.repoPath) return; $wire.toggleSidebar()"
-    @keydown.window.meta.k.prevent="$wire.$dispatch('open-command-palette')"
+    @keydown.window.meta.k.prevent="if(!$event.shiftKey) $wire.$dispatch('open-command-palette')"
     @keydown.window.meta.shift.p.prevent="$wire.$dispatch('open-command-palette')"
     @keydown.window.escape.prevent="$wire.$dispatch('keyboard-escape')"
 >
