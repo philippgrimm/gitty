@@ -15,12 +15,12 @@
         </div>
     @elseif($isLargeFile)
         <div class="border-b border-[#ccd0da] px-4 h-10 flex items-center bg-white">
-            <div class="flex items-center justify-between flex-1">
-                <div class="flex items-center gap-3">
-                    <span class="text-[#4c4f69] text-sm">{{ $file }}</span>
-                    <div class="flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-medium uppercase tracking-wider" style="background-color: #fe640b15; color: #fe640b">
-                        LARGE FILE
-                    </div>
+            <div class="flex items-center gap-3 flex-1 overflow-hidden">
+                <flux:tooltip :content="$file" class="min-w-0 flex-1">
+                    <span class="text-[#4c4f69] text-sm truncate block">{{ $file }}</span>
+                </flux:tooltip>
+                <div class="flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-medium uppercase tracking-wider shrink-0 whitespace-nowrap" style="background-color: #fe640b15; color: #fe640b">
+                    LARGE FILE
                 </div>
             </div>
         </div>
@@ -32,12 +32,12 @@
         </div>
     @elseif($isBinary)
         <div class="border-b border-[#ccd0da] px-4 h-10 flex items-center bg-white">
-            <div class="flex items-center justify-between flex-1">
-                <div class="flex items-center gap-3">
-                    <span class="text-[#4c4f69] text-sm">{{ $file }}</span>
-                    <div class="flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-medium uppercase tracking-wider" style="background-color: #9ca0b015; color: #9ca0b0">
-                        BINARY
-                    </div>
+            <div class="flex items-center gap-3 flex-1 overflow-hidden">
+                <flux:tooltip :content="$file" class="min-w-0 flex-1">
+                    <span class="text-[#4c4f69] text-sm truncate block">{{ $file }}</span>
+                </flux:tooltip>
+                <div class="flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-medium uppercase tracking-wider shrink-0 whitespace-nowrap" style="background-color: #9ca0b015; color: #9ca0b0">
+                    BINARY
                 </div>
             </div>
         </div>
@@ -49,9 +49,11 @@
         </div>
     @else
         <div class="border-b border-[#ccd0da] px-4 h-10 flex items-center bg-white sticky top-0 z-10" style="box-shadow: var(--shadow-sm)">
-            <div class="flex items-center justify-between flex-1">
-                <div class="flex items-center gap-3">
-                    <span class="text-[#4c4f69] text-sm">{{ $file }}</span>
+            <div class="flex items-center justify-between gap-3 flex-1 overflow-hidden">
+                <div class="flex items-center gap-3 min-w-0 flex-1">
+                    <flux:tooltip :content="$file" class="min-w-0 flex-1">
+                        <span class="text-[#4c4f69] text-sm truncate block">{{ $file }}</span>
+                    </flux:tooltip>
                     @if($diffData)
                         @php
                             $badgeColor = match(strtoupper($diffData['status'])) {
@@ -62,13 +64,13 @@
                                 default => '#9ca0b0',
                             };
                         @endphp
-                        <div class="flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-medium uppercase tracking-wider" style="background-color: {{ $badgeColor }}15; color: {{ $badgeColor }}">
+                        <div class="flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-medium uppercase tracking-wider shrink-0 whitespace-nowrap" style="background-color: {{ $badgeColor }}15; color: {{ $badgeColor }}">
                             {{ strtoupper($diffData['status']) }}
                         </div>
                     @endif
                 </div>
                 @if($diffData)
-                    <div class="flex items-center gap-4 text-sm">
+                    <div class="flex items-center gap-4 text-sm shrink-0">
                         <span class="text-[#40a02b] font-bold">+{{ $diffData['additions'] }}</span>
                         <span class="text-[#d20f39] font-bold">-{{ $diffData['deletions'] }}</span>
                     </div>

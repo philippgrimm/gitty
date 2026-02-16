@@ -57,7 +57,7 @@
                         @foreach($recentRepos as $repo)
                             <div
                                 class="group flex items-center justify-between px-3 py-1.5 transition-colors cursor-pointer"
-                                :class="activeIndex === {{ $loop->index }} ? 'bg-[var(--surface-2)]' : 'hover:bg-[var(--surface-2)]'"
+                                :class="activeIndex === {{ $loop->index }} ? 'bg-[#eff1f5]' : 'hover:bg-[#eff1f5]'"
                                 data-repo-item
                                 wire:click="switchRepo({{ $repo['id'] }})"
                                 x-on:click="$el.closest('[popover]')?.hidePopover()"
@@ -96,7 +96,7 @@
                     <button
                         wire:click="openFolderDialog"
                         type="button"
-                        class="w-full flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs uppercase tracking-wider text-[var(--text-secondary)] hover:bg-[var(--surface-2)] transition-colors rounded"
+                        class="w-full flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs uppercase tracking-wider text-[var(--text-secondary)] hover:bg-[#eff1f5] transition-colors rounded"
                     >
                         <x-phosphor-folder-open-light class="w-3.5 h-3.5 shrink-0" />
                         <span>Open Repository</span>

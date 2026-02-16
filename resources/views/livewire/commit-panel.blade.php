@@ -12,7 +12,7 @@
 
     <div class="space-y-2">
         <flux:textarea 
-            wire:model.blur="message" 
+            wire:model.live.debounce.300ms="message" 
             x-on:input="charCount = $event.target.value.length"
             placeholder="Commit message"
             rows="auto"

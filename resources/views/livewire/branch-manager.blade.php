@@ -81,7 +81,7 @@
                         @forelse($this->filteredLocalBranches as $branch)
                             <div
                                 class="group flex items-center justify-between px-3 py-1.5 transition-colors cursor-pointer"
-                                :class="activeIndex === {{ $loop->index }} ? 'bg-[var(--surface-2)]' : 'hover:bg-[var(--surface-2)]'"
+                                :class="activeIndex === {{ $loop->index }} ? 'bg-[#eff1f5]' : 'hover:bg-[#eff1f5]'"
                                 data-branch-item
                                 wire:click="switchBranch('{{ $branch['name'] }}')"
                                 x-on:click="$el.closest('[popover]')?.hidePopover()"
@@ -123,7 +123,7 @@
                                 @endphp
                                 <div
                                     class="flex items-center px-3 py-1.5 transition-colors cursor-default"
-                                    :class="activeIndex === {{ $remoteIndex }} ? 'bg-[var(--surface-2)]' : 'hover:bg-[var(--surface-2)]'"
+                                    :class="activeIndex === {{ $remoteIndex }} ? 'bg-[#eff1f5]' : 'hover:bg-[#eff1f5]'"
                                     data-branch-item
                                 >
                                     <div class="w-4 shrink-0"></div>
@@ -140,7 +140,7 @@
                         <button
                             @click="$wire.showCreateModal = true"
                             type="button"
-                            class="w-full flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs uppercase tracking-wider text-[var(--text-secondary)] hover:bg-[var(--surface-2)] transition-colors rounded"
+                            class="w-full flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs uppercase tracking-wider text-[var(--text-secondary)] hover:bg-[#eff1f5] transition-colors rounded"
                         >
                             <x-phosphor-plus-light class="w-3.5 h-3.5 shrink-0" />
                             <span>New Branch</span>

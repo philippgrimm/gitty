@@ -72,7 +72,7 @@
         <div class="flex-1 overflow-y-auto">
             @if($stagedFiles->isNotEmpty())
                 <div class="border-b border-[#ccd0da]">
-                    <div class="sticky top-0 bg-[#e6e9ef] border-b border-[#ccd0da] px-4 py-2 flex items-center justify-between">
+                    <div class="sticky top-0 z-10 bg-[#e6e9ef] border-b border-[#ccd0da] px-4 py-2 flex items-center justify-between">
                         <div class="flex items-center gap-3">
                             <div class="text-xs uppercase tracking-wider font-medium text-[#9ca0b0]">Staged</div>
                             <span class="text-xs text-[#9ca0b0] font-mono">{{ $stagedFiles->count() }}</span>
@@ -131,7 +131,7 @@
 
             @if($unstagedFiles->isNotEmpty() || $untrackedFiles->isNotEmpty())
                 <div>
-                    <div class="sticky top-0 bg-[#e6e9ef] border-b border-[#ccd0da] px-4 py-2 flex items-center justify-between">
+                    <div class="sticky top-0 z-10 bg-[#e6e9ef] border-b border-[#ccd0da] px-4 py-2 flex items-center justify-between">
                         <div class="flex items-center gap-3">
                             <div class="text-xs uppercase tracking-wider font-medium text-[#9ca0b0]">Changes</div>
                             <span class="text-xs text-[#9ca0b0] font-mono">{{ $unstagedFiles->count() + $untrackedFiles->count() }}</span>
