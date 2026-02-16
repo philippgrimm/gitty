@@ -324,4 +324,43 @@ index 0000000..f6a7b8c
 
 OUTPUT;
     }
+
+    public static function statusOnFeatureBranch(): string
+    {
+        return <<<'OUTPUT'
+# branch.oid a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0
+# branch.head feature/JIRA-123-add-login
+# branch.upstream origin/feature/JIRA-123-add-login
+# branch.ab +1 -0
+1 M. N... 100644 100644 100644 b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1 d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3 README.md
+1 A. N... 000000 100644 100644 0000000000000000000000000000000000000000 e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4 new-file.txt
+
+OUTPUT;
+    }
+
+    public static function statusOnBugfixBranch(): string
+    {
+        return <<<'OUTPUT'
+# branch.oid a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0
+# branch.head bugfix/PROJ-456-fix-crash
+# branch.upstream origin/bugfix/PROJ-456-fix-crash
+# branch.ab +0 -0
+1 M. N... 100644 100644 100644 b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1 d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3 README.md
+1 A. N... 000000 100644 100644 0000000000000000000000000000000000000000 e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4 new-file.txt
+
+OUTPUT;
+    }
+
+    public static function statusOnFeatureBranchNoTicket(): string
+    {
+        return <<<'OUTPUT'
+# branch.oid a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0
+# branch.head feature/no-ticket-here
+# branch.upstream origin/feature/no-ticket-here
+# branch.ab +0 -0
+1 M. N... 100644 100644 100644 b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1 d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3 README.md
+1 A. N... 000000 100644 100644 0000000000000000000000000000000000000000 e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4 new-file.txt
+
+OUTPUT;
+    }
 }

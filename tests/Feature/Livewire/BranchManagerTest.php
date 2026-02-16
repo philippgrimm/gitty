@@ -316,3 +316,16 @@ test('cancelAutoStash resets state without action', function () {
         ->assertSet('showAutoStashModal', false)
         ->assertSet('autoStashTargetBranch', '');
 });
+
+test('openCreateModal prefills feature/ in branch name', function () {
+    Process::fake([
+        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
+    ]);
+
+    Livewire::test(BranchManager::class, ['repoPath' => $this->testRepoPath])
+        ->call('openCreateModal')
+        ->assertSet('newBranchName', 'feature/')
+        ->assertSet('showCreateModal', true)
+        ->assertSet('baseBranch', 'main');
+});

@@ -22,6 +22,11 @@ class CommitPanel extends Component
 
     public ?string $lastCommitMessage = null;
 
+    public string $currentPrefill = '';
+
+    /** @var array<int, string> */
+    public array $commitHistory = [];
+
     public ?string $error = null;
 
     public function mount(): void
@@ -31,12 +36,40 @@ class CommitPanel extends Component
         $this->stagedCount = $status->changedFiles
             ->filter(fn ($file) => $file['indexStatus'] !== '.' && $file['indexStatus'] !== '?')
             ->count();
+
+        $this->currentPrefill = $this->getCommitPrefill();
+        $this->message = $this->currentPrefill;
+        $this->loadCommitHistory();
+    }
+
+    public function loadCommitHistory(): void
+    {
+        try {
+            $gitService = new GitService($this->repoPath);
+            $this->commitHistory = $gitService->log(10)
+                ->pluck('message')
+                ->map(fn (string $message) => \Illuminate\Support\Str::before($message, "\n"))
+                ->values()
+                ->toArray();
+        } catch (\Exception) {
+            $this->commitHistory = [];
+        }
     }
 
     #[On('status-updated')]
     public function refreshStagedCount(int $stagedCount = 0, array $aheadBehind = []): void
     {
         $this->stagedCount = $stagedCount;
+
+        $newPrefill = $this->getCommitPrefill();
+        if ($this->message === '' || $this->message === $this->currentPrefill) {
+            $this->currentPrefill = $newPrefill;
+            $this->message = $newPrefill;
+        } else {
+            $this->currentPrefill = $newPrefill;
+        }
+
+        $this->loadCommitHistory();
     }
 
     #[On('keyboard-commit')]
@@ -68,9 +101,12 @@ class CommitPanel extends Component
                 $commitService->commit($this->message);
             }
 
-            $this->message = '';
             $this->isAmend = false;
+            $this->currentPrefill = $this->getCommitPrefill();
+            $this->message = $this->currentPrefill;
+            $this->loadCommitHistory();
             $this->dispatch('committed');
+            $this->dispatch('prefill-updated');
         } catch (\Exception $e) {
             $this->error = GitErrorHandler::translate($e->getMessage());
             $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
@@ -89,9 +125,12 @@ class CommitPanel extends Component
             $commitService = new CommitService($this->repoPath);
             $commitService->commitAndPush($this->message);
 
-            $this->message = '';
             $this->isAmend = false;
+            $this->currentPrefill = $this->getCommitPrefill();
+            $this->message = $this->currentPrefill;
+            $this->loadCommitHistory();
             $this->dispatch('committed');
+            $this->dispatch('prefill-updated');
         } catch (\Exception $e) {
             $this->error = GitErrorHandler::translate($e->getMessage());
             $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
@@ -106,8 +145,28 @@ class CommitPanel extends Component
             $commitService = new CommitService($this->repoPath);
             $this->message = $commitService->lastCommitMessage();
         } else {
-            $this->message = '';
+            $this->currentPrefill = $this->getCommitPrefill();
+            $this->message = $this->currentPrefill;
         }
+    }
+
+    public function getCommitPrefill(): string
+    {
+        try {
+            $gitService = new GitService($this->repoPath);
+            $branch = $gitService->currentBranch();
+
+            if (preg_match('/^(feature|bugfix)\/([A-Z]+-\d+)/', $branch, $matches)) {
+                $type = $matches[1] === 'feature' ? 'feat' : 'fix';
+                $ticket = $matches[2];
+
+                return "{$type}({$ticket}): ";
+            }
+        } catch (\Exception) {
+            // Graceful fallback for detached HEAD, empty repo, etc.
+        }
+
+        return '';
     }
 
     #[On('palette-toggle-amend')]

@@ -1,7 +1,8 @@
 <div 
-    x-data="{ showDropdown: false, commitFlash: false, charCount: 0 }" 
+    x-data="{ showDropdown: false, commitFlash: false, charCount: 0, historyIndex: -1, draft: '', browsingHistory: false }" 
     x-init="charCount = $wire.message?.length || 0"
-    x-on:committed.window="commitFlash = true; setTimeout(() => commitFlash = false, 200)"
+    x-on:committed.window="commitFlash = true; setTimeout(() => commitFlash = false, 200); historyIndex = -1; browsingHistory = false;"
+    x-on:prefill-updated.window="$nextTick(() => { const ta = $el.querySelector('textarea'); if (ta) { ta.setSelectionRange(ta.value.length, ta.value.length); ta.focus(); } }); historyIndex = -1; browsingHistory = false;"
     class="flex flex-col bg-[#eff1f5] text-[#4c4f69] font-mono border-t border-[#ccd0da] p-3 gap-2"
 >
     @if($error)
@@ -13,7 +14,47 @@
     <div class="relative">
         <flux:textarea 
             wire:model.live.debounce.300ms="message" 
-            x-on:input="charCount = $event.target.value.length"
+            x-on:input="charCount = $event.target.value.length; historyIndex = -1; browsingHistory = false;"
+            x-on:keydown.arrow-up.prevent="
+                const history = $wire.commitHistory || [];
+                if (history.length === 0) return;
+                if (!browsingHistory) {
+                    draft = $event.target.value;
+                    browsingHistory = true;
+                    historyIndex = -1;
+                }
+                if (historyIndex < history.length - 1) {
+                    historyIndex++;
+                    $wire.set('message', history[historyIndex]);
+                    charCount = history[historyIndex].length;
+                    $nextTick(() => { $event.target.setSelectionRange($event.target.value.length, $event.target.value.length); });
+                }
+            "
+            x-on:keydown.arrow-down.prevent="
+                if (!browsingHistory) return;
+                if (historyIndex > 0) {
+                    historyIndex--;
+                    const history = $wire.commitHistory || [];
+                    $wire.set('message', history[historyIndex]);
+                    charCount = history[historyIndex].length;
+                    $nextTick(() => { $event.target.setSelectionRange($event.target.value.length, $event.target.value.length); });
+                } else if (historyIndex === 0) {
+                    historyIndex = -1;
+                    browsingHistory = false;
+                    $wire.set('message', draft);
+                    charCount = draft.length;
+                    $nextTick(() => { $event.target.setSelectionRange($event.target.value.length, $event.target.value.length); });
+                }
+            "
+            x-on:keydown.escape="
+                if (browsingHistory) {
+                    historyIndex = -1;
+                    browsingHistory = false;
+                    $wire.set('message', draft);
+                    charCount = draft.length;
+                    $nextTick(() => { $event.target.setSelectionRange($event.target.value.length, $event.target.value.length); });
+                }
+            "
             placeholder="Commit message"
             rows="auto"
             resize="vertical"

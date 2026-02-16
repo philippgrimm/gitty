@@ -6,7 +6,7 @@
         <div class="flex items-center gap-2 px-3 py-1.5 bg-[#fe640b]/10 border border-[#fe640b]/30 rounded text-[#fe640b]">
             <span class="text-xs uppercase tracking-wider font-semibold">HEAD detached at {{ substr($currentBranch, 0, 7) }}</span>
             <flux:button 
-                @click="$wire.showCreateModal = true"
+                @click="$wire.openCreateModal()"
                 variant="ghost" 
                 size="xs"
                 class="text-xs uppercase tracking-wider"
@@ -188,7 +188,7 @@
                     {{-- New Branch button --}}
                     <div class="border-t border-[var(--border-subtle)] p-2 sticky bottom-0 bg-white">
                         <button
-                            @click="$wire.showCreateModal = true"
+                            @click="$wire.openCreateModal()"
                             type="button"
                             class="w-full flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs uppercase tracking-wider text-[var(--text-secondary)] hover:bg-[#eff1f5] transition-colors rounded"
                         >

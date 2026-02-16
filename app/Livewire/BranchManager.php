@@ -116,6 +116,13 @@ class BranchManager extends Component
         }
     }
 
+    public function openCreateModal(): void
+    {
+        $this->newBranchName = 'feature/';
+        $this->baseBranch = $this->currentBranch;
+        $this->showCreateModal = true;
+    }
+
     #[On('palette-create-branch')]
     public function handlePaletteCreateBranch(string $name): void
     {
@@ -218,49 +225,52 @@ class BranchManager extends Component
     }
 
     /**
-     * @return \Illuminate\Support\Collection<int, array>
+     * @return Collection<int, array>
      */
-    public function getFilteredLocalBranchesProperty(): \Illuminate\Support\Collection
+    public function getFilteredLocalBranchesProperty(): Collection
     {
-        $local = collect($this->branches)->filter(fn ($b) => ! $b['isRemote'] && ! str_contains($b['name'], 'remotes/'));
-
-        if (! empty($this->branchQuery)) {
-            $local = $local->filter(fn ($b) => str_contains(strtolower($b['name']), strtolower($this->branchQuery)));
-        }
-
-        return $local->sortBy([
-            fn ($a, $b) => $b['isCurrent'] <=> $a['isCurrent'], // Current branch first
-            fn ($a, $b) => $a['name'] <=> $b['name'], // Then alphabetically
+        return $this->filterByQuery(
+            collect($this->branches)->filter(fn ($branch) => ! $branch['isRemote'] && ! str_contains($branch['name'], 'remotes/'))
+        )->sortBy([
+            fn ($a, $b) => $b['isCurrent'] <=> $a['isCurrent'],
+            fn ($a, $b) => $a['name'] <=> $b['name'],
         ]);
     }
 
     /**
-     * @return \Illuminate\Support\Collection<int, array>
+     * @return Collection<int, array>
      */
-    public function getFilteredRemoteBranchesProperty(): \Illuminate\Support\Collection
+    public function getFilteredRemoteBranchesProperty(): Collection
     {
-        // Get local branch names for comparison
         $localBranchNames = collect($this->branches)
-            ->filter(fn ($b) => ! $b['isRemote'] && ! str_contains($b['name'], 'remotes/'))
-            ->pluck('name')
-            ->toArray();
+            ->filter(fn ($branch) => ! $branch['isRemote'] && ! str_contains($branch['name'], 'remotes/'))
+            ->pluck('name');
 
-        // Filter remote branches
         $remote = collect($this->branches)
-            ->filter(fn ($b) => $b['isRemote'] || str_contains($b['name'], 'remotes/'))
-            ->filter(function ($b) use ($localBranchNames) {
+            ->filter(fn ($branch) => $branch['isRemote'] || str_contains($branch['name'], 'remotes/'))
+            ->filter(function ($branch) use ($localBranchNames) {
                 // Strip remote prefix (e.g., "origin/main" -> "main", "remotes/origin/feature/xyz" -> "feature/xyz")
-                $cleanName = preg_replace('/^(remotes\/)?[^\/]+\//', '', $b['name']);
+                $cleanName = preg_replace('/^(remotes\/)?[^\/]+\//', '', $branch['name']);
 
-                // Only show remote branches that don't have a corresponding local branch
-                return ! in_array($cleanName, $localBranchNames);
+                return ! $localBranchNames->contains($cleanName);
             });
 
-        if (! empty($this->branchQuery)) {
-            $remote = $remote->filter(fn ($b) => str_contains(strtolower($b['name']), strtolower($this->branchQuery)));
+        return $this->filterByQuery($remote);
+    }
+
+    /**
+     * @param  Collection<int, array>  $branches
+     * @return Collection<int, array>
+     */
+    private function filterByQuery(Collection $branches): Collection
+    {
+        if (empty($this->branchQuery)) {
+            return $branches;
         }
 
-        return $remote;
+        $query = strtolower($this->branchQuery);
+
+        return $branches->filter(fn ($branch) => str_contains(strtolower($branch['name']), $query));
     }
 
     public function render()
