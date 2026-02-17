@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Git;
 
+use App\Exceptions\GitCommandFailedException;
 use Illuminate\Contracts\Process\ProcessResult;
 use Illuminate\Support\Facades\Process;
 
@@ -33,18 +34,16 @@ class GitCommandRunner
      * @param  array<string>  $args  Arguments to escape and append
      * @param  string  $errorPrefix  Prefix for the exception message
      *
-     * @throws \RuntimeException
+     * @throws GitCommandFailedException
      */
     public function runOrFail(string $subcommand, array $args = [], string $errorPrefix = ''): ProcessResult
     {
         $result = $this->run($subcommand, $args);
 
         if (! $result->successful()) {
-            $message = $errorPrefix !== ''
-                ? $errorPrefix.': '.$result->errorOutput()
-                : 'Git command failed: '.$result->errorOutput();
+            $command = $errorPrefix !== '' ? $errorPrefix : "git {$subcommand}";
 
-            throw new \RuntimeException($message);
+            throw new GitCommandFailedException($command, $result->errorOutput(), $result->exitCode());
         }
 
         return $result;

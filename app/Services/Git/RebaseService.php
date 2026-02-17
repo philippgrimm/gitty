@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Git;
 
+use App\Exceptions\GitConflictException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Process;
 
@@ -64,7 +65,7 @@ class RebaseService extends AbstractGitService
         if ($result->exitCode() !== 0) {
             $errorOutput = $result->errorOutput();
             if (str_contains($errorOutput, 'conflict')) {
-                throw new \RuntimeException('Rebase failed due to conflicts. Resolve conflicts and continue.');
+                throw new GitConflictException('Rebase');
             }
             throw new \RuntimeException('Git rebase failed: '.$errorOutput);
         }
@@ -81,7 +82,7 @@ class RebaseService extends AbstractGitService
         if ($result->exitCode() !== 0) {
             $errorOutput = $result->errorOutput();
             if (str_contains($errorOutput, 'conflict')) {
-                throw new \RuntimeException('Rebase failed due to conflicts. Resolve conflicts and continue.');
+                throw new GitConflictException('Rebase');
             }
             throw new \RuntimeException('Git rebase --continue failed: '.$errorOutput);
         }

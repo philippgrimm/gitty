@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services\Git;
 
+use App\Exceptions\GitConflictException;
+
 class ResetService extends AbstractGitService
 {
     public function resetSoft(string $commitSha): void
@@ -49,7 +51,7 @@ class ResetService extends AbstractGitService
         if ($result->exitCode() !== 0) {
             $errorOutput = $result->errorOutput();
             if (str_contains($errorOutput, 'conflict')) {
-                throw new \RuntimeException('Revert failed due to conflicts. Please resolve conflicts manually.');
+                throw new GitConflictException('Revert');
             }
             throw new \RuntimeException('Git revert failed: '.$errorOutput);
         }
