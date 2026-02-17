@@ -948,7 +948,7 @@ Max Concurrent: 6 (Waves 2 & 3 combined)
 
 ---
 
-- [ ] 12. Migrate Remaining 7 Services to AbstractGitService
+- [x] 12. Migrate Remaining 7 Services to AbstractGitService
 
   **What to do**:
   - Migrate: `BlameService`, `GraphService`, `RebaseService`, `ResetService`, `TagService`, `GitConfigValidator`, `GitCacheService` (if applicable)
