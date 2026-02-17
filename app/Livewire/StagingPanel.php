@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Livewire;
 
 use App\Helpers\FileTreeBuilder;
+use App\Livewire\Concerns\HandlesGitOperations;
 use App\Services\Git\GitErrorHandler;
 use App\Services\Git\GitService;
 use App\Services\Git\StagingService;
@@ -17,6 +18,8 @@ use Livewire\Component;
 
 class StagingPanel extends Component
 {
+    use HandlesGitOperations;
+
     public string $repoPath;
 
     public Collection $unstagedFiles;
@@ -88,106 +91,64 @@ class StagingPanel extends Component
 
     public function stageFile(string $file): void
     {
-        try {
+        $this->executeGitOperation(function () use ($file) {
             $stagingService = new StagingService($this->repoPath);
             $stagingService->stageFile($file);
             $this->refreshStatus();
-            $this->dispatch('status-updated',
-                stagedCount: $this->stagedFiles->count(),
-                aheadBehind: $this->lastAheadBehind ?? ['ahead' => 0, 'behind' => 0],
-            );
-            $this->error = '';
-        } catch (\Exception $e) {
-            $this->error = GitErrorHandler::translate($e->getMessage());
-            $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
-        }
+            $this->dispatchStatusUpdate();
+        }, dispatchStatusUpdate: false);
     }
 
     public function unstageFile(string $file): void
     {
-        try {
+        $this->executeGitOperation(function () use ($file) {
             $stagingService = new StagingService($this->repoPath);
             $stagingService->unstageFile($file);
             $this->refreshStatus();
-            $this->dispatch('status-updated',
-                stagedCount: $this->stagedFiles->count(),
-                aheadBehind: $this->lastAheadBehind ?? ['ahead' => 0, 'behind' => 0],
-            );
-            $this->error = '';
-        } catch (\Exception $e) {
-            $this->error = GitErrorHandler::translate($e->getMessage());
-            $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
-        }
+            $this->dispatchStatusUpdate();
+        }, dispatchStatusUpdate: false);
     }
 
     #[On('keyboard-stage-all')]
     public function stageAll(): void
     {
-        try {
+        $this->executeGitOperation(function () {
             $stagingService = new StagingService($this->repoPath);
             $stagingService->stageAll();
             $this->refreshStatus();
-            $this->dispatch('status-updated',
-                stagedCount: $this->stagedFiles->count(),
-                aheadBehind: $this->lastAheadBehind ?? ['ahead' => 0, 'behind' => 0],
-            );
-            $this->error = '';
-        } catch (\Exception $e) {
-            $this->error = GitErrorHandler::translate($e->getMessage());
-            $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
-        }
+            $this->dispatchStatusUpdate();
+        }, dispatchStatusUpdate: false);
     }
 
     #[On('keyboard-unstage-all')]
     public function unstageAll(): void
     {
-        try {
+        $this->executeGitOperation(function () {
             $stagingService = new StagingService($this->repoPath);
             $stagingService->unstageAll();
             $this->refreshStatus();
-            $this->dispatch('status-updated',
-                stagedCount: $this->stagedFiles->count(),
-                aheadBehind: $this->lastAheadBehind ?? ['ahead' => 0, 'behind' => 0],
-            );
-            $this->error = '';
-        } catch (\Exception $e) {
-            $this->error = GitErrorHandler::translate($e->getMessage());
-            $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
-        }
+            $this->dispatchStatusUpdate();
+        }, dispatchStatusUpdate: false);
     }
 
     public function discardFile(string $file): void
     {
-        try {
+        $this->executeGitOperation(function () use ($file) {
             $stagingService = new StagingService($this->repoPath);
             $stagingService->discardFile($file);
             $this->refreshStatus();
-            $this->dispatch('status-updated',
-                stagedCount: $this->stagedFiles->count(),
-                aheadBehind: $this->lastAheadBehind ?? ['ahead' => 0, 'behind' => 0],
-            );
-            $this->error = '';
-        } catch (\Exception $e) {
-            $this->error = GitErrorHandler::translate($e->getMessage());
-            $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
-        }
+            $this->dispatchStatusUpdate();
+        }, dispatchStatusUpdate: false);
     }
 
     public function discardAll(): void
     {
-        try {
+        $this->executeGitOperation(function () {
             $stagingService = new StagingService($this->repoPath);
             $stagingService->discardAll();
             $this->refreshStatus();
-            $this->dispatch('status-updated',
-                stagedCount: $this->stagedFiles->count(),
-                aheadBehind: $this->lastAheadBehind ?? ['ahead' => 0, 'behind' => 0],
-            );
-            $this->error = '';
-        } catch (\Exception $e) {
-            $this->error = GitErrorHandler::translate($e->getMessage());
-            $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
-        }
+            $this->dispatchStatusUpdate();
+        }, dispatchStatusUpdate: false);
     }
 
     public function selectFile(string $file, bool $staged): void
@@ -201,19 +162,12 @@ class StagingPanel extends Component
             return;
         }
 
-        try {
+        $this->executeGitOperation(function () use ($files) {
             $stagingService = new StagingService($this->repoPath);
             $stagingService->stageFiles($files);
             $this->refreshStatus();
-            $this->dispatch('status-updated',
-                stagedCount: $this->stagedFiles->count(),
-                aheadBehind: $this->lastAheadBehind ?? ['ahead' => 0, 'behind' => 0],
-            );
-            $this->error = '';
-        } catch (\Exception $e) {
-            $this->error = GitErrorHandler::translate($e->getMessage());
-            $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
-        }
+            $this->dispatchStatusUpdate();
+        }, dispatchStatusUpdate: false);
     }
 
     public function unstageSelected(array $files): void
@@ -222,19 +176,12 @@ class StagingPanel extends Component
             return;
         }
 
-        try {
+        $this->executeGitOperation(function () use ($files) {
             $stagingService = new StagingService($this->repoPath);
             $stagingService->unstageFiles($files);
             $this->refreshStatus();
-            $this->dispatch('status-updated',
-                stagedCount: $this->stagedFiles->count(),
-                aheadBehind: $this->lastAheadBehind ?? ['ahead' => 0, 'behind' => 0],
-            );
-            $this->error = '';
-        } catch (\Exception $e) {
-            $this->error = GitErrorHandler::translate($e->getMessage());
-            $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
-        }
+            $this->dispatchStatusUpdate();
+        }, dispatchStatusUpdate: false);
     }
 
     public function discardSelected(array $files): void
@@ -243,19 +190,12 @@ class StagingPanel extends Component
             return;
         }
 
-        try {
+        $this->executeGitOperation(function () use ($files) {
             $stagingService = new StagingService($this->repoPath);
             $stagingService->discardFiles($files);
             $this->refreshStatus();
-            $this->dispatch('status-updated',
-                stagedCount: $this->stagedFiles->count(),
-                aheadBehind: $this->lastAheadBehind ?? ['ahead' => 0, 'behind' => 0],
-            );
-            $this->error = '';
-        } catch (\Exception $e) {
-            $this->error = GitErrorHandler::translate($e->getMessage());
-            $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
-        }
+            $this->dispatchStatusUpdate();
+        }, dispatchStatusUpdate: false);
     }
 
     public function stashSelected(array $files): void
@@ -264,38 +204,24 @@ class StagingPanel extends Component
             return;
         }
 
-        try {
+        $this->executeGitOperation(function () use ($files) {
             $stashService = new StashService($this->repoPath);
             $stashService->stashFiles($files);
             $this->refreshStatus();
             $this->dispatch('stash-created');
-            $this->dispatch('status-updated',
-                stagedCount: $this->stagedFiles->count(),
-                aheadBehind: $this->lastAheadBehind ?? ['ahead' => 0, 'behind' => 0],
-            );
-            $this->error = '';
-        } catch (\Exception $e) {
-            $this->error = GitErrorHandler::translate($e->getMessage());
-            $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
-        }
+            $this->dispatchStatusUpdate();
+        }, dispatchStatusUpdate: false);
     }
 
     public function stashAll(): void
     {
-        try {
+        $this->executeGitOperation(function () {
             $stashService = new StashService($this->repoPath);
             $stashService->stash('WIP on '.$this->getCurrentBranch(), true);
             $this->refreshStatus();
             $this->dispatch('stash-created');
-            $this->dispatch('status-updated',
-                stagedCount: $this->stagedFiles->count(),
-                aheadBehind: $this->lastAheadBehind ?? ['ahead' => 0, 'behind' => 0],
-            );
-            $this->error = '';
-        } catch (\Exception $e) {
-            $this->error = GitErrorHandler::translate($e->getMessage());
-            $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
-        }
+            $this->dispatchStatusUpdate();
+        }, dispatchStatusUpdate: false);
     }
 
     private function getCurrentBranch(): string
@@ -303,6 +229,14 @@ class StagingPanel extends Component
         $result = Process::path($this->repoPath)->run('git rev-parse --abbrev-ref HEAD');
 
         return trim($result->output());
+    }
+
+    private function dispatchStatusUpdate(): void
+    {
+        $this->dispatch('status-updated',
+            stagedCount: $this->stagedFiles->count(),
+            aheadBehind: $this->lastAheadBehind ?? ['ahead' => 0, 'behind' => 0],
+        );
     }
 
     public function toggleView(): void

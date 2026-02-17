@@ -200,3 +200,102 @@ Successfully migrated both services to extend `AbstractGitService`.
 - Array merge for variable-length args: `array_merge([$message, '--'], $paths)`
 
 All tests pass. Migration complete.
+
+## Task 13: Test Fix Success — DTO Migration Complete
+
+### What Was Fixed
+1. **StagingPanel.php** (lines 62-64): Changed array access `$file['key']` to property access `$file->key`
+2. **CommitPanel.php** (line 50): Changed filter callback to use `$file->key` property access  
+3. **GitServiceTest.php**: Updated assertions for new DTO types:
+   - `aheadBehind` now expects `AheadBehind` object with `->ahead` and `->behind` properties
+   - `changedFiles->first()['key']` changed to `changedFiles->first()->key`
+
+### Why ArrayAccess Was Already Working
+- `ChangedFile.php` already implemented `\ArrayAccess` interface (lines 7, 58-76)
+- Used `readonly class` (PHP 8.4 supports interfaces on readonly classes)
+- Set methods throw `LogicException('ChangedFile is immutable')` for proper readonly semantics
+
+### Property Access Pattern (Best Practice)
+**Prefer property access** (`$file->key`) over array access (`$file['key']`) for:
+- Better IDE autocomplete and type inference
+- Clearer intent in code review  
+- Aligns with DTO nature of ChangedFile
+
+**ArrayAccess retained for**:
+- FileTreeBuilder compatibility (uses `->toArray()` internally)
+- Legacy code during migration
+- Collection methods that expect array-like behavior
+
+### Test Results (100% Pass)
+```
+GitServiceTest:         16 passed (50 assertions) — 5.40s
+StagingPanelTest:       18 passed (47 assertions) — 5.34s
+CommitPanelTest:        21 passed (59 assertions) — 6.65s
+BranchManagerTest:      19 passed (47 assertions) — 4.51s
+StatusUpdatedEventTest:  7 passed (9 assertions)  — 2.61s
+
+Total: 81 tests, 209 assertions — ALL PASS
+```
+
+### PHP 8.4 Capability Confirmed
+```php
+readonly class ChangedFile implements \ArrayAccess { ... }
+```
+This pattern works perfectly. The `readonly` modifier applies to **properties**, not the class's ability to implement interfaces.
+
+### Files Changed (3)
+- `app/Livewire/StagingPanel.php` — Property access in `refreshStatus()`
+- `app/Livewire/CommitPanel.php` — Property access in `mount()` filter
+- `tests/Feature/Services/GitServiceTest.php` — Updated assertions for DTO properties
+
+### Migration Status
+✅ **Task 11**: ChangedFile & AheadBehind DTOs created  
+✅ **Task 12**: GitStatus refactored to use DTOs  
+✅ **Task 13**: All tests fixed — DTO migration COMPLETE
+
+## 2026-02-17: StagingPanel Trait Refactoring
+
+Successfully refactored `app/Livewire/StagingPanel.php` to use the `HandlesGitOperations` trait:
+
+### Results
+- **Line count**: 351 → 285 lines (66 lines saved, 18.8% reduction)
+- **Try/catch blocks**: 12 → 1 (only `refreshStatus()` keeps its own)
+- **All 18 tests pass**: Behavior is 100% identical
+
+### Implementation Pattern
+Each of the 11 refactored methods now follows this clean pattern:
+
+```php
+public function stageFile(string $file): void
+{
+    $this->executeGitOperation(function () use ($file) {
+        $stagingService = new StagingService($this->repoPath);
+        $stagingService->stageFile($file);
+        $this->refreshStatus();
+        $this->dispatchStatusUpdate();
+    }, dispatchStatusUpdate: false);
+}
+```
+
+### Key Decisions
+1. **Created `dispatchStatusUpdate()` helper**: The trait's `executeGitOperation()` dispatches `status-updated` without parameters, but StagingPanel needs `stagedCount` and `aheadBehind` params. Solution was to add a private helper method.
+
+2. **Always pass `dispatchStatusUpdate: false`**: This prevents the trait from dispatching the generic event, allowing manual dispatch with correct params inside the closure.
+
+3. **Special cases preserved**:
+   - `*Selected()` methods: Early return for empty arrays remains outside the closure
+   - `stash*()` methods: Extra `stash-created` event dispatch preserved inside closure
+   - `refreshStatus()`: Kept its own try/catch — different behavior (hash checking, early return)
+   - `handleRefreshStaging()`: No changes needed — no try/catch to eliminate
+
+### Refactored Methods (11 total)
+- stageFile, unstageFile, stageAll, unstageAll
+- discardFile, discardAll
+- stageSelected, unstageSelected, discardSelected
+- stashSelected, stashAll
+
+### Pattern Benefits
+- **Consistency**: All git operations now use the same error handling pattern
+- **DRY**: Eliminated 11 identical try/catch blocks
+- **Maintainability**: Single source of truth for error handling logic
+- **Readability**: Each method is now 5-7 lines instead of 15-20
