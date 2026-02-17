@@ -12,7 +12,7 @@ class StashService extends AbstractGitService
     public function stash(string $message, bool $includeUntracked): void
     {
         $subcommand = $includeUntracked ? 'stash push -u -m' : 'stash push -m';
-        $this->commandRunner->run($subcommand, [$message]);
+        $this->commandRunner->runOrFail($subcommand, [$message], 'Git stash failed');
 
         $this->cache->invalidateGroup($this->repoPath, 'stashes');
         $this->cache->invalidateGroup($this->repoPath, 'status');
@@ -35,7 +35,7 @@ class StashService extends AbstractGitService
 
     public function stashApply(int $index): void
     {
-        $this->commandRunner->run("stash apply stash@{{$index}}");
+        $this->commandRunner->runOrFail("stash apply stash@{{$index}}", [], 'Git stash apply failed');
 
         $this->cache->invalidateGroup($this->repoPath, 'status');
     }
@@ -51,7 +51,7 @@ class StashService extends AbstractGitService
 
     public function stashPop(int $index): void
     {
-        $this->commandRunner->run("stash pop stash@{{$index}}");
+        $this->commandRunner->runOrFail("stash pop stash@{{$index}}", [], 'Git stash pop failed');
 
         $this->cache->invalidateGroup($this->repoPath, 'stashes');
         $this->cache->invalidateGroup($this->repoPath, 'status');
@@ -59,7 +59,7 @@ class StashService extends AbstractGitService
 
     public function stashDrop(int $index): void
     {
-        $this->commandRunner->run("stash drop stash@{{$index}}");
+        $this->commandRunner->runOrFail("stash drop stash@{{$index}}", [], 'Git stash drop failed');
 
         $this->cache->invalidateGroup($this->repoPath, 'stashes');
     }
@@ -72,7 +72,7 @@ class StashService extends AbstractGitService
 
         $message = $this->generateStashMessage($paths);
         $args = array_merge([$message, '--'], $paths);
-        $this->commandRunner->run('stash push -u -m', $args);
+        $this->commandRunner->runOrFail('stash push -u -m', $args, 'Git stash files failed');
 
         $this->cache->invalidateGroup($this->repoPath, 'stashes');
         $this->cache->invalidateGroup($this->repoPath, 'status');
