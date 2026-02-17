@@ -53,68 +53,165 @@
 
         {{-- Commit list --}}
         <div class="flex-1 overflow-y-auto">
-            @foreach($commits as $commit)
+            @php
+                $graphNodesBySha = [];
+                foreach ($graphData as $node) {
+                    $graphNodesBySha[$node->sha] = $node;
+                }
+                $maxLane = 0;
+                foreach ($graphData as $node) {
+                    $maxLane = max($maxLane, $node->lane);
+                }
+                $graphWidth = max(40, ($maxLane + 1) * 20);
+                
+                $laneColors = [
+                    '#1e66f5',
+                    '#8839ef',
+                    '#40a02b',
+                    '#fe640b',
+                    '#179299',
+                    '#d20f39',
+                    '#04a5e5',
+                    '#df8e1d',
+                ];
+            @endphp
+
+            @foreach($commits as $index => $commit)
+                @php
+                    $graphNode = $graphNodesBySha[$commit->sha] ?? null;
+                    $lane = $graphNode?->lane ?? 0;
+                    $parents = $graphNode?->parents ?? [];
+                    $laneColor = $laneColors[$lane % count($laneColors)];
+                    
+                    $nextCommit = $commits[$index + 1] ?? null;
+                    $nextGraphNode = $nextCommit ? ($graphNodesBySha[$nextCommit->sha] ?? null) : null;
+                @endphp
+
                 <div 
                     wire:key="commit-{{ $commit->sha }}"
                     wire:click="selectCommit('{{ $commit->sha }}')"
                     @contextmenu="showContextMenu('{{ $commit->sha }}', $event)"
-                    class="px-4 py-2 cursor-pointer border-b border-[var(--border-subtle)] transition-colors duration-150"
+                    class="flex cursor-pointer border-b border-[var(--border-subtle)] transition-colors duration-150"
                     :class="$wire.selectedCommitSha === '{{ $commit->sha }}' ? 'bg-[rgba(8,76,207,0.15)]' : 'bg-white dark:bg-[var(--surface-0)] hover:bg-[var(--surface-0)] dark:hover:bg-[var(--surface-3)]'"
                 >
-                    {{-- Line 1: SHA | Author | Date --}}
-                    <div class="flex items-center justify-between gap-3 mb-1">
-                        <div class="flex items-center gap-3 min-w-0">
-                            <flux:tooltip :content="$commit->sha" delay="500">
-                                <span class="text-xs text-[#084CCF] font-mono">{{ $commit->shortSha }}</span>
-                            </flux:tooltip>
-                            @if(!empty($commit->author))
-                                <span class="text-sm text-[var(--text-primary)] truncate">{{ $commit->author }}</span>
-                            @endif
-                        </div>
-                        @if(!empty($commit->date))
-                            <span class="text-xs text-[var(--text-tertiary)] shrink-0">{{ $commit->date }}</span>
-                        @endif
-                    </div>
-
-                    {{-- Line 2: Message --}}
-                    <div class="text-sm text-[var(--text-secondary)] truncate">{{ $commit->message }}</div>
-
-                    {{-- Line 3: Ref badges (if any) --}}
-                    @if(!empty($commit->refs))
-                        <div class="flex items-center gap-1.5 mt-1.5 flex-wrap">
-                            @foreach($commit->refs as $ref)
-                                @php
-                                    $isHead = str_contains($ref, 'HEAD');
-                                    $isBranch = str_starts_with($ref, 'HEAD ->') || (!str_contains($ref, '/') && !str_contains($ref, 'tag:'));
-                                    $isRemote = str_contains($ref, '/') && !str_contains($ref, 'tag:');
-                                    $isTag = str_contains($ref, 'tag:');
+                    {{-- Graph column --}}
+                    @if($showGraph && $graphNode)
+                        <div class="shrink-0 py-2" style="width: {{ $graphWidth }}px;">
+                            <svg width="{{ $graphWidth }}" height="40" class="overflow-visible">
+                                {{-- Draw lines to parents --}}
+                                @foreach($parents as $parentSha)
+                                    @php
+                                        $parentNode = $graphNodesBySha[$parentSha] ?? null;
+                                        $parentLane = $parentNode?->lane ?? $lane;
+                                        $parentColor = $laneColors[$parentLane % count($laneColors)];
+                                        
+                                        $startX = ($lane * 20) + 10;
+                                        $endX = ($parentLane * 20) + 10;
+                                    @endphp
                                     
-                                    $displayRef = str_replace('HEAD -> ', '', $ref);
-                                    $displayRef = str_replace('tag: ', '', $displayRef);
-                                    
-                                    if ($isHead && !str_contains($ref, '->')) {
-                                        $bgColor = '#fe640b';
-                                        $textColor = '#ffffff';
-                                    } elseif ($isTag) {
-                                        $bgColor = '#8839ef';
-                                        $textColor = '#ffffff';
-                                    } elseif ($isRemote) {
-                                        $bgColor = '#179299';
-                                        $textColor = '#ffffff';
-                                    } else {
-                                        $bgColor = '#40a02b';
-                                        $textColor = '#ffffff';
-                                    }
-                                @endphp
-                                <span 
-                                    class="px-1.5 py-0.5 rounded text-xs font-medium"
-                                    style="background-color: {{ $bgColor }}; color: {{ $textColor }};"
-                                >
-                                    {{ $displayRef }}
-                                </span>
-                            @endforeach
+                                    @if($parentLane === $lane)
+                                        {{-- Straight line down --}}
+                                        <line 
+                                            x1="{{ $startX }}" 
+                                            y1="20" 
+                                            x2="{{ $startX }}" 
+                                            y2="40" 
+                                            stroke="{{ $laneColor }}" 
+                                            stroke-width="2"
+                                        />
+                                    @else
+                                        {{-- Merge line --}}
+                                        <path 
+                                            d="M {{ $startX }} 20 Q {{ $startX }} 30, {{ ($startX + $endX) / 2 }} 35 T {{ $endX }} 40" 
+                                            stroke="{{ $parentColor }}" 
+                                            stroke-width="2" 
+                                            fill="none"
+                                        />
+                                    @endif
+                                @endforeach
+
+                                {{-- Draw line from previous commit if it's in the same lane --}}
+                                @if($index > 0 && $nextGraphNode && in_array($commit->sha, $nextGraphNode->parents))
+                                    <line 
+                                        x1="{{ ($lane * 20) + 10 }}" 
+                                        y1="0" 
+                                        x2="{{ ($lane * 20) + 10 }}" 
+                                        y2="20" 
+                                        stroke="{{ $laneColor }}" 
+                                        stroke-width="2"
+                                    />
+                                @endif
+
+                                {{-- Draw commit node --}}
+                                <circle 
+                                    cx="{{ ($lane * 20) + 10 }}" 
+                                    cy="20" 
+                                    r="4" 
+                                    fill="{{ $laneColor }}" 
+                                    stroke="white" 
+                                    stroke-width="1.5"
+                                />
+                            </svg>
                         </div>
                     @endif
+
+                    {{-- Commit details --}}
+                    <div class="flex-1 px-4 py-2">
+                        {{-- Line 1: SHA | Author | Date --}}
+                        <div class="flex items-center justify-between gap-3 mb-1">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <flux:tooltip :content="$commit->sha" delay="500">
+                                    <span class="text-xs text-[#084CCF] font-mono">{{ $commit->shortSha }}</span>
+                                </flux:tooltip>
+                                @if(!empty($commit->author))
+                                    <span class="text-sm text-[var(--text-primary)] truncate">{{ $commit->author }}</span>
+                                @endif
+                            </div>
+                            @if(!empty($commit->date))
+                                <span class="text-xs text-[var(--text-tertiary)] shrink-0">{{ $commit->date }}</span>
+                            @endif
+                        </div>
+
+                        {{-- Line 2: Message --}}
+                        <div class="text-sm text-[var(--text-secondary)] truncate">{{ $commit->message }}</div>
+
+                        {{-- Line 3: Ref badges (if any) --}}
+                        @if(!empty($commit->refs))
+                            <div class="flex items-center gap-1.5 mt-1.5 flex-wrap">
+                                @foreach($commit->refs as $ref)
+                                    @php
+                                        $isHead = str_contains($ref, 'HEAD');
+                                        $isBranch = str_starts_with($ref, 'HEAD ->') || (!str_contains($ref, '/') && !str_contains($ref, 'tag:'));
+                                        $isRemote = str_contains($ref, '/') && !str_contains($ref, 'tag:');
+                                        $isTag = str_contains($ref, 'tag:');
+                                        
+                                        $displayRef = str_replace('HEAD -> ', '', $ref);
+                                        $displayRef = str_replace('tag: ', '', $displayRef);
+                                        
+                                        if ($isHead && !str_contains($ref, '->')) {
+                                            $bgColor = '#fe640b';
+                                            $textColor = '#ffffff';
+                                        } elseif ($isTag) {
+                                            $bgColor = '#8839ef';
+                                            $textColor = '#ffffff';
+                                        } elseif ($isRemote) {
+                                            $bgColor = '#179299';
+                                            $textColor = '#ffffff';
+                                        } else {
+                                            $bgColor = '#40a02b';
+                                            $textColor = '#ffffff';
+                                        }
+                                    @endphp
+                                    <span 
+                                        class="px-1.5 py-0.5 rounded text-xs font-medium"
+                                        style="background-color: {{ $bgColor }}; color: {{ $textColor }};"
+                                    >
+                                        {{ $displayRef }}
+                                    </span>
+                                @endforeach
+                            </div>
+                        @endif
+                    </div>
                 </div>
             @endforeach
 

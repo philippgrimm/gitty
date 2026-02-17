@@ -7,6 +7,7 @@ namespace App\Livewire;
 use App\Services\Git\CommitService;
 use App\Services\Git\GitErrorHandler;
 use App\Services\Git\GitService;
+use App\Services\SettingsService;
 use Illuminate\Support\Facades\Process;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -28,6 +29,13 @@ class CommitPanel extends Component
     /** @var array<int, string> */
     public array $commitHistory = [];
 
+    public int $historyIndex = -1;
+
+    public string $draftMessage = '';
+
+    /** @var array<int, string> */
+    public array $storedHistory = [];
+
     public ?string $error = null;
 
     public bool $showUndoConfirmation = false;
@@ -45,6 +53,7 @@ class CommitPanel extends Component
         $this->currentPrefill = $this->getCommitPrefill();
         $this->message = $this->currentPrefill;
         $this->loadCommitHistory();
+        $this->loadStoredHistory();
     }
 
     public function loadCommitHistory(): void
@@ -59,6 +68,52 @@ class CommitPanel extends Component
         } catch (\Exception) {
             $this->commitHistory = [];
         }
+    }
+
+    public function loadStoredHistory(): void
+    {
+        try {
+            $settingsService = app(SettingsService::class);
+            $this->storedHistory = $settingsService->getCommitHistory($this->repoPath);
+        } catch (\Exception) {
+            $this->storedHistory = [];
+        }
+    }
+
+    public function cycleHistory(string $direction): void
+    {
+        if (empty($this->storedHistory)) {
+            return;
+        }
+
+        if ($direction === 'up') {
+            // Save draft on first up press
+            if ($this->historyIndex === -1) {
+                $this->draftMessage = $this->message;
+            }
+
+            // Move to older message
+            if ($this->historyIndex < count($this->storedHistory) - 1) {
+                $this->historyIndex++;
+                $this->message = $this->storedHistory[$this->historyIndex];
+            }
+        } elseif ($direction === 'down') {
+            // Move to newer message
+            if ($this->historyIndex > 0) {
+                $this->historyIndex--;
+                $this->message = $this->storedHistory[$this->historyIndex];
+            } elseif ($this->historyIndex === 0) {
+                // Return to draft
+                $this->historyIndex = -1;
+                $this->message = $this->draftMessage;
+            }
+        }
+    }
+
+    public function selectHistoryMessage(string $message): void
+    {
+        $this->message = $message;
+        $this->historyIndex = -1;
     }
 
     #[On('status-updated')]
@@ -99,17 +154,28 @@ class CommitPanel extends Component
 
         try {
             $commitService = new CommitService($this->repoPath);
+            $messageToCommit = $this->message;
 
             if ($this->isAmend) {
-                $commitService->commitAmend($this->message);
+                $commitService->commitAmend($messageToCommit);
             } else {
-                $commitService->commit($this->message);
+                $commitService->commit($messageToCommit);
+            }
+
+            // Save to history (non-critical, don't abort commit on failure)
+            try {
+                $settingsService = app(SettingsService::class);
+                $settingsService->addCommitMessage($this->repoPath, $messageToCommit);
+            } catch (\Exception) {
+                // Settings table may not exist in test environment
             }
 
             $this->isAmend = false;
             $this->currentPrefill = $this->getCommitPrefill();
             $this->message = $this->currentPrefill;
+            $this->historyIndex = -1;
             $this->loadCommitHistory();
+            $this->loadStoredHistory();
             $this->dispatch('committed');
             $this->dispatch('prefill-updated');
         } catch (\Exception $e) {
@@ -128,12 +194,23 @@ class CommitPanel extends Component
 
         try {
             $commitService = new CommitService($this->repoPath);
-            $commitService->commitAndPush($this->message);
+            $messageToCommit = $this->message;
+            $commitService->commitAndPush($messageToCommit);
+
+            // Save to history (non-critical)
+            try {
+                $settingsService = app(SettingsService::class);
+                $settingsService->addCommitMessage($this->repoPath, $messageToCommit);
+            } catch (\Exception) {
+                // Settings table may not exist in test environment
+            }
 
             $this->isAmend = false;
             $this->currentPrefill = $this->getCommitPrefill();
             $this->message = $this->currentPrefill;
+            $this->historyIndex = -1;
             $this->loadCommitHistory();
+            $this->loadStoredHistory();
             $this->dispatch('committed');
             $this->dispatch('prefill-updated');
         } catch (\Exception $e) {

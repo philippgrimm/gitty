@@ -12,6 +12,7 @@ class SettingsService
         'confirm_discard',
         'confirm_force_push',
         'show_untracked',
+        'notifications_enabled',
     ];
 
     private const DEFAULTS = [
@@ -23,6 +24,7 @@ class SettingsService
         'confirm_force_push' => true,
         'show_untracked' => true,
         'diff_context_lines' => 3,
+        'notifications_enabled' => true,
     ];
 
     public function defaults(): array
@@ -90,5 +92,48 @@ class SettingsService
         }
 
         return (string) $value;
+    }
+
+    /**
+     * Get commit message history for a specific repository.
+     *
+     * @return array<int, string>
+     */
+    public function getCommitHistory(string $repoPath): array
+    {
+        $key = 'commit_history_'.md5($repoPath);
+        $setting = Setting::where('key', $key)->first();
+
+        if ($setting === null) {
+            return [];
+        }
+
+        $decoded = json_decode($setting->value, true);
+
+        return is_array($decoded) ? $decoded : [];
+    }
+
+    /**
+     * Add a commit message to the history for a specific repository.
+     * Deduplicates and keeps max 20 messages.
+     */
+    public function addCommitMessage(string $repoPath, string $message): void
+    {
+        $key = 'commit_history_'.md5($repoPath);
+        $history = $this->getCommitHistory($repoPath);
+
+        // Remove duplicates (case-sensitive)
+        $history = array_values(array_filter($history, fn ($msg) => $msg !== $message));
+
+        // Prepend new message
+        array_unshift($history, $message);
+
+        // Keep max 20
+        $history = array_slice($history, 0, 20);
+
+        Setting::updateOrCreate(
+            ['key' => $key],
+            ['value' => json_encode($history)]
+        );
     }
 }

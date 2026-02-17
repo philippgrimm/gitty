@@ -65,6 +65,12 @@ class AutoFetchIndicator extends Component
             $this->dispatch('remote-updated');
         } else {
             $this->lastError = $result['error'];
+
+            $notificationService = app(NotificationService::class);
+            $notificationService->notify(
+                'Fetch Failed',
+                $result['error']
+            );
         }
 
         $this->refreshStatus();

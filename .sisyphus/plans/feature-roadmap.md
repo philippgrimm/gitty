@@ -763,7 +763,7 @@ Wave 5 (Final — Integration):
 
 ### TIER 3 — PROFESSIONAL POLISH
 
-- [ ] 10. Git Graph (Visual Branch Topology)
+- [x] 10. Git Graph (Visual Branch Topology)
 
   **What to do**:
   - Create `app/Services/Git/GraphService.php`:
@@ -819,7 +819,7 @@ Wave 5 (Final — Integration):
 
 ---
 
-- [ ] 11. Search
+- [x] 11. Search
 
   **What to do**:
   - Create `app/Services/Git/SearchService.php`:
@@ -1139,7 +1139,7 @@ Wave 5 (Final — Integration):
 
 ---
 
-- [ ] 17. Native macOS Notifications
+- [x] 17. Native macOS Notifications
 
   **What to do**:
   - Use NativePHP notification API to send macOS notifications
@@ -1190,7 +1190,7 @@ Wave 5 (Final — Integration):
 
 ---
 
-- [ ] 18. Quick Commit / Message History
+- [x] 18. Quick Commit / Message History
 
   **What to do**:
   - Extend `app/Livewire/CommitPanel.php`:

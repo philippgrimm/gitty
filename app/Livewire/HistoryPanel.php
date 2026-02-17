@@ -25,6 +25,8 @@ class HistoryPanel extends Component
 
     public ?string $selectedCommitSha = null;
 
+    public bool $showGraph = true;
+
     public bool $showResetModal = false;
 
     public bool $showRevertModal = false;
@@ -242,8 +244,19 @@ class HistoryPanel extends Component
 
     public function render()
     {
+        $graphData = [];
+        if ($this->showGraph) {
+            try {
+                $graphService = new GraphService($this->repoPath);
+                $graphData = $graphService->getGraphData($this->perPage);
+            } catch (\Exception $e) {
+                $graphData = [];
+            }
+        }
+
         return view('livewire.history-panel', [
             'commits' => $this->getCommits(),
+            'graphData' => $graphData,
         ]);
     }
 }

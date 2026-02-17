@@ -1,8 +1,9 @@
 <div 
-    x-data="{ showDropdown: false, commitFlash: false, charCount: 0, historyIndex: -1, draft: '', browsingHistory: false }" 
+    x-data="{ showDropdown: false, commitFlash: false, charCount: 0 }" 
     x-init="charCount = $wire.message?.length || 0"
-    x-on:committed.window="commitFlash = true; setTimeout(() => commitFlash = false, 200); historyIndex = -1; browsingHistory = false;"
-    x-on:prefill-updated.window="$nextTick(() => { const ta = $el.querySelector('textarea'); if (ta) { ta.setSelectionRange(ta.value.length, ta.value.length); ta.focus(); } }); historyIndex = -1; browsingHistory = false;"
+    x-on:committed.window="commitFlash = true; setTimeout(() => commitFlash = false, 200);"
+    x-on:prefill-updated.window="$nextTick(() => { const ta = $el.querySelector('textarea'); if (ta) { ta.setSelectionRange(ta.value.length, ta.value.length); ta.focus(); } });"
+    x-on:focus-commit-message.window="$nextTick(() => { const ta = $el.querySelector('textarea'); if (ta) { ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length); } });"
     class="flex flex-col bg-[var(--surface-0)] text-[var(--text-primary)] font-mono border-t border-[var(--border-default)] p-3 gap-2"
 >
     @if($error)
@@ -13,7 +14,26 @@
 
     <div class="relative">
         {{-- Templates dropdown (overlaid on textarea) --}}
-        <div class="absolute top-1 right-1 z-10">
+        <div class="absolute top-1 right-1 z-10 flex gap-1">
+            @if(count($storedHistory) > 0)
+                <flux:dropdown position="bottom-end">
+                    <flux:tooltip content="Recent messages">
+                        <flux:button variant="ghost" size="xs" square class="text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] !h-5 !w-5">
+                            <x-phosphor-clock-counter-clockwise class="w-3 h-3" />
+                        </flux:button>
+                    </flux:tooltip>
+                    <flux:menu class="max-h-64 overflow-y-auto">
+                        @foreach($storedHistory as $historyMessage)
+                            <flux:menu.item wire:click="selectHistoryMessage('{{ addslashes($historyMessage) }}')">
+                                <div class="font-mono text-xs truncate max-w-xs">
+                                    {{ \Illuminate\Support\Str::limit($historyMessage, 60) }}
+                                </div>
+                            </flux:menu.item>
+                        @endforeach
+                    </flux:menu>
+                </flux:dropdown>
+            @endif
+
             <flux:dropdown position="bottom-end">
                 <flux:tooltip content="Commit templates">
                     <flux:button variant="ghost" size="xs" square class="text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] !h-5 !w-5">
@@ -35,47 +55,9 @@
 
         <flux:textarea 
             wire:model.live.debounce.300ms="message" 
-            x-on:input="charCount = $event.target.value.length; historyIndex = -1; browsingHistory = false;"
-            x-on:keydown.arrow-up.prevent="
-                const history = $wire.commitHistory || [];
-                if (history.length === 0) return;
-                if (!browsingHistory) {
-                    draft = $event.target.value;
-                    browsingHistory = true;
-                    historyIndex = -1;
-                }
-                if (historyIndex < history.length - 1) {
-                    historyIndex++;
-                    $wire.set('message', history[historyIndex]);
-                    charCount = history[historyIndex].length;
-                    $nextTick(() => { $event.target.setSelectionRange($event.target.value.length, $event.target.value.length); });
-                }
-            "
-            x-on:keydown.arrow-down.prevent="
-                if (!browsingHistory) return;
-                if (historyIndex > 0) {
-                    historyIndex--;
-                    const history = $wire.commitHistory || [];
-                    $wire.set('message', history[historyIndex]);
-                    charCount = history[historyIndex].length;
-                    $nextTick(() => { $event.target.setSelectionRange($event.target.value.length, $event.target.value.length); });
-                } else if (historyIndex === 0) {
-                    historyIndex = -1;
-                    browsingHistory = false;
-                    $wire.set('message', draft);
-                    charCount = draft.length;
-                    $nextTick(() => { $event.target.setSelectionRange($event.target.value.length, $event.target.value.length); });
-                }
-            "
-            x-on:keydown.escape="
-                if (browsingHistory) {
-                    historyIndex = -1;
-                    browsingHistory = false;
-                    $wire.set('message', draft);
-                    charCount = draft.length;
-                    $nextTick(() => { $event.target.setSelectionRange($event.target.value.length, $event.target.value.length); });
-                }
-            "
+            x-on:input="charCount = $event.target.value.length;"
+            x-on:keydown.arrow-up.prevent="$wire.cycleHistory('up'); charCount = $wire.message?.length || 0;"
+            x-on:keydown.arrow-down.prevent="$wire.cycleHistory('down'); charCount = $wire.message?.length || 0;"
             placeholder="Commit message"
             rows="auto"
             resize="vertical"
@@ -83,6 +65,10 @@
         />
         <div class="absolute bottom-2 right-2 text-[10px] text-[var(--text-tertiary)] font-mono pointer-events-none select-none" x-text="charCount"></div>
     </div>
+
+    @if(count($storedHistory) > 0)
+        <div class="text-xs text-[#8c8fa1]">↑↓ message history</div>
+    @endif
 
     <flux:button.group class="w-full">
         <flux:button 

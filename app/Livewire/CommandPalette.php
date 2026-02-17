@@ -76,7 +76,7 @@ class CommandPalette extends Component
                 'commit', 'commit-push', 'toggle-amend', 'push', 'pull', 'fetch',
                 'fetch-all', 'force-push', 'create-branch', 'select-all', 'toggle-history',
                 'abort-merge', 'create-tag', 'toggle-diff-view', 'open-in-editor',
-                'continue-rebase', 'abort-rebase',
+                'continue-rebase', 'abort-rebase', 'focus-commit',
             ], true);
         }
 
@@ -324,6 +324,24 @@ class CommandPalette extends Component
                 'keywords' => ['rebase', 'abort', 'cancel'],
                 'requiresInput' => false,
                 'icon' => 'phosphor-x-circle',
+            ],
+            [
+                'id' => 'search',
+                'label' => 'Search...',
+                'shortcut' => '⌘F',
+                'event' => 'open-search',
+                'keywords' => ['search', 'find', 'commits', 'content', 'files'],
+                'requiresInput' => false,
+                'icon' => 'phosphor-magnifying-glass',
+            ],
+            [
+                'id' => 'focus-commit',
+                'label' => 'Focus Commit Message',
+                'shortcut' => '⌘L',
+                'event' => 'focus-commit-message',
+                'keywords' => ['focus', 'commit', 'message', 'textarea'],
+                'requiresInput' => false,
+                'icon' => 'phosphor-text-aa',
             ],
             [
                 'id' => 'select-all',

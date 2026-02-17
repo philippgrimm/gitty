@@ -100,6 +100,17 @@
                     label="Show untracked files"
                 />
             </div>
+
+            <div class="space-y-4">
+                <div class="text-xs uppercase tracking-wider font-medium text-[var(--text-tertiary)] border-b border-[var(--border-default)] pb-2">
+                    Notifications
+                </div>
+                
+                <flux:checkbox 
+                    wire:model="notificationsEnabled"
+                    label="Enable notifications"
+                />
+            </div>
         </div>
 
         <div class="flex items-center justify-between border-t border-[var(--border-default)] pt-4">

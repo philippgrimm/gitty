@@ -26,6 +26,8 @@ class SettingsModal extends Component
 
     public int $diffContextLines;
 
+    public bool $notificationsEnabled;
+
     public bool $showModal = false;
 
     public function mount(): void
@@ -56,6 +58,7 @@ class SettingsModal extends Component
         $service->set('confirm_force_push', $this->confirmForcePush);
         $service->set('show_untracked', $this->showUntracked);
         $service->set('diff_context_lines', $this->diffContextLines);
+        $service->set('notifications_enabled', $this->notificationsEnabled);
 
         $this->dispatch('settings-updated');
         $this->dispatch('theme-updated', theme: $this->theme);
@@ -92,5 +95,6 @@ class SettingsModal extends Component
         $this->confirmForcePush = $service->get('confirm_force_push');
         $this->showUntracked = $service->get('show_untracked');
         $this->diffContextLines = $service->get('diff_context_lines');
+        $this->notificationsEnabled = $service->get('notifications_enabled');
     }
 }

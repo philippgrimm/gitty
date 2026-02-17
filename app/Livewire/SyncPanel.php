@@ -91,6 +91,13 @@ class SyncPanel extends Component
             $this->isOperationRunning = false;
             $this->refreshAheadBehindData();
             $this->dispatch('status-updated', stagedCount: 0, aheadBehind: $this->aheadBehind);
+
+            $commitCount = $this->aheadBehind['ahead'] ?? 0;
+            $notificationService = app(NotificationService::class);
+            $notificationService->notify(
+                'Push Complete',
+                "Pushed {$commitCount} commit(s) to origin/{$currentBranch}"
+            );
         } catch (\Exception $e) {
             $this->error = GitErrorHandler::translate($e->getMessage());
             $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
@@ -130,6 +137,12 @@ class SyncPanel extends Component
             $this->isOperationRunning = false;
             $this->refreshAheadBehindData();
             $this->dispatch('status-updated', stagedCount: 0, aheadBehind: $this->aheadBehind);
+
+            $notificationService = app(NotificationService::class);
+            $notificationService->notify(
+                'Pull Complete',
+                "Pulled new commits from origin/{$currentBranch}"
+            );
         } catch (\Exception $e) {
             $this->error = GitErrorHandler::translate($e->getMessage());
             $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);

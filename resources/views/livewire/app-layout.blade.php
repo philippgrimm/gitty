@@ -14,10 +14,12 @@
     @keydown.window.meta.slash.prevent="$wire.$dispatch('open-shortcut-help')"
     @keydown.window.meta.h.prevent="if (!$wire.repoPath) return; $wire.$dispatch('toggle-history-panel')"
     @keydown.window.meta.f.prevent="if (!$wire.repoPath) return; $wire.$dispatch('open-search')"
+    @keydown.window.meta.l.prevent="if (!$wire.repoPath) return; $wire.$dispatch('focus-commit-message')"
 >
     @livewire('error-banner', key('error-banner'))
     @livewire('command-palette', ['repoPath' => $repoPath ?? ''], key('command-palette'))
     @livewire('shortcut-help', key('shortcut-help'))
+    @livewire('search-panel', ['repoPath' => $repoPath ?? ''], key('search-panel'))
     
     <div class="border-b border-[var(--border-default)] bg-[var(--surface-1)] px-3 flex items-center gap-2 h-9" style="box-shadow: var(--shadow-sm); -webkit-app-region: drag;">
         {{-- Traffic light drag spacer (macOS window controls) --}}
