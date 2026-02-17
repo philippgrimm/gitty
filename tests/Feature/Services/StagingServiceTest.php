@@ -16,7 +16,7 @@ test('it stages a single file', function () {
     $service = new StagingService('/tmp/gitty-test-repo');
     $service->stageFile('README.md');
 
-    Process::assertRan('git add README.md');
+    Process::assertRan("git add 'README.md'");
 });
 
 test('it unstages a single file', function () {
@@ -25,7 +25,7 @@ test('it unstages a single file', function () {
     $service = new StagingService('/tmp/gitty-test-repo');
     $service->unstageFile('README.md');
 
-    Process::assertRan('git reset HEAD README.md');
+    Process::assertRan("git reset HEAD 'README.md'");
 });
 
 test('it stages all files', function () {
@@ -52,7 +52,7 @@ test('it discards changes to a single file', function () {
     $service = new StagingService('/tmp/gitty-test-repo');
     $service->discardFile('README.md');
 
-    Process::assertRan('git checkout -- README.md');
+    Process::assertRan("git checkout -- 'README.md'");
 });
 
 test('it discards all changes', function () {

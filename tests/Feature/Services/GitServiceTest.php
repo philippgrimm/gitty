@@ -124,9 +124,9 @@ test('it parses diff output', function () {
 
 test('it loads diff for untracked file', function () {
     Process::fake([
-        'git diff -- new-file.txt' => '',
-        'git status --porcelain=v2 -- new-file.txt' => GitOutputFixtures::statusWithSingleUntrackedFile(),
-        'git diff --no-index -- /dev/null new-file.txt' => GitOutputFixtures::diffUntracked(),
+        "git diff -- 'new-file.txt'" => '',
+        "git status --porcelain=v2 -- 'new-file.txt'" => GitOutputFixtures::statusWithSingleUntrackedFile(),
+        "git diff --no-index -- '/dev/null' 'new-file.txt'" => GitOutputFixtures::diffUntracked(),
     ]);
 
     $service = new GitService('/tmp/gitty-test-repo');

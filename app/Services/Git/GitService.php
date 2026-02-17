@@ -8,29 +8,16 @@ use App\DTOs\Commit;
 use App\DTOs\DiffResult;
 use App\DTOs\GitStatus;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Process;
 
-class GitService
+class GitService extends AbstractGitService
 {
-    private GitCacheService $cache;
-
-    public function __construct(
-        protected string $repoPath,
-    ) {
-        $gitDir = rtrim($this->repoPath, '/').'/.git';
-        if (! is_dir($gitDir)) {
-            throw new \InvalidArgumentException("Not a valid git repository: {$this->repoPath}");
-        }
-        $this->cache = new GitCacheService;
-    }
-
     public function status(): GitStatus
     {
         return $this->cache->get(
             $this->repoPath,
             'status',
             function () {
-                $result = Process::path($this->repoPath)->run('git status --porcelain=v2 --branch');
+                $result = $this->commandRunner->run('status --porcelain=v2 --branch');
 
                 return GitStatus::fromOutput($result->output());
             },
@@ -47,16 +34,17 @@ class GitService
             $cacheKey,
             function () use ($limit, $branch, $detailed) {
                 if ($detailed) {
-                    $command = "git log --format='%H|||%an|||%ae|||%ar|||%s|||%D' -n {$limit}";
+                    $command = "log --format='%H|||%an|||%ae|||%ar|||%s|||%D' -n {$limit}";
                 } else {
-                    $command = "git log --oneline -n {$limit}";
+                    $command = "log --oneline -n {$limit}";
                 }
 
+                $args = [];
                 if ($branch !== null) {
-                    $command .= " {$branch}";
+                    $args = [$branch];
                 }
 
-                $result = Process::path($this->repoPath)->run($command);
+                $result = $this->commandRunner->run($command, $args);
                 $lines = array_filter(explode("\n", trim($result->output())));
 
                 if ($detailed) {
@@ -98,22 +86,27 @@ class GitService
 
     public function diff(?string $file = null, bool $staged = false): DiffResult
     {
-        $command = 'git diff';
+        $command = 'diff';
         if ($staged) {
             $command .= ' --cached';
         }
         if ($file !== null) {
-            $command .= " -- {$file}";
+            $command .= ' --';
         }
 
-        $result = Process::path($this->repoPath)->run($command);
+        $args = [];
+        if ($file !== null) {
+            $args = [$file];
+        }
+
+        $result = $this->commandRunner->run($command, $args);
         $diffResult = DiffResult::fromDiffOutput($result->output());
 
         // For untracked files, git diff returns empty — use --no-index instead
         if ($diffResult->files->isEmpty() && $file !== null && ! $staged) {
-            $statusResult = Process::path($this->repoPath)->run("git status --porcelain=v2 -- {$file}");
+            $statusResult = $this->commandRunner->run('status --porcelain=v2 --', [$file]);
             if (str_starts_with(trim($statusResult->output()), '?')) {
-                $untrackedResult = Process::path($this->repoPath)->run("git diff --no-index -- /dev/null {$file}");
+                $untrackedResult = $this->commandRunner->run('diff --no-index --', ['/dev/null', $file]);
 
                 return DiffResult::fromDiffOutput($untrackedResult->output());
             }
