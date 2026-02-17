@@ -5,19 +5,9 @@ declare(strict_types=1);
 namespace App\Services\Git;
 
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Process;
 
-class SearchService
+class SearchService extends AbstractGitService
 {
-    public function __construct(
-        protected string $repoPath,
-    ) {
-        $gitDir = rtrim($this->repoPath, '/').'/.git';
-        if (! is_dir($gitDir)) {
-            throw new \InvalidArgumentException("Not a valid git repository: {$this->repoPath}");
-        }
-    }
-
     /**
      * Search commit messages using git log --grep
      */
@@ -27,9 +17,7 @@ class SearchService
             return collect();
         }
 
-        $result = Process::path($this->repoPath)->run(
-            "git log --grep=\"{$query}\" --format=\"%H|%h|%an|%ar|%s\" -{$limit}"
-        );
+        $result = $this->commandRunner->run("log --format=\"%H|%h|%an|%ar|%s\" -{$limit} --grep", [$query]);
 
         if ($result->exitCode() !== 0) {
             throw new \RuntimeException('Git log --grep failed: '.$result->errorOutput());
@@ -47,9 +35,7 @@ class SearchService
             return collect();
         }
 
-        $result = Process::path($this->repoPath)->run(
-            "git log -S \"{$query}\" --format=\"%H|%h|%an|%ar|%s\" -{$limit}"
-        );
+        $result = $this->commandRunner->run("log --format=\"%H|%h|%an|%ar|%s\" -{$limit} -S", [$query]);
 
         if ($result->exitCode() !== 0) {
             throw new \RuntimeException('Git log -S failed: '.$result->errorOutput());
@@ -67,9 +53,7 @@ class SearchService
             return collect();
         }
 
-        $result = Process::path($this->repoPath)->run(
-            "git ls-files \"*{$query}*\""
-        );
+        $result = $this->commandRunner->run('ls-files', ["*{$query}*"]);
 
         if ($result->exitCode() !== 0) {
             throw new \RuntimeException('Git ls-files failed: '.$result->errorOutput());

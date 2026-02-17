@@ -8,19 +8,9 @@ use App\DTOs\DiffFile;
 use App\DTOs\DiffResult;
 use App\DTOs\Hunk;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Process;
 
-class DiffService
+class DiffService extends AbstractGitService
 {
-    public function __construct(
-        protected string $repoPath,
-    ) {
-        $gitDir = rtrim($this->repoPath, '/').'/.git';
-        if (! is_dir($gitDir)) {
-            throw new \InvalidArgumentException("Not a valid git repository: {$this->repoPath}");
-        }
-    }
-
     public function parseDiff(string $rawDiff): DiffResult
     {
         return DiffResult::fromDiffOutput($rawDiff);
@@ -34,22 +24,19 @@ class DiffService
     public function stageHunk(DiffFile $file, Hunk $hunk): void
     {
         $patch = $this->generatePatch($file, $hunk);
-        $process = Process::path($this->repoPath)->input($patch);
-        $process->run('git apply --cached');
+        $this->commandRunner->runWithInput('apply --cached', $patch);
     }
 
     public function unstageHunk(DiffFile $file, Hunk $hunk): void
     {
         $patch = $this->generatePatch($file, $hunk);
-        $process = Process::path($this->repoPath)->input($patch);
-        $process->run('git apply --cached --reverse');
+        $this->commandRunner->runWithInput('apply --cached --reverse', $patch);
     }
 
     public function stageLines(DiffFile $file, Hunk $hunk, array $selectedLineIndices): void
     {
         $patch = $this->generateLinePatch($file, $hunk, $selectedLineIndices);
-        $process = Process::path($this->repoPath)->input($patch);
-        $result = $process->run('git apply --cached --unidiff-zero -');
+        $result = $this->commandRunner->runWithInput('apply --cached --unidiff-zero -', $patch);
 
         if (! $result->successful()) {
             throw new \RuntimeException('Failed to stage lines: '.$result->errorOutput());
@@ -59,8 +46,7 @@ class DiffService
     public function unstageLines(DiffFile $file, Hunk $hunk, array $selectedLineIndices): void
     {
         $patch = $this->generateLinePatch($file, $hunk, $selectedLineIndices);
-        $process = Process::path($this->repoPath)->input($patch);
-        $result = $process->run('git apply --cached --unidiff-zero --reverse -');
+        $result = $this->commandRunner->runWithInput('apply --cached --unidiff-zero --reverse -', $patch);
 
         if (! $result->successful()) {
             throw new \RuntimeException('Failed to unstage lines: '.$result->errorOutput());

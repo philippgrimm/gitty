@@ -29,7 +29,7 @@ test('constructor validates git repository', function () {
 
 test('searchCommits returns parsed results', function () {
     Process::fake([
-        'git log --grep="feature" --format="%H|%h|%an|%ar|%s" -50' => Process::result(
+        'git log --format="%H|%h|%an|%ar|%s" -50 --grep \'feature\'' => Process::result(
             output: "1234567890abcdef1234567890abcdef12345678|1234567|John Doe|2 hours ago|Add feature X\nabcdef1234567890abcdef1234567890abcdef12|abcdef1|Jane Smith|1 day ago|Fix feature Y"
         ),
     ]);
@@ -56,7 +56,7 @@ test('searchCommits returns empty collection for empty query', function () {
 
 test('searchCommits throws exception on git error', function () {
     Process::fake([
-        'git log --grep="test" --format="%H|%h|%an|%ar|%s" -50' => Process::result(
+        'git log --format="%H|%h|%an|%ar|%s" -50 --grep \'test\'' => Process::result(
             exitCode: 1,
             errorOutput: 'fatal: bad revision'
         ),
@@ -70,7 +70,7 @@ test('searchCommits throws exception on git error', function () {
 
 test('searchContent returns pickaxe results', function () {
     Process::fake([
-        'git log -S "function" --format="%H|%h|%an|%ar|%s" -50' => Process::result(
+        'git log --format="%H|%h|%an|%ar|%s" -50 -S \'function\'' => Process::result(
             output: "fedcba0987654321fedcba0987654321fedcba09|fedcba0|Alice|3 days ago|Refactor function\n0987654321fedcba0987654321fedcba09876543|0987654|Bob|1 week ago|Add function tests"
         ),
     ]);
@@ -95,7 +95,7 @@ test('searchContent returns empty collection for empty query', function () {
 
 test('searchContent throws exception on git error', function () {
     Process::fake([
-        'git log -S "test" --format="%H|%h|%an|%ar|%s" -50' => Process::result(
+        'git log --format="%H|%h|%an|%ar|%s" -50 -S \'test\'' => Process::result(
             exitCode: 1,
             errorOutput: 'fatal: invalid object'
         ),
@@ -109,7 +109,7 @@ test('searchContent throws exception on git error', function () {
 
 test('searchFiles returns file paths', function () {
     Process::fake([
-        'git ls-files "*component*"' => Process::result(
+        'git ls-files \'*component*\'' => Process::result(
             output: "src/components/Button.php\nsrc/components/Modal.php\ntests/components/ButtonTest.php"
         ),
     ]);
@@ -132,7 +132,7 @@ test('searchFiles returns empty collection for empty query', function () {
 
 test('searchFiles throws exception on git error', function () {
     Process::fake([
-        'git ls-files "*test*"' => Process::result(
+        'git ls-files \'*test*\'' => Process::result(
             exitCode: 1,
             errorOutput: 'fatal: not a git repository'
         ),
@@ -146,7 +146,7 @@ test('searchFiles throws exception on git error', function () {
 
 test('searchCommits respects limit parameter', function () {
     Process::fake([
-        'git log --grep="fix" --format="%H|%h|%an|%ar|%s" -10' => Process::result(
+        'git log --format="%H|%h|%an|%ar|%s" -10 --grep \'fix\'' => Process::result(
             output: '1111111111111111111111111111111111111111|1111111|Dev|now|Fix 1'
         ),
     ]);
@@ -163,7 +163,7 @@ test('searchCommits respects limit parameter', function () {
 
 test('searchContent respects limit parameter', function () {
     Process::fake([
-        'git log -S "bug" --format="%H|%h|%an|%ar|%s" -25' => Process::result(
+        'git log --format="%H|%h|%an|%ar|%s" -25 -S \'bug\'' => Process::result(
             output: '2222222222222222222222222222222222222222|2222222|Tester|yesterday|Fix bug'
         ),
     ]);
