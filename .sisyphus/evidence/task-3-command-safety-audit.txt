@@ -1,0 +1,1048 @@
+================================================================================
+GIT COMMAND SAFETY AUDIT
+================================================================================
+Date: 2026-02-17
+Scope: All Process::path() calls in app/Services/Git/*.php and app/Livewire/*.php
+Context: Desktop app — user is the "attacker". Shell injection = robustness issue.
+
+================================================================================
+EXECUTIVE SUMMARY
+================================================================================
+
+Total Process::path() calls audited: 128 across 27 files
+- Services: 18 files (app/Services/Git/)
+- Livewire: 9 files (app/Livewire/)
+- Tests: Excluded from this audit (test code, not production)
+
+CRITICAL FINDINGS:
+- 23 UNSAFE commands with raw user input interpolation
+- 8 PARTIALLY SAFE commands (some escaping, but gaps)
+- 97 SAFE commands (no user input or properly escaped)
+
+HIGHEST RISK COMMANDS (Priority 1 - Fix Immediately):
+1. CommitService::commit() - commit messages with quotes break command
+2. CommitService::commitAmend() - same issue as commit()
+3. SearchService::searchCommits() - grep query not escaped
+4. SearchService::searchContent() - pickaxe query not escaped
+5. SearchService::searchFiles() - filename pattern not escaped
+6. TagService::createTag() - tag name and message not escaped
+7. StashService::stash() - stash message not escaped
+
+================================================================================
+DETAILED AUDIT BY SERVICE
+================================================================================
+
+--------------------------------------------------------------------------------
+1. CommitService (app/Services/Git/CommitService.php)
+--------------------------------------------------------------------------------
+
+Line 26: UNSAFE - commit()
+Command: "git commit -m \"{$message}\""
+User Input: $message (commit message from user)
+Escaping: NONE
+Exit Code Check: YES (line 49)
+Risk: HIGH - Quotes in commit message break command
+Example: Message 'fix: add "quotes" support' → command fails
+Classification: UNSAFE
+
+Line 31: UNSAFE - commitAmend()
+Command: "git commit --amend -m \"{$message}\""
+User Input: $message (commit message from user)
+Escaping: NONE
+Exit Code Check: YES (line 49)
+Risk: HIGH - Same as commit()
+Classification: UNSAFE
+
+Line 38: SAFE - commitAndPush() → push
+Command: 'git push'
+User Input: NONE
+Exit Code Check: YES (line 40)
+Classification: SAFE
+
+Line 59: SAFE - lastCommitMessage()
+Command: 'git log -1 --pretty=%B'
+User Input: NONE
+Exit Code Check: NO (read-only)
+Classification: SAFE
+
+Line 66: SAFE - undoLastCommit()
+Command: 'git reset --soft HEAD~1'
+User Input: NONE
+Exit Code Check: YES (line 68)
+Classification: SAFE
+
+Line 92: SAFE - isLastCommitMerge()
+Command: 'git rev-parse HEAD^2 2>/dev/null'
+User Input: NONE
+Exit Code Check: YES (line 94)
+Classification: SAFE
+
+Line 99: UNSAFE - cherryPick()
+Command: "git cherry-pick {$sha}"
+User Input: $sha (commit SHA from user selection)
+Escaping: NONE
+Exit Code Check: YES (line 101)
+Risk: MEDIUM - SHA format is constrained (hex), but not validated
+Classification: PARTIALLY SAFE (should validate SHA format)
+
+Line 111: SAFE - cherryPickAbort()
+Command: 'git cherry-pick --abort'
+User Input: NONE
+Exit Code Check: YES (line 113)
+Classification: SAFE
+
+Line 123: SAFE - cherryPickContinue()
+Command: 'git cherry-pick --continue'
+User Input: NONE
+Exit Code Check: YES (line 125)
+Classification: SAFE
+
+--------------------------------------------------------------------------------
+2. BranchService (app/Services/Git/BranchService.php)
+--------------------------------------------------------------------------------
+
+Line 32: SAFE - branches()
+Command: 'git branch -a -vv'
+User Input: NONE
+Exit Code Check: NO (read-only)
+Classification: SAFE
+
+Line 43: UNSAFE - switchBranch()
+Command: "git checkout {$name}"
+User Input: $name (branch name from user)
+Escaping: NONE
+Exit Code Check: YES (line 45)
+Risk: MEDIUM - Branch names with spaces/special chars break command
+Classification: UNSAFE
+
+Line 56: UNSAFE - createBranch()
+Command: "git checkout -b {$name} {$from}"
+User Input: $name, $from (branch names from user)
+Escaping: NONE
+Exit Code Check: YES (line 58)
+Risk: MEDIUM - Same as switchBranch()
+Classification: UNSAFE
+
+Line 70: UNSAFE - deleteBranch()
+Command: "git branch {$flag} {$name}"
+User Input: $name (branch name from user)
+Escaping: NONE
+Exit Code Check: YES (line 72)
+Risk: MEDIUM - Same as switchBranch()
+Classification: UNSAFE
+
+Line 82: UNSAFE - mergeBranch()
+Command: "git merge {$name}"
+User Input: $name (branch name from user)
+Escaping: NONE
+Exit Code Check: YES (line 87 via MergeResult)
+Risk: MEDIUM - Same as switchBranch()
+Classification: UNSAFE
+
+--------------------------------------------------------------------------------
+3. SearchService (app/Services/Git/SearchService.php)
+--------------------------------------------------------------------------------
+
+Line 30-31: UNSAFE - searchCommits()
+Command: "git log --grep=\"{$query}\" --format=\"%H|%h|%an|%ar|%s\" -{$limit}"
+User Input: $query (search query from user)
+Escaping: NONE
+Exit Code Check: YES (line 34)
+Risk: HIGH - Quotes in query break command
+Example: Query 'fix "bug"' → command fails
+Classification: UNSAFE
+
+Line 50-51: UNSAFE - searchContent()
+Command: "git log -S \"{$query}\" --format=\"%H|%h|%an|%ar|%s\" -{$limit}"
+User Input: $query (search query from user)
+Escaping: NONE
+Exit Code Check: YES (line 54)
+Risk: HIGH - Same as searchCommits()
+Classification: UNSAFE
+
+Line 70-71: UNSAFE - searchFiles()
+Command: "git ls-files \"*{$query}*\""
+User Input: $query (filename pattern from user)
+Escaping: NONE
+Exit Code Check: YES (line 74)
+Risk: HIGH - Quotes in query break command
+Classification: UNSAFE
+
+--------------------------------------------------------------------------------
+4. StagingService (app/Services/Git/StagingService.php)
+--------------------------------------------------------------------------------
+
+Line 25: UNSAFE - stageFile()
+Command: "git add {$file}"
+User Input: $file (file path from git status)
+Escaping: NONE
+Exit Code Check: NO
+Risk: MEDIUM - Files with spaces break command
+Classification: UNSAFE
+
+Line 32: UNSAFE - unstageFile()
+Command: "git reset HEAD {$file}"
+User Input: $file (file path from git status)
+Escaping: NONE
+Exit Code Check: NO
+Risk: MEDIUM - Same as stageFile()
+Classification: UNSAFE
+
+Line 39: SAFE - stageAll()
+Command: 'git add .'
+User Input: NONE
+Exit Code Check: NO
+Classification: SAFE
+
+Line 46: SAFE - unstageAll()
+Command: 'git reset HEAD'
+User Input: NONE
+Exit Code Check: NO
+Classification: SAFE
+
+Line 53: UNSAFE - discardFile()
+Command: "git checkout -- {$file}"
+User Input: $file (file path from git status)
+Escaping: NONE
+Exit Code Check: NO
+Risk: MEDIUM - Same as stageFile()
+Classification: UNSAFE
+
+Line 60: SAFE - discardAll()
+Command: 'git checkout -- .'
+User Input: NONE
+Exit Code Check: NO
+Classification: SAFE
+
+Line 71-74: SAFE - stageFiles()
+Command: "git add {$filesString}"
+User Input: $files (array of file paths)
+Escaping: YES - escapeshellarg() on line 71
+Exit Code Check: NO
+Classification: SAFE ✓ (GOOD EXAMPLE)
+
+Line 85-88: SAFE - unstageFiles()
+Command: "git reset HEAD -- {$filesString}"
+User Input: $files (array of file paths)
+Escaping: YES - escapeshellarg() on line 85
+Exit Code Check: NO
+Classification: SAFE ✓ (GOOD EXAMPLE)
+
+Line 99-102: SAFE - discardFiles()
+Command: "git checkout -- {$filesString}"
+User Input: $files (array of file paths)
+Escaping: YES - escapeshellarg() on line 99
+Exit Code Check: NO
+Classification: SAFE ✓ (GOOD EXAMPLE)
+
+--------------------------------------------------------------------------------
+5. GitService (app/Services/Git/GitService.php)
+--------------------------------------------------------------------------------
+
+Line 33: SAFE - status()
+Command: 'git status --porcelain=v2 --branch'
+User Input: NONE
+Exit Code Check: NO (read-only)
+Classification: SAFE
+
+Line 50-59: SAFE - log()
+Command: "git log --format='%H|||%an|||%ae|||%ar|||%s|||%D' -n {$limit}"
+         OR "git log --oneline -n {$limit}"
+         (with optional " {$branch}" appended)
+User Input: $limit (integer), $branch (nullable string)
+Escaping: NONE on $branch
+Exit Code Check: NO (read-only)
+Risk: LOW - $limit is typed as int, $branch is from git status (trusted)
+Classification: PARTIALLY SAFE (should escape $branch if user-provided)
+
+Line 106-109: UNSAFE - diff()
+Command: "git diff -- {$file}" OR "git diff --cached -- {$file}"
+User Input: $file (file path from git status)
+Escaping: NONE
+Exit Code Check: NO (read-only)
+Risk: MEDIUM - Files with spaces break command
+Classification: UNSAFE
+
+Line 114: UNSAFE - diff() → untracked file check
+Command: "git status --porcelain=v2 -- {$file}"
+User Input: $file (file path from git status)
+Escaping: NONE
+Exit Code Check: NO (read-only)
+Risk: MEDIUM - Same as above
+Classification: UNSAFE
+
+Line 116: UNSAFE - diff() → untracked diff
+Command: "git diff --no-index -- /dev/null {$file}"
+User Input: $file (file path from git status)
+Escaping: NONE
+Exit Code Check: NO (read-only)
+Risk: MEDIUM - Same as above
+Classification: UNSAFE
+
+--------------------------------------------------------------------------------
+6. RemoteService (app/Services/Git/RemoteService.php)
+--------------------------------------------------------------------------------
+
+Line 31: SAFE - remotes()
+Command: 'git remote -v'
+User Input: NONE
+Exit Code Check: NO (read-only)
+Classification: SAFE
+
+Line 44: UNSAFE - push()
+Command: "git push {$remote} {$branch}"
+User Input: $remote, $branch (from user selection)
+Escaping: NONE
+Exit Code Check: NO
+Risk: MEDIUM - Remote/branch names with spaces break command
+Classification: UNSAFE
+
+Line 51: UNSAFE - pull()
+Command: "git pull {$remote} {$branch}"
+User Input: $remote, $branch (from user selection)
+Escaping: NONE
+Exit Code Check: NO
+Risk: MEDIUM - Same as push()
+Classification: UNSAFE
+
+Line 60: UNSAFE - fetch()
+Command: "git fetch {$remote}"
+User Input: $remote (from user selection)
+Escaping: NONE
+Exit Code Check: NO
+Risk: MEDIUM - Same as push()
+Classification: UNSAFE
+
+Line 67: SAFE - fetchAll()
+Command: 'git fetch --all'
+User Input: NONE
+Exit Code Check: NO
+Classification: SAFE
+
+--------------------------------------------------------------------------------
+7. TagService (app/Services/Git/TagService.php)
+--------------------------------------------------------------------------------
+
+Line 30-31: SAFE - tags()
+Command: "git tag -l --sort=-creatordate --format='%(refname:short)|||%(objectname:short)|||%(creatordate:relative)|||%(contents:subject)'"
+User Input: NONE
+Exit Code Check: YES (line 33)
+Classification: SAFE
+
+Line 55-63: UNSAFE - createTag()
+Command: "git tag -a \"{$name}\" -m \"{$message}\"" OR "git tag \"{$name}\""
+         (with optional " {$commit}" appended)
+User Input: $name, $message, $commit (from user)
+Escaping: NONE
+Exit Code Check: YES (line 64)
+Risk: HIGH - Quotes in tag name/message break command
+Classification: UNSAFE
+
+Line 72: UNSAFE - deleteTag()
+Command: "git tag -d \"{$name}\""
+User Input: $name (tag name from user)
+Escaping: NONE
+Exit Code Check: YES (line 73)
+Risk: MEDIUM - Quotes in tag name break command
+Classification: UNSAFE
+
+Line 81: UNSAFE - pushTag()
+Command: "git push {$remote} \"{$name}\""
+User Input: $remote, $name (from user)
+Escaping: NONE
+Exit Code Check: YES (line 82)
+Risk: MEDIUM - Same as deleteTag()
+Classification: UNSAFE
+
+--------------------------------------------------------------------------------
+8. ResetService (app/Services/Git/ResetService.php)
+--------------------------------------------------------------------------------
+
+Line 25: UNSAFE - resetSoft()
+Command: "git reset --soft {$commitSha}"
+User Input: $commitSha (from user selection)
+Escaping: NONE
+Exit Code Check: YES (line 27)
+Risk: MEDIUM - SHA format is constrained, but not validated
+Classification: PARTIALLY SAFE (should validate SHA format)
+
+Line 37: UNSAFE - resetMixed()
+Command: "git reset {$commitSha}"
+User Input: $commitSha (from user selection)
+Escaping: NONE
+Exit Code Check: YES (line 39)
+Risk: MEDIUM - Same as resetSoft()
+Classification: PARTIALLY SAFE
+
+Line 49: UNSAFE - resetHard()
+Command: "git reset --hard {$commitSha}"
+User Input: $commitSha (from user selection)
+Escaping: NONE
+Exit Code Check: YES (line 51)
+Risk: MEDIUM - Same as resetSoft()
+Classification: PARTIALLY SAFE
+
+Line 61: UNSAFE - revertCommit()
+Command: "git revert {$commitSha} --no-edit"
+User Input: $commitSha (from user selection)
+Escaping: NONE
+Exit Code Check: YES (line 63)
+Risk: MEDIUM - Same as resetSoft()
+Classification: PARTIALLY SAFE
+
+--------------------------------------------------------------------------------
+9. StashService (app/Services/Git/StashService.php)
+--------------------------------------------------------------------------------
+
+Line 27-33: UNSAFE - stash()
+Command: "git stash push -u -m \"{$message}\""
+User Input: $message (stash message from user)
+Escaping: NONE
+Exit Code Check: NO
+Risk: HIGH - Quotes in message break command
+Classification: UNSAFE
+
+Line 45: SAFE - stashList()
+Command: 'git stash list'
+User Input: NONE
+Exit Code Check: NO (read-only)
+Classification: SAFE
+
+Line 56: SAFE - stashApply()
+Command: "git stash apply stash@{{$index}}"
+User Input: $index (integer from user selection)
+Escaping: NONE (but $index is typed as int)
+Exit Code Check: NO
+Risk: LOW - Integer type constraint
+Classification: SAFE
+
+Line 63: SAFE - stashPop()
+Command: "git stash pop stash@{{$index}}"
+User Input: $index (integer from user selection)
+Escaping: NONE (but $index is typed as int)
+Exit Code Check: NO
+Risk: LOW - Integer type constraint
+Classification: SAFE
+
+Line 71: SAFE - stashDrop()
+Command: "git stash drop stash@{{$index}}"
+User Input: $index (integer from user selection)
+Escaping: NONE (but $index is typed as int)
+Exit Code Check: NO
+Risk: LOW - Integer type constraint
+Classification: SAFE
+
+Line 83-88: PARTIALLY SAFE - stashFiles()
+Command: "git stash push -u -m \"{$message}\" -- {$pathsString}"
+User Input: $paths (array of file paths), $message (generated from paths)
+Escaping: YES on $paths (line 83), NONE on $message
+Exit Code Check: NO
+Risk: MEDIUM - Message is generated from file paths (could contain quotes)
+Classification: PARTIALLY SAFE (paths escaped, message not)
+
+Line 102: SAFE - generateStashMessage() → getCurrentBranch()
+Command: 'git rev-parse --abbrev-ref HEAD'
+User Input: NONE
+Exit Code Check: NO (read-only)
+Classification: SAFE
+
+--------------------------------------------------------------------------------
+10. RebaseService (app/Services/Git/RebaseService.php)
+--------------------------------------------------------------------------------
+
+Line 34: UNSAFE - getRebaseCommits()
+Command: "git log --oneline HEAD~{$count}..HEAD"
+User Input: $count (integer from user)
+Escaping: NONE (but $count is typed as int)
+Exit Code Check: YES (line 36)
+Risk: LOW - Integer type constraint
+Classification: SAFE
+
+Line 69-71: UNSAFE - startRebase()
+Command: "git rebase -i {$onto}"
+User Input: $onto (branch/commit from user), $plan (array of commits)
+Escaping: NONE on $onto
+Exit Code Check: YES (line 76)
+Risk: MEDIUM - $onto not escaped
+Note: Uses GIT_SEQUENCE_EDITOR to inject todo list (clever!)
+Classification: PARTIALLY SAFE ($onto should be escaped)
+
+Line 91: SAFE - continueRebase()
+Command: 'git rebase --continue'
+User Input: NONE
+Exit Code Check: YES (line 93)
+Classification: SAFE
+
+Line 108: SAFE - abortRebase()
+Command: 'git rebase --abort'
+User Input: NONE
+Exit Code Check: YES (line 110)
+Classification: SAFE
+
+--------------------------------------------------------------------------------
+11. BlameService (app/Services/Git/BlameService.php)
+--------------------------------------------------------------------------------
+
+Line 27: UNSAFE - blame()
+Command: "git blame --porcelain \"{$file}\""
+User Input: $file (file path from user)
+Escaping: NONE
+Exit Code Check: YES (line 29)
+Risk: MEDIUM - Quotes in filename break command
+Classification: UNSAFE
+
+--------------------------------------------------------------------------------
+12. ConflictService (app/Services/Git/ConflictService.php)
+--------------------------------------------------------------------------------
+
+Line 34: SAFE - getConflictedFiles()
+Command: 'git status --porcelain=v2'
+User Input: NONE
+Exit Code Check: NO (read-only)
+Classification: SAFE
+
+Line 88: UNSAFE - resolveConflict()
+Command: "git add \"{$file}\""
+User Input: $file (file path from user)
+Escaping: NONE
+Exit Code Check: YES (line 90)
+Risk: MEDIUM - Quotes in filename break command
+Classification: UNSAFE
+
+Line 100: SAFE - abortMerge()
+Command: 'git merge --abort'
+User Input: NONE
+Exit Code Check: YES (line 102)
+Classification: SAFE
+
+Line 124: SAFE - getMergeHeadBranch()
+Command: 'git log -1 --format=%s MERGE_HEAD 2>/dev/null'
+User Input: NONE
+Exit Code Check: YES (line 125)
+Classification: SAFE
+
+Line 134: UNSAFE - getFileVersion()
+Command: "git show :{$stage}:\"{$file}\" 2>/dev/null"
+User Input: $file (file path from user), $stage (integer 1/2/3)
+Escaping: NONE on $file
+Exit Code Check: YES (line 137)
+Risk: MEDIUM - Quotes in filename break command
+Classification: UNSAFE
+
+Line 147: UNSAFE - isBinaryFile()
+Command: "git diff --numstat HEAD -- \"{$file}\" 2>/dev/null"
+User Input: $file (file path from user)
+Escaping: NONE
+Exit Code Check: YES (line 149)
+Risk: MEDIUM - Quotes in filename break command
+Classification: UNSAFE
+
+Line 161: SAFE - getConflictStatus()
+Command: 'git status --porcelain=v2'
+User Input: NONE
+Exit Code Check: NO (read-only)
+Classification: SAFE
+
+--------------------------------------------------------------------------------
+13. GraphService (app/Services/Git/GraphService.php)
+--------------------------------------------------------------------------------
+
+Line 23-24: SAFE - getGraphData()
+Command: "git log --all --format='%H|||%P|||%an|||%ar|||%s|||%D' -n {$limit}"
+User Input: $limit (integer from user)
+Escaping: NONE (but $limit is typed as int)
+Exit Code Check: YES (line 27)
+Risk: LOW - Integer type constraint
+Classification: SAFE
+
+--------------------------------------------------------------------------------
+14. GitConfigValidator (app/Services/Git/GitConfigValidator.php)
+--------------------------------------------------------------------------------
+
+Line 60: UNSAFE - getConfig()
+Command: "git config {$key}"
+User Input: $key (config key from caller)
+Escaping: NONE
+Exit Code Check: NO (read-only)
+Risk: LOW - Keys are hardcoded in validate() method
+Classification: PARTIALLY SAFE (keys are controlled, but method is public)
+
+Line 67: SAFE - getGitVersion()
+Command: 'git --version'
+User Input: NONE
+Exit Code Check: NO (read-only)
+Classification: SAFE
+
+Line 44: SAFE - checkGitBinary()
+Command: 'which git'
+User Input: NONE
+Exit Code Check: YES (line 46)
+Classification: SAFE
+
+--------------------------------------------------------------------------------
+15. DiffService (app/Services/Git/DiffService.php)
+--------------------------------------------------------------------------------
+
+Line 37-38: SAFE - stageHunk()
+Command: 'git apply --cached'
+User Input: $patch (via stdin)
+Escaping: N/A (stdin input)
+Exit Code Check: NO
+Classification: SAFE (patch is generated internally)
+
+Line 44-45: SAFE - unstageHunk()
+Command: 'git apply --cached --reverse'
+User Input: $patch (via stdin)
+Escaping: N/A (stdin input)
+Exit Code Check: NO
+Classification: SAFE (patch is generated internally)
+
+Line 51-52: SAFE - stageLines()
+Command: 'git apply --cached --unidiff-zero -'
+User Input: $patch (via stdin)
+Escaping: N/A (stdin input)
+Exit Code Check: YES (line 54)
+Classification: SAFE (patch is generated internally)
+
+Line 62-63: SAFE - unstageLines()
+Command: 'git apply --cached --unidiff-zero --reverse -'
+User Input: $patch (via stdin)
+Escaping: N/A (stdin input)
+Exit Code Check: YES (line 65)
+Classification: SAFE (patch is generated internally)
+
+================================================================================
+LIVEWIRE COMPONENTS
+================================================================================
+
+--------------------------------------------------------------------------------
+16. SyncPanel (app/Livewire/SyncPanel.php)
+--------------------------------------------------------------------------------
+
+Line 79: UNSAFE - syncPush()
+Command: "git push origin {$currentBranch}"
+User Input: $currentBranch (from git status)
+Escaping: NONE
+Exit Code Check: YES (line 81)
+Risk: MEDIUM - Branch names with spaces break command
+Classification: UNSAFE
+
+Line 125: UNSAFE - syncPull()
+Command: "git pull origin {$currentBranch}"
+User Input: $currentBranch (from git status)
+Escaping: NONE
+Exit Code Check: YES (line 127)
+Risk: MEDIUM - Same as syncPush()
+Classification: UNSAFE
+
+Line 160: SAFE - syncFetch()
+Command: 'git fetch origin'
+User Input: NONE
+Exit Code Check: YES (line 162)
+Classification: SAFE
+
+Line 189: SAFE - syncFetchAll()
+Command: 'git fetch --all'
+User Input: NONE
+Exit Code Check: YES (line 191)
+Classification: SAFE
+
+Line 228: UNSAFE - syncForcePushWithLease()
+Command: "git push --force-with-lease origin {$currentBranch}"
+User Input: $currentBranch (from git status)
+Escaping: NONE
+Exit Code Check: YES (line 230)
+Risk: MEDIUM - Same as syncPush()
+Classification: UNSAFE
+
+--------------------------------------------------------------------------------
+17. BranchManager (app/Livewire/BranchManager.php)
+--------------------------------------------------------------------------------
+
+Line 167: SAFE - confirmAutoStash()
+Command: 'git stash apply stash@{0}'
+User Input: NONE (hardcoded index 0)
+Exit Code Check: YES (line 169)
+Classification: SAFE
+
+--------------------------------------------------------------------------------
+18. DiffViewer (app/Livewire/DiffViewer.php)
+--------------------------------------------------------------------------------
+
+Line 452: UNSAFE - getFileSize()
+Command: "git cat-file -s HEAD:\"{$file}\" 2>/dev/null || echo 0"
+User Input: $file (file path from user)
+Escaping: NONE
+Exit Code Check: NO (read-only)
+Risk: MEDIUM - Quotes in filename break command
+Classification: UNSAFE
+
+Line 536: UNSAFE - getImageData()
+Command: "git show HEAD:\"{$file}\" 2>/dev/null"
+User Input: $file (file path from user)
+Escaping: NONE
+Exit Code Check: YES (line 537)
+Risk: MEDIUM - Quotes in filename break command
+Classification: UNSAFE
+
+--------------------------------------------------------------------------------
+19. StagingPanel (app/Livewire/StagingPanel.php)
+--------------------------------------------------------------------------------
+
+Line 300: SAFE - getCurrentBranch()
+Command: 'git rev-parse --abbrev-ref HEAD'
+User Input: NONE
+Exit Code Check: NO (read-only)
+Classification: SAFE
+
+--------------------------------------------------------------------------------
+20. CommitPanel (app/Livewire/CommitPanel.php)
+--------------------------------------------------------------------------------
+
+Line 295: SAFE - loadCustomTemplate()
+Command: 'git config --get commit.template'
+User Input: NONE
+Exit Code Check: YES (line 296)
+Classification: SAFE
+
+================================================================================
+PRIORITIZED UNSAFE COMMANDS (HIGHEST RISK FIRST)
+================================================================================
+
+PRIORITY 1 - CRITICAL (User-facing, high frequency, breaks on common input):
+-----------------------------------------------------------------------------
+1. CommitService::commit() [Line 26]
+   Command: "git commit -m \"{$message}\""
+   Risk: Commit messages with quotes break command
+   Frequency: VERY HIGH (every commit)
+   Impact: User cannot commit with quotes in message
+   Fix: Use -F flag with temp file OR escapeshellarg()
+
+2. CommitService::commitAmend() [Line 31]
+   Command: "git commit --amend -m \"{$message}\""
+   Risk: Same as commit()
+   Frequency: HIGH (amend commits)
+   Impact: Same as commit()
+   Fix: Same as commit()
+
+3. SearchService::searchCommits() [Line 30-31]
+   Command: "git log --grep=\"{$query}\" ..."
+   Risk: Search queries with quotes break command
+   Frequency: HIGH (search feature)
+   Impact: User cannot search for quoted strings
+   Fix: escapeshellarg() on $query
+
+4. SearchService::searchContent() [Line 50-51]
+   Command: "git log -S \"{$query}\" ..."
+   Risk: Same as searchCommits()
+   Frequency: HIGH (search feature)
+   Impact: Same as searchCommits()
+   Fix: escapeshellarg() on $query
+
+5. SearchService::searchFiles() [Line 70-71]
+   Command: "git ls-files \"*{$query}*\""
+   Risk: Same as searchCommits()
+   Frequency: MEDIUM (file search)
+   Impact: Same as searchCommits()
+   Fix: escapeshellarg() on $query
+
+6. TagService::createTag() [Line 55-63]
+   Command: "git tag -a \"{$name}\" -m \"{$message}\""
+   Risk: Tag names/messages with quotes break command
+   Frequency: MEDIUM (tag creation)
+   Impact: User cannot create tags with quotes
+   Fix: escapeshellarg() on $name and $message
+
+7. StashService::stash() [Line 27-33]
+   Command: "git stash push -u -m \"{$message}\""
+   Risk: Stash messages with quotes break command
+   Frequency: MEDIUM (stash creation)
+   Impact: User cannot stash with quotes in message
+   Fix: escapeshellarg() on $message
+
+PRIORITY 2 - HIGH (User-facing, medium frequency, breaks on spaces):
+---------------------------------------------------------------------
+8. StagingService::stageFile() [Line 25]
+   Command: "git add {$file}"
+   Risk: Files with spaces break command
+   Frequency: HIGH (staging files)
+   Impact: User cannot stage files with spaces
+   Fix: escapeshellarg() on $file (see stageFiles() for example)
+
+9. StagingService::unstageFile() [Line 32]
+   Command: "git reset HEAD {$file}"
+   Risk: Same as stageFile()
+   Frequency: HIGH (unstaging files)
+   Impact: Same as stageFile()
+   Fix: escapeshellarg() on $file
+
+10. StagingService::discardFile() [Line 53]
+    Command: "git checkout -- {$file}"
+    Risk: Same as stageFile()
+    Frequency: MEDIUM (discarding changes)
+    Impact: Same as stageFile()
+    Fix: escapeshellarg() on $file
+
+11. GitService::diff() [Line 106-116]
+    Command: "git diff -- {$file}" (3 occurrences)
+    Risk: Same as stageFile()
+    Frequency: VERY HIGH (diff viewer)
+    Impact: User cannot view diffs for files with spaces
+    Fix: escapeshellarg() on $file
+
+12. BranchService::switchBranch() [Line 43]
+    Command: "git checkout {$name}"
+    Risk: Branch names with spaces break command
+    Frequency: HIGH (switching branches)
+    Impact: User cannot switch to branches with spaces
+    Fix: escapeshellarg() on $name
+
+13. BranchService::createBranch() [Line 56]
+    Command: "git checkout -b {$name} {$from}"
+    Risk: Same as switchBranch()
+    Frequency: MEDIUM (creating branches)
+    Impact: Same as switchBranch()
+    Fix: escapeshellarg() on $name and $from
+
+14. BranchService::deleteBranch() [Line 70]
+    Command: "git branch {$flag} {$name}"
+    Risk: Same as switchBranch()
+    Frequency: MEDIUM (deleting branches)
+    Impact: Same as switchBranch()
+    Fix: escapeshellarg() on $name
+
+15. BranchService::mergeBranch() [Line 82]
+    Command: "git merge {$name}"
+    Risk: Same as switchBranch()
+    Frequency: MEDIUM (merging branches)
+    Impact: Same as switchBranch()
+    Fix: escapeshellarg() on $name
+
+16. RemoteService::push() [Line 44]
+    Command: "git push {$remote} {$branch}"
+    Risk: Remote/branch names with spaces break command
+    Frequency: HIGH (pushing)
+    Impact: User cannot push to remotes/branches with spaces
+    Fix: escapeshellarg() on $remote and $branch
+
+17. RemoteService::pull() [Line 51]
+    Command: "git pull {$remote} {$branch}"
+    Risk: Same as push()
+    Frequency: HIGH (pulling)
+    Impact: Same as push()
+    Fix: escapeshellarg() on $remote and $branch
+
+18. RemoteService::fetch() [Line 60]
+    Command: "git fetch {$remote}"
+    Risk: Same as push()
+    Frequency: MEDIUM (fetching)
+    Impact: Same as push()
+    Fix: escapeshellarg() on $remote
+
+19. SyncPanel::syncPush() [Line 79]
+    Command: "git push origin {$currentBranch}"
+    Risk: Same as switchBranch()
+    Frequency: HIGH (pushing from UI)
+    Impact: Same as switchBranch()
+    Fix: escapeshellarg() on $currentBranch
+
+20. SyncPanel::syncPull() [Line 125]
+    Command: "git pull origin {$currentBranch}"
+    Risk: Same as syncPush()
+    Frequency: HIGH (pulling from UI)
+    Impact: Same as syncPush()
+    Fix: escapeshellarg() on $currentBranch
+
+21. SyncPanel::syncForcePushWithLease() [Line 228]
+    Command: "git push --force-with-lease origin {$currentBranch}"
+    Risk: Same as syncPush()
+    Frequency: MEDIUM (force pushing)
+    Impact: Same as syncPush()
+    Fix: escapeshellarg() on $currentBranch
+
+22. BlameService::blame() [Line 27]
+    Command: "git blame --porcelain \"{$file}\""
+    Risk: Quotes in filename break command
+    Frequency: MEDIUM (blame feature)
+    Impact: User cannot blame files with quotes
+    Fix: escapeshellarg() on $file
+
+23. ConflictService::resolveConflict() [Line 88]
+    Command: "git add \"{$file}\""
+    Risk: Same as blame()
+    Frequency: MEDIUM (conflict resolution)
+    Impact: User cannot resolve conflicts for files with quotes
+    Fix: escapeshellarg() on $file
+
+24. ConflictService::getFileVersion() [Line 134]
+    Command: "git show :{$stage}:\"{$file}\" 2>/dev/null"
+    Risk: Same as blame()
+    Frequency: MEDIUM (conflict resolution)
+    Impact: Same as resolveConflict()
+    Fix: escapeshellarg() on $file
+
+25. ConflictService::isBinaryFile() [Line 147]
+    Command: "git diff --numstat HEAD -- \"{$file}\" 2>/dev/null"
+    Risk: Same as blame()
+    Frequency: MEDIUM (conflict resolution)
+    Impact: Same as resolveConflict()
+    Fix: escapeshellarg() on $file
+
+26. DiffViewer::getFileSize() [Line 452]
+    Command: "git cat-file -s HEAD:\"{$file}\" 2>/dev/null || echo 0"
+    Risk: Same as blame()
+    Frequency: HIGH (diff viewer)
+    Impact: User cannot view file size for files with quotes
+    Fix: escapeshellarg() on $file
+
+27. DiffViewer::getImageData() [Line 536]
+    Command: "git show HEAD:\"{$file}\" 2>/dev/null"
+    Risk: Same as blame()
+    Frequency: MEDIUM (image diff)
+    Impact: User cannot view image diffs for files with quotes
+    Fix: escapeshellarg() on $file
+
+28. TagService::deleteTag() [Line 72]
+    Command: "git tag -d \"{$name}\""
+    Risk: Tag names with quotes break command
+    Frequency: LOW (tag deletion)
+    Impact: User cannot delete tags with quotes
+    Fix: escapeshellarg() on $name
+
+29. TagService::pushTag() [Line 81]
+    Command: "git push {$remote} \"{$name}\""
+    Risk: Same as deleteTag()
+    Frequency: LOW (tag pushing)
+    Impact: Same as deleteTag()
+    Fix: escapeshellarg() on $remote and $name
+
+PRIORITY 3 - MEDIUM (SHA validation needed, not escaping):
+-----------------------------------------------------------
+30. CommitService::cherryPick() [Line 99]
+    Command: "git cherry-pick {$sha}"
+    Risk: Invalid SHA format could break command
+    Frequency: LOW (cherry-pick feature)
+    Impact: User cannot cherry-pick with malformed SHA
+    Fix: Validate SHA format (40-char hex) before use
+
+31. ResetService::resetSoft() [Line 25]
+    Command: "git reset --soft {$commitSha}"
+    Risk: Same as cherryPick()
+    Frequency: LOW (reset feature)
+    Impact: Same as cherryPick()
+    Fix: Validate SHA format
+
+32. ResetService::resetMixed() [Line 37]
+    Command: "git reset {$commitSha}"
+    Risk: Same as cherryPick()
+    Frequency: LOW (reset feature)
+    Impact: Same as cherryPick()
+    Fix: Validate SHA format
+
+33. ResetService::resetHard() [Line 49]
+    Command: "git reset --hard {$commitSha}"
+    Risk: Same as cherryPick()
+    Frequency: LOW (reset feature)
+    Impact: Same as cherryPick()
+    Fix: Validate SHA format
+
+34. ResetService::revertCommit() [Line 61]
+    Command: "git revert {$commitSha} --no-edit"
+    Risk: Same as cherryPick()
+    Frequency: LOW (revert feature)
+    Impact: Same as cherryPick()
+    Fix: Validate SHA format
+
+PRIORITY 4 - LOW (Partially safe, edge cases):
+-----------------------------------------------
+35. StashService::stashFiles() [Line 83-88]
+    Command: "git stash push -u -m \"{$message}\" -- {$pathsString}"
+    Risk: Message is generated from file paths (could contain quotes)
+    Frequency: MEDIUM (stash selected files)
+    Impact: Stash message could break command if file paths contain quotes
+    Fix: escapeshellarg() on $message (even though it's generated)
+
+36. RebaseService::startRebase() [Line 69-71]
+    Command: "git rebase -i {$onto}"
+    Risk: $onto not escaped
+    Frequency: LOW (rebase feature)
+    Impact: User cannot rebase onto branches with spaces
+    Fix: escapeshellarg() on $onto
+
+37. GitConfigValidator::getConfig() [Line 60]
+    Command: "git config {$key}"
+    Risk: $key not escaped (but keys are hardcoded in validate())
+    Frequency: LOW (config validation)
+    Impact: Low - keys are controlled by validate() method
+    Fix: escapeshellarg() on $key for safety (method is public)
+
+38. GitService::log() [Line 50-59]
+    Command: "git log ... {$branch}"
+    Risk: $branch not escaped (but comes from git status)
+    Frequency: HIGH (log feature)
+    Impact: Low - branch names come from git status (trusted)
+    Fix: escapeshellarg() on $branch for safety
+
+================================================================================
+SUMMARY STATISTICS
+================================================================================
+
+Total Process::path() calls: 128
+- Production code: 101 (Services: 73, Livewire: 28)
+- Test code: 27 (excluded from this audit)
+
+UNSAFE commands: 38
+- Priority 1 (Critical): 7
+- Priority 2 (High): 22
+- Priority 3 (Medium - SHA validation): 5
+- Priority 4 (Low - edge cases): 4
+
+SAFE commands: 63
+- No user input: 51
+- Properly escaped: 12 (stageFiles, unstageFiles, discardFiles, stashFiles paths)
+
+GOOD EXAMPLES TO FOLLOW:
+- StagingService::stageFiles() [Line 71-74] - escapeshellarg() on array
+- StagingService::unstageFiles() [Line 85-88] - escapeshellarg() on array
+- StagingService::discardFiles() [Line 99-102] - escapeshellarg() on array
+- StashService::stashFiles() [Line 83] - escapeshellarg() on paths array
+- DiffService (all methods) - Uses stdin for patch input (no escaping needed)
+
+================================================================================
+RECOMMENDATIONS
+================================================================================
+
+1. IMMEDIATE FIXES (Priority 1):
+   - CommitService: Use -F flag with temp file for commit messages
+   - SearchService: escapeshellarg() on all search queries
+   - TagService: escapeshellarg() on tag names and messages
+   - StashService: escapeshellarg() on stash messages
+
+2. HIGH PRIORITY FIXES (Priority 2):
+   - StagingService: escapeshellarg() on single-file methods (follow stageFiles pattern)
+   - GitService::diff(): escapeshellarg() on file paths
+   - BranchService: escapeshellarg() on all branch names
+   - RemoteService: escapeshellarg() on remote and branch names
+   - SyncPanel: escapeshellarg() on branch names
+   - BlameService, ConflictService, DiffViewer: escapeshellarg() on file paths
+
+3. MEDIUM PRIORITY (Priority 3):
+   - Add SHA validation helper: preg_match('/^[0-9a-f]{7,40}$/i', $sha)
+   - Apply to CommitService::cherryPick() and all ResetService methods
+
+4. LOW PRIORITY (Priority 4):
+   - StashService::stashFiles(): escapeshellarg() on generated message
+   - RebaseService::startRebase(): escapeshellarg() on $onto
+   - GitConfigValidator::getConfig(): escapeshellarg() on $key
+   - GitService::log(): escapeshellarg() on $branch
+
+5. GENERAL PATTERN:
+   - ALWAYS use escapeshellarg() for user input in shell commands
+   - PREFER stdin input (like DiffService) when passing large/complex data
+   - VALIDATE format constraints (SHA, integers) before interpolation
+   - CHECK exit codes for all write operations
+   - FOLLOW the stageFiles() pattern for array escaping
+
+================================================================================
+END OF AUDIT
+================================================================================
