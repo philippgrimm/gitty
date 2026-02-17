@@ -41,6 +41,10 @@ it('parses porcelain blame output into BlameLine collection', function () {
         'git blame --porcelain *' => Process::result(output: $porcelainOutput),
     ]);
 
+    Process::fake([
+        'git blame --porcelain *' => Process::result(output: $porcelainOutput),
+    ]);
+
     $service = new BlameService($this->testRepoPath);
     $result = $service->blame('test.php');
 
@@ -75,7 +79,7 @@ it('handles multiple commits in blame output', function () {
     ]);
 
     Process::fake([
-        'git blame --porcelain *' => Process::result(output: $porcelainOutput),
+        "git blame --porcelain 'file.php'" => Process::result(output: $porcelainOutput),
     ]);
 
     $service = new BlameService($this->testRepoPath);
@@ -90,7 +94,7 @@ it('handles multiple commits in blame output', function () {
 
 it('throws exception when blame command fails', function () {
     Process::fake([
-        'git blame --porcelain *' => Process::result(exitCode: 128, errorOutput: 'fatal: no such path'),
+        "git blame --porcelain 'nonexistent.php'" => Process::result(exitCode: 128, errorOutput: 'fatal: no such path'),
     ]);
 
     $service = new BlameService($this->testRepoPath);
@@ -99,7 +103,7 @@ it('throws exception when blame command fails', function () {
 
 it('handles empty file blame output', function () {
     Process::fake([
-        'git blame --porcelain *' => Process::result(output: ''),
+        "git blame --porcelain 'empty.php'" => Process::result(output: ''),
     ]);
 
     $service = new BlameService($this->testRepoPath);
@@ -126,7 +130,7 @@ it('formats relative dates correctly', function () {
     ]);
 
     Process::fake([
-        'git blame --porcelain *' => Process::result(output: $porcelainOutput),
+        "git blame --porcelain 'test.php'" => Process::result(output: $porcelainOutput),
     ]);
 
     $service = new BlameService($this->testRepoPath);

@@ -4,25 +4,11 @@ declare(strict_types=1);
 
 namespace App\Services\Git;
 
-use Illuminate\Support\Facades\Process;
-
-class ResetService
+class ResetService extends AbstractGitService
 {
-    private GitCacheService $cache;
-
-    public function __construct(
-        protected string $repoPath,
-    ) {
-        $gitDir = rtrim($this->repoPath, '/').'/.git';
-        if (! is_dir($gitDir)) {
-            throw new \InvalidArgumentException("Not a valid git repository: {$this->repoPath}");
-        }
-        $this->cache = new GitCacheService;
-    }
-
     public function resetSoft(string $commitSha): void
     {
-        $result = Process::path($this->repoPath)->run("git reset --soft {$commitSha}");
+        $result = $this->commandRunner->run('reset --soft', [$commitSha]);
 
         if ($result->exitCode() !== 0) {
             throw new \RuntimeException('Git reset --soft failed: '.$result->errorOutput());
@@ -34,7 +20,7 @@ class ResetService
 
     public function resetMixed(string $commitSha): void
     {
-        $result = Process::path($this->repoPath)->run("git reset {$commitSha}");
+        $result = $this->commandRunner->run('reset', [$commitSha]);
 
         if ($result->exitCode() !== 0) {
             throw new \RuntimeException('Git reset failed: '.$result->errorOutput());
@@ -46,7 +32,7 @@ class ResetService
 
     public function resetHard(string $commitSha): void
     {
-        $result = Process::path($this->repoPath)->run("git reset --hard {$commitSha}");
+        $result = $this->commandRunner->run('reset --hard', [$commitSha]);
 
         if ($result->exitCode() !== 0) {
             throw new \RuntimeException('Git reset --hard failed: '.$result->errorOutput());
@@ -58,7 +44,7 @@ class ResetService
 
     public function revertCommit(string $commitSha): void
     {
-        $result = Process::path($this->repoPath)->run("git revert {$commitSha} --no-edit");
+        $result = $this->commandRunner->run('revert --no-edit', [$commitSha]);
 
         if ($result->exitCode() !== 0) {
             $errorOutput = $result->errorOutput();

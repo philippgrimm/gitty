@@ -5,23 +5,13 @@ declare(strict_types=1);
 namespace App\Services\Git;
 
 use App\DTOs\GraphNode;
-use Illuminate\Support\Facades\Process;
 
-class GraphService
+class GraphService extends AbstractGitService
 {
-    public function __construct(
-        protected string $repoPath,
-    ) {
-        $gitDir = rtrim($this->repoPath, '/').'/.git';
-        if (! is_dir($gitDir)) {
-            throw new \InvalidArgumentException("Not a valid git repository: {$this->repoPath}");
-        }
-    }
-
     public function getGraphData(int $limit = 200): array
     {
-        $result = Process::path($this->repoPath)->run(
-            "git log --all --format='%H|||%P|||%an|||%ar|||%s|||%D' -n {$limit}"
+        $result = $this->commandRunner->run(
+            "log --all --format='%H|||%P|||%an|||%ar|||%s|||%D' -n {$limit}"
         );
 
         if ($result->exitCode() !== 0) {

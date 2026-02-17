@@ -5,30 +5,17 @@ declare(strict_types=1);
 namespace App\Services\Git;
 
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Process;
 
-class TagService
+class TagService extends AbstractGitService
 {
-    private GitCacheService $cache;
-
-    public function __construct(
-        protected string $repoPath,
-    ) {
-        $gitDir = rtrim($this->repoPath, '/').'/.git';
-        if (! is_dir($gitDir)) {
-            throw new \InvalidArgumentException("Not a valid git repository: {$this->repoPath}");
-        }
-        $this->cache = new GitCacheService;
-    }
-
     public function tags(): Collection
     {
         return $this->cache->get(
             $this->repoPath,
             'tags',
             function () {
-                $result = Process::path($this->repoPath)
-                    ->run("git tag -l --sort=-creatordate --format='%(refname:short)|||%(objectname:short)|||%(creatordate:relative)|||%(contents:subject)'");
+                $result = $this->commandRunner
+                    ->run("tag -l --sort=-creatordate --format='%(refname:short)|||%(objectname:short)|||%(creatordate:relative)|||%(contents:subject)'");
 
                 if (! $result->successful()) {
                     return collect();
@@ -52,15 +39,20 @@ class TagService
 
     public function createTag(string $name, ?string $message = null, ?string $commit = null): void
     {
-        $command = $message
-            ? "git tag -a \"{$name}\" -m \"{$message}\""
-            : "git tag \"{$name}\"";
-
-        if ($commit) {
-            $command .= " {$commit}";
+        if ($message) {
+            $args = [$name, '-m', $message];
+            if ($commit) {
+                $args[] = $commit;
+            }
+            $result = $this->commandRunner->run('tag -a', $args);
+        } else {
+            $args = [$name];
+            if ($commit) {
+                $args[] = $commit;
+            }
+            $result = $this->commandRunner->run('tag', $args);
         }
 
-        $result = Process::path($this->repoPath)->run($command);
         if (! $result->successful()) {
             throw new \RuntimeException('Failed to create tag: '.$result->errorOutput());
         }
@@ -69,7 +61,7 @@ class TagService
 
     public function deleteTag(string $name): void
     {
-        $result = Process::path($this->repoPath)->run("git tag -d \"{$name}\"");
+        $result = $this->commandRunner->run('tag -d', [$name]);
         if (! $result->successful()) {
             throw new \RuntimeException('Failed to delete tag: '.$result->errorOutput());
         }
@@ -78,7 +70,7 @@ class TagService
 
     public function pushTag(string $name, string $remote = 'origin'): void
     {
-        $result = Process::path($this->repoPath)->run("git push {$remote} \"{$name}\"");
+        $result = $this->commandRunner->run("push {$remote}", [$name]);
         if (! $result->successful()) {
             throw new \RuntimeException('Failed to push tag: '.$result->errorOutput());
         }

@@ -16,7 +16,7 @@ test('resetSoft runs git reset --soft', function () {
     $service = new ResetService('/tmp/gitty-test-repo');
     $service->resetSoft('abc123');
 
-    Process::assertRan('git reset --soft abc123');
+    Process::assertRan("git reset --soft 'abc123'");
 });
 
 test('resetMixed runs git reset without flags', function () {
@@ -25,7 +25,7 @@ test('resetMixed runs git reset without flags', function () {
     $service = new ResetService('/tmp/gitty-test-repo');
     $service->resetMixed('abc123');
 
-    Process::assertRan('git reset abc123');
+    Process::assertRan("git reset 'abc123'");
 });
 
 test('resetHard runs git reset --hard', function () {
@@ -34,7 +34,7 @@ test('resetHard runs git reset --hard', function () {
     $service = new ResetService('/tmp/gitty-test-repo');
     $service->resetHard('abc123');
 
-    Process::assertRan('git reset --hard abc123');
+    Process::assertRan("git reset --hard 'abc123'");
 });
 
 test('revertCommit runs git revert --no-edit', function () {
@@ -43,12 +43,12 @@ test('revertCommit runs git revert --no-edit', function () {
     $service = new ResetService('/tmp/gitty-test-repo');
     $service->revertCommit('abc123');
 
-    Process::assertRan('git revert abc123 --no-edit');
+    Process::assertRan("git revert --no-edit 'abc123'");
 });
 
 test('revertCommit throws RuntimeException on conflict', function () {
     Process::fake([
-        'git revert abc123 --no-edit' => Process::result(
+        "git revert --no-edit 'abc123'" => Process::result(
             output: '',
             errorOutput: 'error: could not revert abc123... conflict in file.txt',
             exitCode: 1
@@ -63,7 +63,7 @@ test('revertCommit throws RuntimeException on conflict', function () {
 
 test('resetSoft throws RuntimeException on failure', function () {
     Process::fake([
-        'git reset --soft abc123' => Process::result(
+        "git reset --soft 'abc123'" => Process::result(
             output: '',
             errorOutput: 'fatal: ambiguous argument',
             exitCode: 1
@@ -78,7 +78,7 @@ test('resetSoft throws RuntimeException on failure', function () {
 
 test('resetMixed throws RuntimeException on failure', function () {
     Process::fake([
-        'git reset abc123' => Process::result(
+        "git reset 'abc123'" => Process::result(
             output: '',
             errorOutput: 'fatal: ambiguous argument',
             exitCode: 1
@@ -93,7 +93,7 @@ test('resetMixed throws RuntimeException on failure', function () {
 
 test('resetHard throws RuntimeException on failure', function () {
     Process::fake([
-        'git reset --hard abc123' => Process::result(
+        "git reset --hard 'abc123'" => Process::result(
             output: '',
             errorOutput: 'fatal: ambiguous argument',
             exitCode: 1

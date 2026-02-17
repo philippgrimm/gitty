@@ -7,20 +7,8 @@ namespace App\Services\Git;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Process;
 
-class RebaseService
+class RebaseService extends AbstractGitService
 {
-    private GitCacheService $cache;
-
-    public function __construct(
-        protected string $repoPath,
-    ) {
-        $gitDir = rtrim($this->repoPath, '/').'/.git';
-        if (! is_dir($gitDir)) {
-            throw new \InvalidArgumentException("Not a valid git repository: {$this->repoPath}");
-        }
-        $this->cache = new GitCacheService;
-    }
-
     public function isRebasing(): bool
     {
         $rebaseMergePath = rtrim($this->repoPath, '/').'/.git/rebase-merge';
@@ -31,7 +19,7 @@ class RebaseService
 
     public function getRebaseCommits(string $onto, int $count): Collection
     {
-        $result = Process::path($this->repoPath)->run("git log --oneline HEAD~{$count}..HEAD");
+        $result = $this->commandRunner->run("log --oneline HEAD~{$count}..HEAD");
 
         if ($result->exitCode() !== 0) {
             throw new \RuntimeException('Failed to get rebase commits: '.$result->errorOutput());
@@ -88,7 +76,7 @@ class RebaseService
 
     public function continueRebase(): void
     {
-        $result = Process::path($this->repoPath)->run('git rebase --continue');
+        $result = $this->commandRunner->run('rebase --continue');
 
         if ($result->exitCode() !== 0) {
             $errorOutput = $result->errorOutput();
@@ -105,7 +93,7 @@ class RebaseService
 
     public function abortRebase(): void
     {
-        $result = Process::path($this->repoPath)->run('git rebase --abort');
+        $result = $this->commandRunner->run('rebase --abort');
 
         if ($result->exitCode() !== 0) {
             throw new \RuntimeException('Failed to abort rebase: '.$result->errorOutput());

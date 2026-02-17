@@ -45,51 +45,51 @@ test('tags returns empty collection when no tags exist', function () {
 
 test('createTag creates lightweight tag', function () {
     Process::fake([
-        'git tag "v1.0.0"' => Process::result(''),
+        "git tag 'v1.0.0'" => Process::result(''),
     ]);
 
     $tagService = new TagService($this->testRepoPath);
     $tagService->createTag('v1.0.0');
 
-    Process::assertRan('git tag "v1.0.0"');
+    Process::assertRan("git tag 'v1.0.0'");
 });
 
 test('createTag creates annotated tag with message', function () {
     Process::fake([
-        'git tag -a "v2.0.0" -m "Release version 2.0"' => Process::result(''),
+        "git tag -a 'v2.0.0' '-m' 'Release version 2.0'" => Process::result(''),
     ]);
 
     $tagService = new TagService($this->testRepoPath);
     $tagService->createTag('v2.0.0', 'Release version 2.0');
 
-    Process::assertRan('git tag -a "v2.0.0" -m "Release version 2.0"');
+    Process::assertRan("git tag -a 'v2.0.0' '-m' 'Release version 2.0'");
 });
 
 test('createTag creates tag at specific commit', function () {
     Process::fake([
-        'git tag "v1.5.0" abc1234' => Process::result(''),
+        "git tag 'v1.5.0' 'abc1234'" => Process::result(''),
     ]);
 
     $tagService = new TagService($this->testRepoPath);
     $tagService->createTag('v1.5.0', null, 'abc1234');
 
-    Process::assertRan('git tag "v1.5.0" abc1234');
+    Process::assertRan("git tag 'v1.5.0' 'abc1234'");
 });
 
 test('createTag creates annotated tag at specific commit', function () {
     Process::fake([
-        'git tag -a "v1.5.0" -m "Hotfix release" abc1234' => Process::result(''),
+        "git tag -a 'v1.5.0' '-m' 'Hotfix release' 'abc1234'" => Process::result(''),
     ]);
 
     $tagService = new TagService($this->testRepoPath);
     $tagService->createTag('v1.5.0', 'Hotfix release', 'abc1234');
 
-    Process::assertRan('git tag -a "v1.5.0" -m "Hotfix release" abc1234');
+    Process::assertRan("git tag -a 'v1.5.0' '-m' 'Hotfix release' 'abc1234'");
 });
 
 test('createTag throws exception on failure', function () {
     Process::fake([
-        'git tag "v1.0.0"' => Process::result('', 'fatal: tag already exists', 1),
+        "git tag 'v1.0.0'" => Process::result('', 'fatal: tag already exists', 1),
     ]);
 
     $tagService = new TagService($this->testRepoPath);
@@ -100,18 +100,18 @@ test('createTag throws exception on failure', function () {
 
 test('deleteTag deletes a tag', function () {
     Process::fake([
-        'git tag -d "v1.0.0"' => Process::result('Deleted tag v1.0.0'),
+        "git tag -d 'v1.0.0'" => Process::result('Deleted tag v1.0.0'),
     ]);
 
     $tagService = new TagService($this->testRepoPath);
     $tagService->deleteTag('v1.0.0');
 
-    Process::assertRan('git tag -d "v1.0.0"');
+    Process::assertRan("git tag -d 'v1.0.0'");
 });
 
 test('deleteTag throws exception on failure', function () {
     Process::fake([
-        'git tag -d "v1.0.0"' => Process::result('', 'fatal: tag not found', 1),
+        "git tag -d 'v1.0.0'" => Process::result('', 'fatal: tag not found', 1),
     ]);
 
     $tagService = new TagService($this->testRepoPath);
@@ -122,29 +122,29 @@ test('deleteTag throws exception on failure', function () {
 
 test('pushTag pushes tag to default remote', function () {
     Process::fake([
-        'git push origin "v1.0.0"' => Process::result(''),
+        "git push origin 'v1.0.0'" => Process::result(''),
     ]);
 
     $tagService = new TagService($this->testRepoPath);
     $tagService->pushTag('v1.0.0');
 
-    Process::assertRan('git push origin "v1.0.0"');
+    Process::assertRan("git push origin 'v1.0.0'");
 });
 
 test('pushTag pushes tag to specified remote', function () {
     Process::fake([
-        'git push upstream "v2.0.0"' => Process::result(''),
+        "git push upstream 'v2.0.0'" => Process::result(''),
     ]);
 
     $tagService = new TagService($this->testRepoPath);
     $tagService->pushTag('v2.0.0', 'upstream');
 
-    Process::assertRan('git push upstream "v2.0.0"');
+    Process::assertRan("git push upstream 'v2.0.0'");
 });
 
 test('pushTag throws exception on failure', function () {
     Process::fake([
-        'git push origin "v1.0.0"' => Process::result('', 'fatal: remote not found', 1),
+        "git push origin 'v1.0.0'" => Process::result('', 'fatal: remote not found', 1),
     ]);
 
     $tagService = new TagService($this->testRepoPath);

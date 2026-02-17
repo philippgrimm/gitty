@@ -72,7 +72,7 @@ test('it resolves conflict by writing file and staging', function () {
 
     expect(file_get_contents($testRepo.'/'.$testFile))->toBe($resolvedContent);
 
-    Process::assertRan("git add \"{$testFile}\"");
+    Process::assertRan("git add 'test.txt'");
 
     unlink($testRepo.'/'.$testFile);
 });

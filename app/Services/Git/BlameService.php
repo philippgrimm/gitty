@@ -6,25 +6,12 @@ namespace App\Services\Git;
 
 use App\DTOs\BlameLine;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Process;
 
-class BlameService
+class BlameService extends AbstractGitService
 {
-    private GitCacheService $cache;
-
-    public function __construct(
-        protected string $repoPath,
-    ) {
-        $gitDir = rtrim($this->repoPath, '/').'/.git';
-        if (! is_dir($gitDir)) {
-            throw new \InvalidArgumentException("Not a valid git repository: {$this->repoPath}");
-        }
-        $this->cache = new GitCacheService;
-    }
-
     public function blame(string $file): Collection
     {
-        $result = Process::path($this->repoPath)->run("git blame --porcelain \"{$file}\"");
+        $result = $this->commandRunner->run('blame --porcelain', [$file]);
 
         if ($result->exitCode() !== 0) {
             throw new \RuntimeException('Git blame failed: '.$result->errorOutput());

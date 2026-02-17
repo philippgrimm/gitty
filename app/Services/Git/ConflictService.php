@@ -6,22 +6,9 @@ namespace App\Services\Git;
 
 use App\DTOs\ConflictFile;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Process;
 
-class ConflictService
+class ConflictService extends AbstractGitService
 {
-    private GitCacheService $cache;
-
-    public function __construct(
-        protected string $repoPath,
-    ) {
-        $gitDir = rtrim($this->repoPath, '/').'/.git';
-        if (! is_dir($gitDir)) {
-            throw new \InvalidArgumentException("Not a valid git repository: {$this->repoPath}");
-        }
-        $this->cache = new GitCacheService;
-    }
-
     public function isInMergeState(): bool
     {
         $mergeHeadPath = rtrim($this->repoPath, '/').'/.git/MERGE_HEAD';
@@ -31,7 +18,7 @@ class ConflictService
 
     public function getConflictedFiles(): Collection
     {
-        $result = Process::path($this->repoPath)->run('git status --porcelain=v2');
+        $result = $this->commandRunner->run('status --porcelain=v2');
         $lines = explode("\n", trim($result->output()));
 
         $conflictedFiles = collect();
@@ -85,7 +72,7 @@ class ConflictService
         file_put_contents($filePath, $resolvedContent);
 
         // Stage the resolved file
-        $result = Process::path($this->repoPath)->run("git add \"{$file}\"");
+        $result = $this->commandRunner->run('add', [$file]);
 
         if ($result->exitCode() !== 0) {
             throw new \RuntimeException('Failed to stage resolved file: '.$result->errorOutput());
@@ -97,7 +84,7 @@ class ConflictService
 
     public function abortMerge(): void
     {
-        $result = Process::path($this->repoPath)->run('git merge --abort');
+        $result = $this->commandRunner->run('merge --abort');
 
         if ($result->exitCode() !== 0) {
             throw new \RuntimeException('Failed to abort merge: '.$result->errorOutput());
@@ -121,7 +108,7 @@ class ConflictService
         }
 
         // Fallback: get commit message from MERGE_HEAD
-        $result = Process::path($this->repoPath)->run('git log -1 --format=%s MERGE_HEAD 2>/dev/null');
+        $result = $this->commandRunner->run('log -1 --format=%s MERGE_HEAD 2>/dev/null');
         if ($result->successful()) {
             return trim($result->output());
         }
@@ -131,7 +118,7 @@ class ConflictService
 
     private function getFileVersion(string $file, int $stage): string
     {
-        $result = Process::path($this->repoPath)->run("git show :{$stage}:\"{$file}\" 2>/dev/null");
+        $result = $this->commandRunner->run("show :{$stage}:\"{$file}\" 2>/dev/null");
 
         // If the stage doesn't exist (e.g., file was added in one branch), return empty
         if ($result->exitCode() !== 0) {
@@ -144,7 +131,7 @@ class ConflictService
     private function isBinaryFile(string $file): bool
     {
         // Use git diff --numstat to detect binary files (shows "- -" for binary)
-        $result = Process::path($this->repoPath)->run("git diff --numstat HEAD -- \"{$file}\" 2>/dev/null");
+        $result = $this->commandRunner->run("diff --numstat HEAD -- \"{$file}\" 2>/dev/null");
 
         if ($result->exitCode() !== 0) {
             return false;
@@ -158,7 +145,7 @@ class ConflictService
 
     private function getConflictStatus(string $file): string
     {
-        $result = Process::path($this->repoPath)->run('git status --porcelain=v2');
+        $result = $this->commandRunner->run('status --porcelain=v2');
         $lines = explode("\n", trim($result->output()));
 
         foreach ($lines as $line) {

@@ -6,17 +6,8 @@ namespace App\Services\Git;
 
 use Illuminate\Support\Facades\Process;
 
-class GitConfigValidator
+class GitConfigValidator extends AbstractGitService
 {
-    public function __construct(
-        protected string $repoPath,
-    ) {
-        $gitDir = rtrim($this->repoPath, '/').'/.git';
-        if (! is_dir($gitDir)) {
-            throw new \InvalidArgumentException("Not a valid git repository: {$this->repoPath}");
-        }
-    }
-
     public function validate(): array
     {
         $issues = [];
@@ -57,7 +48,7 @@ class GitConfigValidator
 
     protected function getConfig(string $key): string
     {
-        $result = Process::path($this->repoPath)->run("git config {$key}");
+        $result = $this->commandRunner->run('config', [$key]);
 
         return trim($result->output());
     }

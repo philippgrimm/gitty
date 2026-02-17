@@ -19,8 +19,8 @@ test('it validates repository path has .git directory', function () {
 
 test('it detects missing user.name configuration', function () {
     Process::fake([
-        'git config user.name' => '',
-        'git config user.email' => 'test@example.com',
+        "git config 'user.name'" => '',
+        "git config 'user.email'" => 'test@example.com',
         'git --version' => 'git version 2.35.0',
     ]);
 
@@ -32,8 +32,8 @@ test('it detects missing user.name configuration', function () {
 
 test('it detects missing user.email configuration', function () {
     Process::fake([
-        'git config user.name' => 'Test User',
-        'git config user.email' => '',
+        "git config 'user.name'" => 'Test User',
+        "git config 'user.email'" => '',
         'git --version' => 'git version 2.35.0',
     ]);
 
@@ -45,8 +45,8 @@ test('it detects missing user.email configuration', function () {
 
 test('it detects git version below 2.30.0', function () {
     Process::fake([
-        'git config user.name' => 'Test User',
-        'git config user.email' => 'test@example.com',
+        "git config 'user.name'" => 'Test User',
+        "git config 'user.email'" => 'test@example.com',
         'git --version' => 'git version 2.25.0',
     ]);
 
@@ -58,8 +58,8 @@ test('it detects git version below 2.30.0', function () {
 
 test('it passes validation with git version 2.30.0', function () {
     Process::fake([
-        'git config user.name' => 'Test User',
-        'git config user.email' => 'test@example.com',
+        "git config 'user.name'" => 'Test User',
+        "git config 'user.email'" => 'test@example.com',
         'git --version' => 'git version 2.30.0',
     ]);
 
@@ -71,8 +71,8 @@ test('it passes validation with git version 2.30.0', function () {
 
 test('it passes validation with git version above 2.30.0', function () {
     Process::fake([
-        'git config user.name' => 'Test User',
-        'git config user.email' => 'test@example.com',
+        "git config 'user.name'" => 'Test User',
+        "git config 'user.email'" => 'test@example.com',
         'git --version' => 'git version 2.45.1',
     ]);
 
@@ -105,8 +105,8 @@ test('checkGitBinary returns false when git is not found', function () {
 test('validateAll returns all configuration issues', function () {
     Process::fake([
         'which git' => '/usr/bin/git',
-        'git config user.name' => '',
-        'git config user.email' => '',
+        "git config 'user.name'" => '',
+        "git config 'user.email'" => '',
         'git --version' => 'git version 2.25.0',
     ]);
 
@@ -133,8 +133,8 @@ test('validateAll includes git binary check', function () {
 test('validateAll returns empty array when all checks pass', function () {
     Process::fake([
         'which git' => '/usr/bin/git',
-        'git config user.name' => 'Test User',
-        'git config user.email' => 'test@example.com',
+        "git config 'user.name'" => 'Test User',
+        "git config 'user.email'" => 'test@example.com',
         'git --version' => 'git version 2.35.0',
     ]);
 
