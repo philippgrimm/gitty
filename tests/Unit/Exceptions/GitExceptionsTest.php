@@ -9,8 +9,7 @@ test('GitCommandFailedException extends RuntimeException', function () {
 
     expect($exception)
         ->toBeInstanceOf(\RuntimeException::class)
-        ->getMessage()->toContain('Git command failed: git push')
-        ->getMessage()->toContain('remote not found')
+        ->getMessage()->toBe('git push: remote not found')
         ->and($exception->getCode())->toBe(1);
 });
 

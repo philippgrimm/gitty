@@ -47,10 +47,10 @@ test('component selects file and loads conflict versions', function () {
 
     Process::fake([
         'git status --porcelain=v2' => 'u UU N... 100644 100644 100644 000000 abc123 def456 ghi789 test.txt',
-        'git show :1:"test.txt" 2>/dev/null' => "base content\n",
-        'git show :2:"test.txt" 2>/dev/null' => "ours content\n",
-        'git show :3:"test.txt" 2>/dev/null' => "theirs content\n",
-        'git diff --numstat HEAD -- "test.txt" 2>/dev/null' => Process::result(output: '1	1	test.txt', exitCode: 0),
+        "git show ':1:test.txt'" => "base content\n",
+        "git show ':2:test.txt'" => "ours content\n",
+        "git show ':3:test.txt'" => "theirs content\n",
+        "git diff --numstat HEAD -- 'test.txt'" => Process::result(output: '1	1	test.txt', exitCode: 0),
     ]);
 
     $component = Livewire::test(ConflictResolver::class, ['repoPath' => $this->testRepoPath])
@@ -71,10 +71,10 @@ test('component accepts ours sets result content', function () {
 
     Process::fake([
         'git status --porcelain=v2' => 'u UU N... 100644 100644 100644 000000 abc123 def456 ghi789 test.txt',
-        'git show :1:"test.txt" 2>/dev/null' => "base content\n",
-        'git show :2:"test.txt" 2>/dev/null' => "ours content\n",
-        'git show :3:"test.txt" 2>/dev/null' => "theirs content\n",
-        'git diff --numstat HEAD -- "test.txt" 2>/dev/null' => Process::result(output: '1	1	test.txt', exitCode: 0),
+        "git show ':1:test.txt'" => "base content\n",
+        "git show ':2:test.txt'" => "ours content\n",
+        "git show ':3:test.txt'" => "theirs content\n",
+        "git diff --numstat HEAD -- 'test.txt'" => Process::result(output: '1	1	test.txt', exitCode: 0),
     ]);
 
     $component = Livewire::test(ConflictResolver::class, ['repoPath' => $this->testRepoPath])
@@ -92,10 +92,10 @@ test('component accepts theirs sets result content', function () {
 
     Process::fake([
         'git status --porcelain=v2' => 'u UU N... 100644 100644 100644 000000 abc123 def456 ghi789 test.txt',
-        'git show :1:"test.txt" 2>/dev/null' => "base content\n",
-        'git show :2:"test.txt" 2>/dev/null' => "ours content\n",
-        'git show :3:"test.txt" 2>/dev/null' => "theirs content\n",
-        'git diff --numstat HEAD -- "test.txt" 2>/dev/null' => Process::result(output: '1	1	test.txt', exitCode: 0),
+        "git show ':1:test.txt'" => "base content\n",
+        "git show ':2:test.txt'" => "ours content\n",
+        "git show ':3:test.txt'" => "theirs content\n",
+        "git diff --numstat HEAD -- 'test.txt'" => Process::result(output: '1	1	test.txt', exitCode: 0),
     ]);
 
     $component = Livewire::test(ConflictResolver::class, ['repoPath' => $this->testRepoPath])
@@ -113,10 +113,10 @@ test('component accepts both concatenates content', function () {
 
     Process::fake([
         'git status --porcelain=v2' => 'u UU N... 100644 100644 100644 000000 abc123 def456 ghi789 test.txt',
-        'git show :1:"test.txt" 2>/dev/null' => "base content\n",
-        'git show :2:"test.txt" 2>/dev/null' => "ours content\n",
-        'git show :3:"test.txt" 2>/dev/null' => "theirs content\n",
-        'git diff --numstat HEAD -- "test.txt" 2>/dev/null' => Process::result(output: '1	1	test.txt', exitCode: 0),
+        "git show ':1:test.txt'" => "base content\n",
+        "git show ':2:test.txt'" => "ours content\n",
+        "git show ':3:test.txt'" => "theirs content\n",
+        "git diff --numstat HEAD -- 'test.txt'" => Process::result(output: '1	1	test.txt', exitCode: 0),
     ]);
 
     $component = Livewire::test(ConflictResolver::class, ['repoPath' => $this->testRepoPath])

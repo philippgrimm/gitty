@@ -143,7 +143,7 @@ test('component handles commit failure with error message', function () {
         ->set('message', 'feat: add feature')
         ->call('commit')
         ->assertSet('message', 'feat: add feature')
-        ->assertSet('error', 'Git commit failed: ');
+        ->assertSet('error', 'Git command failed: Git commit failed');
 });
 
 test('component does not commit with empty message', function () {
