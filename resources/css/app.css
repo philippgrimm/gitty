@@ -68,6 +68,46 @@
     --radius-lg: 8px;
 }
 
+/* Catppuccin Mocha - Dark Theme */
+.dark {
+    /* Background Colors */
+    --surface-0: #1e1e2e;        /* Base - main background */
+    --surface-1: #181825;        /* Mantle - elevated panels, headers */
+    --surface-2: #11111b;        /* Crust - darker elevation */
+    --surface-3: #313244;        /* Surface 0 - highest elevation, active states */
+    
+    /* Border Colors */
+    --border-default: #313244;   /* Surface 0 */
+    --border-subtle: #181825;    /* Mantle */
+    --border-strong: #45475a;    /* Surface 1 */
+    
+    /* Text Colors */
+    --text-primary: #cdd6f4;     /* Text */
+    --text-secondary: #a6adc8;   /* Subtext 0 */
+    --text-tertiary: #7f849c;    /* Overlay 1 */
+    
+    /* Accent Colors - Zed's Brand Blue */
+    --accent: #084CCF;           /* Zed blue - primary accent */
+    --accent-muted: rgba(8, 76, 207, 0.25);  /* Zed blue/25 - higher opacity for dark bg */
+    --accent-text: #89b4fa;      /* Mocha blue - for accent text */
+    
+    /* Semantic Colors */
+    --color-green: #a6e3a1;      /* Green - added/staged */
+    --color-red: #f38ba8;        /* Red - deleted/errors */
+    --color-yellow: #f9e2af;     /* Yellow - modified/warnings */
+    --color-peach: #fab387;      /* Peach - untracked */
+    --color-blue: #89b4fa;       /* Mocha blue */
+    --color-mauve: #cba6f7;      /* Mauve - special */
+    --color-teal: #94e2d5;       /* Teal */
+    --color-sky: #89dceb;        /* Sky */
+    --color-lavender: #b4befe;   /* Lavender */
+    
+    /* Shadows - stronger for dark theme */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+    --shadow-glow: 0 0 20px rgba(8, 76, 207, 0.15);
+}
+
 /* Diff Viewer Styles - Refactored with Design Tokens */
 .diff-container {
     @apply text-sm;
@@ -271,3 +311,79 @@
 .hljs-emphasis { font-style: italic; }
 
 .hljs-strong { font-weight: bold; }
+
+/* Dark Mode - Diff Viewer Styles */
+.dark .diff-line-addition {
+    background-color: rgba(166, 227, 161, 0.08);
+}
+
+.dark .diff-line-addition:hover {
+    background-color: rgba(166, 227, 161, 0.12);
+}
+
+.dark .diff-line-deletion {
+    background-color: rgba(243, 139, 168, 0.08);
+}
+
+.dark .diff-line-deletion:hover {
+    background-color: rgba(243, 139, 168, 0.12);
+}
+
+.dark .diff-line-context {
+    background-color: #1e1e2e;
+}
+
+.dark .diff-line-context:hover {
+    background-color: #313244;
+}
+
+.dark .diff-line-addition .line-content {
+    color: #a6e3a1;
+}
+
+.dark .diff-line-deletion .line-content {
+    color: #f38ba8;
+}
+
+.dark .diff-line-context .line-content {
+    color: #bac2de;
+}
+
+/* Dark Mode - Highlight.js Catppuccin Mocha */
+.dark .hljs-keyword,
+.dark .hljs-selector-tag,
+.dark .hljs-built_in,
+.dark .hljs-name,
+.dark .hljs-tag { color: #cba6f7; }
+
+.dark .hljs-string,
+.dark .hljs-title,
+.dark .hljs-section,
+.dark .hljs-attribute,
+.dark .hljs-literal,
+.dark .hljs-template-tag,
+.dark .hljs-template-variable,
+.dark .hljs-type { color: #a6e3a1; }
+
+.dark .hljs-comment,
+.dark .hljs-quote,
+.dark .hljs-deletion { color: #6c7086; }
+
+.dark .hljs-meta,
+.dark .hljs-meta .hljs-keyword { color: #fab387; }
+
+.dark .hljs-number,
+.dark .hljs-symbol,
+.dark .hljs-bullet,
+.dark .hljs-link { color: #f9e2af; }
+
+.dark .hljs-variable,
+.dark .hljs-params { color: #cdd6f4; }
+
+.dark .hljs-function { color: #89b4fa; }
+
+.dark .hljs-title.function_ { color: #89b4fa; }
+
+.dark .hljs-regexp { color: #94e2d5; }
+
+.dark .hljs-addition { color: #a6e3a1; }

@@ -58,7 +58,13 @@ class SettingsModal extends Component
         $service->set('diff_context_lines', $this->diffContextLines);
 
         $this->dispatch('settings-updated');
+        $this->dispatch('theme-updated', theme: $this->theme);
         $this->closeModal();
+    }
+
+    public function updatedTheme(string $value): void
+    {
+        $this->dispatch('theme-updated', theme: $value);
     }
 
     public function resetToDefaults(): void

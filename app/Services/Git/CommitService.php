@@ -59,4 +59,37 @@ class CommitService
 
         return trim($result->output());
     }
+
+    public function undoLastCommit(): void
+    {
+        $process = Process::path($this->repoPath)->run('git reset --soft HEAD~1');
+
+        if (! $process->successful()) {
+            throw new \RuntimeException('Git reset failed: '.$process->errorOutput());
+        }
+
+        $this->cache->invalidateGroup($this->repoPath, 'status');
+        $this->cache->invalidateGroup($this->repoPath, 'history');
+    }
+
+    public function isLastCommitPushed(): bool
+    {
+        $gitService = new GitService($this->repoPath);
+        $status = $gitService->status();
+
+        if (empty($status->upstream)) {
+            return false;
+        }
+
+        $aheadBehind = $gitService->aheadBehind();
+
+        return ($aheadBehind['ahead'] ?? 0) === 0;
+    }
+
+    public function isLastCommitMerge(): bool
+    {
+        $process = Process::path($this->repoPath)->run('git rev-parse HEAD^2 2>/dev/null');
+
+        return $process->successful();
+    }
 }

@@ -1,6 +1,6 @@
 <div class="flex items-center gap-3 font-mono">
     @if($error)
-        <div class="absolute top-16 left-1/2 transform -translate-x-1/2 z-50 bg-[#d20f39]/10 border border-[#d20f39]/30 text-[#d20f39] px-6 py-3 text-xs uppercase tracking-wider font-semibold shadow-xl">
+        <div class="absolute top-16 left-1/2 transform -translate-x-1/2 z-50 bg-[var(--color-red)]/10 border border-[#d20f39]/30 text-[var(--color-red)] px-6 py-3 text-xs uppercase tracking-wider font-semibold shadow-xl">
             {{ $error }}
         </div>
     @endif
@@ -9,15 +9,15 @@
         <flux:button 
             variant="subtle" 
             size="xs"
-            class="flex items-center gap-2 px-2.5 py-1 !bg-[#eff1f5] border border-[#ccd0da] hover:border-[#bcc0cc] transition-colors text-xs rounded-lg"
+            class="flex items-center gap-2 px-2.5 py-1 !bg-[var(--surface-0)] border border-[var(--border-default)] hover:border-[var(--border-strong)] transition-colors text-xs rounded-lg"
         >
-            <x-phosphor-folder-light class="w-3.5 h-3.5 text-[#6c6f85] shrink-0" />
+            <x-phosphor-folder-light class="w-3.5 h-3.5 text-[var(--text-secondary)] shrink-0" />
             @if($currentRepoName)
-                <span class="font-semibold text-[#4c4f69]">{{ $currentRepoName }}</span>
+                <span class="font-semibold text-[var(--text-primary)]">{{ $currentRepoName }}</span>
             @else
-                <span class="text-[#9ca0b0]">No repository open</span>
+                <span class="text-[var(--text-tertiary)]">No repository open</span>
             @endif
-            <svg class="w-3 h-3 text-[#6c6f85]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+            <svg class="w-3 h-3 text-[var(--text-secondary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
         </flux:button>
 
         <flux:menu class="w-80 max-h-[500px] overflow-hidden !p-0">
@@ -57,7 +57,7 @@
                         @foreach($recentRepos as $repo)
                             <div
                                 class="group flex items-center justify-between px-3 py-1.5 transition-colors cursor-pointer"
-                                :class="activeIndex === {{ $loop->index }} ? 'bg-[#eff1f5]' : 'hover:bg-[#eff1f5]'"
+                                :class="activeIndex === {{ $loop->index }} ? 'bg-[var(--surface-0)]' : 'hover:bg-[var(--surface-0)] dark:hover:bg-[var(--surface-3)]'"
                                 data-repo-item
                                 wire:click="switchRepo({{ $repo['id'] }})"
                                 x-on:click="$el.closest('[popover]')?.hidePopover()"
@@ -92,11 +92,11 @@
                 @endif
 
                 {{-- Open Repository button --}}
-                <div class="border-t border-[var(--border-subtle)] p-2 sticky bottom-0 bg-white">
+                <div class="border-t border-[var(--border-subtle)] p-2 sticky bottom-0 bg-white dark:bg-[var(--surface-0)]">
                     <button
                         wire:click="openFolderDialog"
                         type="button"
-                        class="w-full flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs uppercase tracking-wider text-[var(--text-secondary)] hover:bg-[#eff1f5] transition-colors rounded"
+                        class="w-full flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs uppercase tracking-wider text-[var(--text-secondary)] hover:bg-[var(--surface-0)] dark:hover:bg-[var(--surface-3)] transition-colors rounded"
                     >
                         <x-phosphor-folder-open-light class="w-3.5 h-3.5 shrink-0" />
                         <span>Open Repository</span>

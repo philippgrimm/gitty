@@ -39,7 +39,7 @@ test('command palette toggles on toggle-command-palette event', function () {
 test('command registry returns all expected commands', function () {
     $commands = CommandPalette::getCommands();
 
-    expect($commands)->toHaveCount(18);
+    expect($commands)->toHaveCount(24);
 
     $ids = collect($commands)->pluck('id');
 
@@ -47,8 +47,10 @@ test('command registry returns all expected commands', function () {
         ->toContain('commit')
         ->toContain('push')
         ->toContain('create-branch')
+        ->toContain('create-tag')
         ->toContain('toggle-sidebar')
-        ->toContain('open-settings');
+        ->toContain('open-settings')
+        ->toContain('show-shortcuts');
 });
 
 test('search filters commands by label', function () {
@@ -76,7 +78,7 @@ test('empty search query returns all commands', function () {
         ->set('repoPath', '/tmp/test-repo')
         ->set('query', '');
 
-    expect($component->get('filteredCommands'))->toHaveCount(18);
+    expect($component->get('filteredCommands'))->toHaveCount(24);
 });
 
 test('search with no matches returns empty', function () {

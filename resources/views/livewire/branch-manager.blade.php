@@ -3,7 +3,7 @@
     class="flex items-center gap-2 font-mono"
 >
     @if($isDetachedHead)
-        <div class="flex items-center gap-2 px-3 py-1.5 bg-[#fe640b]/10 border border-[#fe640b]/30 rounded text-[#fe640b]">
+        <div class="flex items-center gap-2 px-3 py-1.5 bg-[var(--color-peach)]/10 border border-[#fe640b]/30 rounded text-[var(--color-peach)]">
             <span class="text-xs uppercase tracking-wider font-semibold">HEAD detached at {{ substr($currentBranch, 0, 7) }}</span>
             <flux:button 
                 @click="$dispatch('open-command-palette-create-branch')"
@@ -19,21 +19,21 @@
             <flux:button 
                 variant="subtle" 
                 size="xs"
-                class="flex items-center gap-2 px-2.5 py-1 !bg-[#eff1f5] border border-[#ccd0da] hover:border-[#bcc0cc] transition-colors text-sm rounded-lg"
+                class="flex items-center gap-2 px-2.5 py-1 !bg-[var(--surface-0)] border border-[var(--border-default)] hover:border-[var(--border-strong)] transition-colors text-sm rounded-lg"
             >
-                <x-phosphor-git-branch-light class="w-3.5 h-3.5 text-[#6c6f85] shrink-0" />
-                <span class="font-semibold text-[#4c4f69]">{{ $currentBranch }}</span>
+                <x-phosphor-git-branch-light class="w-3.5 h-3.5 text-[var(--text-secondary)] shrink-0" />
+                <span class="font-semibold text-[var(--text-primary)]">{{ $currentBranch }}</span>
                 @if($aheadBehind['ahead'] > 0 || $aheadBehind['behind'] > 0)
                     <div class="flex items-center gap-1">
                         @if($aheadBehind['ahead'] > 0)
-                            <span class="font-mono text-xs text-[#40a02b]">↑{{ $aheadBehind['ahead'] }}</span>
+                            <span class="font-mono text-xs text-[var(--color-green)]">↑{{ $aheadBehind['ahead'] }}</span>
                         @endif
                         @if($aheadBehind['behind'] > 0)
-                            <span class="font-mono text-xs text-[#d20f39]">↓{{ $aheadBehind['behind'] }}</span>
+                            <span class="font-mono text-xs text-[var(--color-red)]">↓{{ $aheadBehind['behind'] }}</span>
                         @endif
                     </div>
                 @endif
-                <svg class="w-3 h-3 text-[#6c6f85]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                <svg class="w-3 h-3 text-[var(--text-secondary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
             </flux:button>
 
             <flux:menu class="w-96 max-h-[600px] overflow-hidden !p-0">
@@ -75,7 +75,7 @@
                     @keydown.enter.prevent="selectActive()"
                 >
                     {{-- Search field --}}
-                    <div class="p-2 border-b border-[var(--border-subtle)] sticky top-0 z-10 bg-white">
+                    <div class="p-2 border-b border-[var(--border-subtle)] sticky top-0 z-10 bg-white dark:bg-[var(--surface-0)]">
                         <div class="flex items-center gap-1.5 px-2 py-1 border border-[var(--border-subtle)] rounded">
                             <x-phosphor-magnifying-glass-light class="w-3 h-3 text-[var(--text-tertiary)] shrink-0" />
                             <input
@@ -97,7 +97,7 @@
                         @forelse($this->filteredLocalBranches as $branch)
                             <div
                                 class="group flex items-center justify-between px-3 py-1.5 transition-colors cursor-pointer"
-                                :class="activeIndex === {{ $loop->index }} ? 'bg-[#eff1f5]' : 'hover:bg-[#eff1f5]'"
+                                :class="activeIndex === {{ $loop->index }} ? 'bg-[var(--surface-0)]' : 'hover:bg-[var(--surface-0)] dark:hover:bg-[var(--surface-3)]'"
                                 data-branch-item
                                 wire:click="switchBranch('{{ $branch['name'] }}')"
                                 x-on:click="$el.closest('[popover]')?.hidePopover()"
@@ -142,7 +142,7 @@
                                 @endphp
                                 <div
                                     class="flex items-center px-3 py-1.5 transition-colors cursor-default"
-                                    :class="activeIndex === {{ $remoteIndex }} ? 'bg-[#eff1f5]' : 'hover:bg-[#eff1f5]'"
+                                    :class="activeIndex === {{ $remoteIndex }} ? 'bg-[var(--surface-0)]' : 'hover:bg-[var(--surface-0)] dark:hover:bg-[var(--surface-3)]'"
                                     data-branch-item
                                 >
                                     <div class="w-4 shrink-0"></div>
@@ -161,24 +161,24 @@
                             @keydown.escape.window="hideBranchContextMenu()"
                             @scroll.window="hideBranchContextMenu()"
                             :style="`position: fixed; left: ${contextMenu.x}px; top: ${contextMenu.y}px; z-index: 50;`"
-                            class="bg-white border border-[#ccd0da] rounded-lg shadow-lg py-1 min-w-[200px] font-mono text-sm"
+                            class="bg-white dark:bg-[var(--surface-0)] border border-[var(--border-default)] rounded-lg shadow-lg py-1 min-w-[200px] font-mono text-sm"
                         >
                             <button
                                 @click="$wire.switchBranch(contextMenu.branch); hideBranchContextMenu(); $el.closest('[popover]')?.hidePopover()"
-                                class="w-full px-3 py-1.5 text-left hover:bg-[#eff1f5] text-[#4c4f69]"
+                                class="w-full px-3 py-1.5 text-left hover:bg-[var(--surface-0)] dark:hover:bg-[var(--surface-3)] text-[var(--text-primary)]"
                             >
                                 Switch to Branch
                             </button>
                             <button
                                 @click="$wire.mergeBranch(contextMenu.branch); hideBranchContextMenu(); $el.closest('[popover]')?.hidePopover()"
-                                class="w-full px-3 py-1.5 text-left hover:bg-[#eff1f5] text-[#4c4f69]"
+                                class="w-full px-3 py-1.5 text-left hover:bg-[var(--surface-0)] dark:hover:bg-[var(--surface-3)] text-[var(--text-primary)]"
                             >
                                 Merge into {{ $currentBranch }}
                             </button>
-                            <div class="border-t border-[#dce0e8] my-1"></div>
+                            <div class="border-t border-[var(--border-subtle)] my-1"></div>
                             <button
                                 @click="$wire.deleteBranch(contextMenu.branch); hideBranchContextMenu(); $el.closest('[popover]')?.hidePopover()"
-                                class="w-full px-3 py-1.5 text-left hover:bg-[#eff1f5] text-[#d20f39]"
+                                class="w-full px-3 py-1.5 text-left hover:bg-[var(--surface-0)] dark:hover:bg-[var(--surface-3)] text-[var(--color-red)]"
                             >
                                 Delete Branch
                             </button>
@@ -186,11 +186,11 @@
                     </template>
 
                     {{-- New Branch button --}}
-                    <div class="border-t border-[var(--border-subtle)] p-2 sticky bottom-0 bg-white">
+                    <div class="border-t border-[var(--border-subtle)] p-2 sticky bottom-0 bg-white dark:bg-[var(--surface-0)]">
                         <button
                             @click="$el.closest('[popover]')?.hidePopover(); $dispatch('open-command-palette-create-branch')"
                             type="button"
-                            class="w-full flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs uppercase tracking-wider text-[var(--text-secondary)] hover:bg-[#eff1f5] transition-colors rounded"
+                            class="w-full flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs uppercase tracking-wider text-[var(--text-secondary)] hover:bg-[var(--surface-0)] dark:hover:bg-[var(--surface-3)] transition-colors rounded"
                         >
                             <x-phosphor-plus-light class="w-3.5 h-3.5 shrink-0" />
                             <span>New Branch</span>

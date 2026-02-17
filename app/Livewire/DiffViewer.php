@@ -31,6 +31,8 @@ class DiffViewer extends Component
 
     public string $error = '';
 
+    public string $diffViewMode = 'unified';
+
     public function mount(): void
     {
         $this->isEmpty = true;
@@ -38,6 +40,17 @@ class DiffViewer extends Component
         $this->isLargeFile = false;
         $this->files = null;
         $this->error = '';
+    }
+
+    public function toggleDiffViewMode(): void
+    {
+        $this->diffViewMode = $this->diffViewMode === 'unified' ? 'split' : 'unified';
+    }
+
+    #[On('palette-toggle-diff-view')]
+    public function handlePaletteToggleDiffView(): void
+    {
+        $this->toggleDiffViewMode();
     }
 
     #[On('file-selected')]
@@ -229,6 +242,104 @@ class DiffViewer extends Component
         }
     }
 
+    public function stageSelectedLines(int $fileIndex, int $hunkIndex, array $lineIndices): void
+    {
+        if (! $this->files || ! isset($this->files[$fileIndex]['hunks'][$hunkIndex])) {
+            return;
+        }
+
+        try {
+            $fileData = $this->files[$fileIndex];
+            $hunkData = $fileData['hunks'][$hunkIndex];
+
+            $diffFile = new \App\DTOs\DiffFile(
+                oldPath: $fileData['oldPath'],
+                newPath: $fileData['newPath'],
+                status: $fileData['status'],
+                isBinary: $fileData['isBinary'],
+                hunks: collect(),
+                additions: $fileData['additions'],
+                deletions: $fileData['deletions'],
+            );
+
+            $hunkLines = collect($hunkData['lines'])->map(function ($line) {
+                return new \App\DTOs\HunkLine(
+                    type: $line['type'],
+                    content: $line['content'],
+                    oldLineNumber: $line['oldLineNumber'],
+                    newLineNumber: $line['newLineNumber'],
+                );
+            });
+
+            $hunk = new \App\DTOs\Hunk(
+                oldStart: $hunkData['oldStart'],
+                oldCount: $hunkData['oldCount'],
+                newStart: $hunkData['newStart'],
+                newCount: $hunkData['newCount'],
+                header: $hunkData['header'],
+                lines: $hunkLines,
+            );
+
+            $diffService = new DiffService($this->repoPath);
+            $diffService->stageLines($diffFile, $hunk, $lineIndices);
+
+            $this->refreshFileData($fileIndex);
+            $this->dispatch('refresh-staging');
+        } catch (\Exception $e) {
+            $this->error = GitErrorHandler::translate($e->getMessage());
+            $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
+        }
+    }
+
+    public function unstageSelectedLines(int $fileIndex, int $hunkIndex, array $lineIndices): void
+    {
+        if (! $this->files || ! isset($this->files[$fileIndex]['hunks'][$hunkIndex])) {
+            return;
+        }
+
+        try {
+            $fileData = $this->files[$fileIndex];
+            $hunkData = $fileData['hunks'][$hunkIndex];
+
+            $diffFile = new \App\DTOs\DiffFile(
+                oldPath: $fileData['oldPath'],
+                newPath: $fileData['newPath'],
+                status: $fileData['status'],
+                isBinary: $fileData['isBinary'],
+                hunks: collect(),
+                additions: $fileData['additions'],
+                deletions: $fileData['deletions'],
+            );
+
+            $hunkLines = collect($hunkData['lines'])->map(function ($line) {
+                return new \App\DTOs\HunkLine(
+                    type: $line['type'],
+                    content: $line['content'],
+                    oldLineNumber: $line['oldLineNumber'],
+                    newLineNumber: $line['newLineNumber'],
+                );
+            });
+
+            $hunk = new \App\DTOs\Hunk(
+                oldStart: $hunkData['oldStart'],
+                oldCount: $hunkData['oldCount'],
+                newStart: $hunkData['newStart'],
+                newCount: $hunkData['newCount'],
+                header: $hunkData['header'],
+                lines: $hunkLines,
+            );
+
+            $diffService = new DiffService($this->repoPath);
+            $diffService->unstageLines($diffFile, $hunk, $lineIndices);
+
+            $this->refreshFileData($fileIndex);
+            $this->dispatch('refresh-staging');
+        } catch (\Exception $e) {
+            $this->error = GitErrorHandler::translate($e->getMessage());
+            $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
+        }
+    }
+
     public function render()
     {
         return view('livewire.diff-viewer');
@@ -324,5 +435,39 @@ class DiffViewer extends Component
             'sh', 'bash' => 'bash',
             default => 'text',
         };
+    }
+
+    public function getSplitLines(array $hunk): array
+    {
+        $left = [];
+        $right = [];
+        $pairs = [];
+
+        foreach ($hunk['lines'] as $line) {
+            if ($line['type'] === 'context') {
+                $this->flushPairs($left, $right, $pairs);
+                $pairs[] = ['left' => $line, 'right' => $line];
+            } elseif ($line['type'] === 'deletion') {
+                $left[] = $line;
+            } elseif ($line['type'] === 'addition') {
+                $right[] = $line;
+            }
+        }
+        $this->flushPairs($left, $right, $pairs);
+
+        return $pairs;
+    }
+
+    private function flushPairs(array &$left, array &$right, array &$pairs): void
+    {
+        $max = max(count($left), count($right));
+        for ($i = 0; $i < $max; $i++) {
+            $pairs[] = [
+                'left' => $left[$i] ?? null,
+                'right' => $right[$i] ?? null,
+            ];
+        }
+        $left = [];
+        $right = [];
     }
 }

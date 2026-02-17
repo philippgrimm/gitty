@@ -7,6 +7,7 @@ namespace App\Livewire;
 use App\Services\Git\CommitService;
 use App\Services\Git\GitErrorHandler;
 use App\Services\Git\GitService;
+use Illuminate\Support\Facades\Process;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
@@ -28,6 +29,10 @@ class CommitPanel extends Component
     public array $commitHistory = [];
 
     public ?string $error = null;
+
+    public bool $showUndoConfirmation = false;
+
+    public bool $lastCommitPushed = false;
 
     public function mount(): void
     {
@@ -169,10 +174,106 @@ class CommitPanel extends Component
         return '';
     }
 
+    /**
+     * @return array<int, array{type: string, label: string, prefix: string, description: string}>
+     */
+    public function getTemplates(): array
+    {
+        $templates = [
+            ['type' => 'feat', 'label' => 'Feature', 'prefix' => 'feat: ', 'description' => 'A new feature'],
+            ['type' => 'fix', 'label' => 'Bug Fix', 'prefix' => 'fix: ', 'description' => 'A bug fix'],
+            ['type' => 'refactor', 'label' => 'Refactor', 'prefix' => 'refactor: ', 'description' => 'Code restructuring'],
+            ['type' => 'docs', 'label' => 'Documentation', 'prefix' => 'docs: ', 'description' => 'Documentation changes'],
+            ['type' => 'test', 'label' => 'Test', 'prefix' => 'test: ', 'description' => 'Adding or updating tests'],
+            ['type' => 'chore', 'label' => 'Chore', 'prefix' => 'chore: ', 'description' => 'Maintenance tasks'],
+            ['type' => 'style', 'label' => 'Style', 'prefix' => 'style: ', 'description' => 'Code style/formatting'],
+            ['type' => 'perf', 'label' => 'Performance', 'prefix' => 'perf: ', 'description' => 'Performance improvement'],
+            ['type' => 'ci', 'label' => 'CI', 'prefix' => 'ci: ', 'description' => 'CI/CD changes'],
+            ['type' => 'build', 'label' => 'Build', 'prefix' => 'build: ', 'description' => 'Build system changes'],
+        ];
+
+        // Check for custom templates
+        $customTemplate = $this->loadCustomTemplate();
+        if ($customTemplate) {
+            array_unshift($templates, [
+                'type' => 'custom',
+                'label' => 'Custom Template',
+                'prefix' => $customTemplate,
+                'description' => 'From .gitmessage',
+            ]);
+        }
+
+        return $templates;
+    }
+
+    private function loadCustomTemplate(): ?string
+    {
+        // Check repo-level .gitmessage
+        $repoTemplate = $this->repoPath.'/.gitmessage';
+        if (file_exists($repoTemplate)) {
+            return trim(file_get_contents($repoTemplate));
+        }
+
+        // Check git config for commit.template
+        $result = Process::path($this->repoPath)->run('git config --get commit.template');
+        if ($result->successful() && trim($result->output())) {
+            $path = trim($result->output());
+            // Expand ~ to home directory
+            $path = str_replace('~', $_SERVER['HOME'] ?? '', $path);
+            if (file_exists($path)) {
+                return trim(file_get_contents($path));
+            }
+        }
+
+        return null;
+    }
+
+    public function applyTemplate(string $prefix): void
+    {
+        // If message is empty or just a prefill, replace with template prefix
+        if (empty(trim($this->message)) || $this->message === $this->currentPrefill) {
+            $this->message = $prefix;
+        } else {
+            // Prepend template type to existing message if it doesn't already have a type
+            if (! preg_match('/^(feat|fix|refactor|docs|test|chore|style|perf|ci|build)(\(.*?\))?:/', $this->message)) {
+                $this->message = $prefix.$this->message;
+            }
+        }
+    }
+
     #[On('palette-toggle-amend')]
     public function handlePaletteToggleAmend(): void
     {
         $this->toggleAmend();
+    }
+
+    #[On('palette-undo-last-commit')]
+    public function promptUndoLastCommit(): void
+    {
+        $commitService = new CommitService($this->repoPath);
+
+        if ($commitService->isLastCommitMerge()) {
+            $this->dispatch('show-error', message: 'Cannot undo merge commits', type: 'error');
+
+            return;
+        }
+
+        $this->lastCommitPushed = $commitService->isLastCommitPushed();
+        $this->showUndoConfirmation = true;
+    }
+
+    public function confirmUndoLastCommit(): void
+    {
+        try {
+            $commitService = new CommitService($this->repoPath);
+            $commitService->undoLastCommit();
+            $this->showUndoConfirmation = false;
+            $this->message = $commitService->lastCommitMessage();
+            $this->dispatch('status-updated');
+            $this->dispatch('show-error', message: 'Last commit undone. Changes are now staged.', type: 'success');
+        } catch (\Exception $e) {
+            $this->dispatch('show-error', message: 'Failed to undo commit: '.$e->getMessage(), type: 'error');
+        }
     }
 
     public function render()

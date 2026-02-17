@@ -74,7 +74,8 @@ class CommandPalette extends Component
             $disabled = array_fill_keys([
                 'stage-all', 'unstage-all', 'discard-all', 'stash-all', 'toggle-view',
                 'commit', 'commit-push', 'toggle-amend', 'push', 'pull', 'fetch',
-                'fetch-all', 'force-push', 'create-branch', 'select-all',
+                'fetch-all', 'force-push', 'create-branch', 'select-all', 'toggle-history',
+                'abort-merge', 'create-tag', 'toggle-diff-view',
             ], true);
         }
 
@@ -162,6 +163,15 @@ class CommandPalette extends Component
                 'icon' => 'phosphor-pencil-simple',
             ],
             [
+                'id' => 'undo-last-commit',
+                'label' => 'Undo Last Commit',
+                'shortcut' => '⌘Z',
+                'event' => 'palette-undo-last-commit',
+                'keywords' => ['undo', 'reset', 'last commit', 'revert'],
+                'requiresInput' => false,
+                'icon' => 'phosphor-arrow-counter-clockwise',
+            ],
+            [
                 'id' => 'push',
                 'label' => 'Push',
                 'shortcut' => null,
@@ -225,6 +235,24 @@ class CommandPalette extends Component
                 'icon' => 'phosphor-sidebar-simple',
             ],
             [
+                'id' => 'toggle-history',
+                'label' => 'Toggle History',
+                'shortcut' => '⌘H',
+                'event' => 'toggle-history-panel',
+                'keywords' => ['history', 'log', 'commits', 'toggle'],
+                'requiresInput' => false,
+                'icon' => 'phosphor-clock-counter-clockwise',
+            ],
+            [
+                'id' => 'show-shortcuts',
+                'label' => 'Keyboard Shortcuts',
+                'shortcut' => '⌘/',
+                'event' => 'open-shortcut-help',
+                'keywords' => ['shortcuts', 'keyboard', 'help', 'keys'],
+                'requiresInput' => false,
+                'icon' => 'phosphor-keyboard',
+            ],
+            [
                 'id' => 'open-settings',
                 'label' => 'Open Settings',
                 'shortcut' => null,
@@ -241,6 +269,33 @@ class CommandPalette extends Component
                 'keywords' => ['open', 'folder', 'repository', 'browse'],
                 'requiresInput' => false,
                 'icon' => 'phosphor-folder-open',
+            ],
+            [
+                'id' => 'toggle-diff-view',
+                'label' => 'Toggle Diff View Mode',
+                'shortcut' => null,
+                'event' => 'palette-toggle-diff-view',
+                'keywords' => ['diff', 'split', 'side', 'unified', 'view', 'columns'],
+                'requiresInput' => false,
+                'icon' => 'phosphor-columns',
+            ],
+            [
+                'id' => 'abort-merge',
+                'label' => 'Abort Merge',
+                'shortcut' => null,
+                'event' => 'palette-abort-merge',
+                'keywords' => ['abort', 'merge', 'cancel', 'conflict'],
+                'requiresInput' => false,
+                'icon' => 'phosphor-x-circle',
+            ],
+            [
+                'id' => 'create-tag',
+                'label' => 'Create Tag',
+                'shortcut' => null,
+                'event' => 'palette-create-tag',
+                'keywords' => ['tag', 'create', 'version', 'release'],
+                'requiresInput' => false,
+                'icon' => 'phosphor-tag',
             ],
             [
                 'id' => 'select-all',

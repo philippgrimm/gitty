@@ -38,15 +38,20 @@ class GitService
         );
     }
 
-    public function log(int $limit = 100, ?string $branch = null): Collection
+    public function log(int $limit = 100, ?string $branch = null, bool $detailed = false): Collection
     {
-        $cacheKey = "log:{$limit}:".($branch ?? 'HEAD');
+        $cacheKey = "log:{$limit}:".($branch ?? 'HEAD').':'.($detailed ? 'detailed' : 'oneline');
 
         return $this->cache->get(
             $this->repoPath,
             $cacheKey,
-            function () use ($limit, $branch) {
-                $command = "git log --oneline -n {$limit}";
+            function () use ($limit, $branch, $detailed) {
+                if ($detailed) {
+                    $command = "git log --format='%H|||%an|||%ae|||%ar|||%s|||%D' -n {$limit}";
+                } else {
+                    $command = "git log --oneline -n {$limit}";
+                }
+
                 if ($branch !== null) {
                     $command .= " {$branch}";
                 }
@@ -54,9 +59,40 @@ class GitService
                 $result = Process::path($this->repoPath)->run($command);
                 $lines = array_filter(explode("\n", trim($result->output())));
 
+                if ($detailed) {
+                    return collect($lines)->map(fn ($line) => $this->parseDetailedLogLine($line));
+                }
+
                 return collect($lines)->map(fn ($line) => Commit::fromLogLine($line));
             },
             60
+        );
+    }
+
+    private function parseDetailedLogLine(string $line): Commit
+    {
+        $parts = explode('|||', $line);
+
+        $sha = $parts[0] ?? '';
+        $author = $parts[1] ?? '';
+        $email = $parts[2] ?? '';
+        $date = $parts[3] ?? '';
+        $message = $parts[4] ?? '';
+        $refString = $parts[5] ?? '';
+
+        $refs = [];
+        if (! empty($refString)) {
+            $refs = array_map('trim', explode(',', $refString));
+        }
+
+        return new Commit(
+            sha: $sha,
+            shortSha: substr($sha, 0, 7),
+            message: $message,
+            author: $author,
+            email: $email,
+            date: $date,
+            refs: $refs,
         );
     }
 

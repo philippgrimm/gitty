@@ -13,7 +13,7 @@
                 variant="ghost" 
                 size="xs"
                 square
-                class="text-[#8c8fa1] hover:text-[#6c6f85] hover:bg-[#dce0e8] transition-colors flex items-center justify-center"
+                class="text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] hover:bg-[var(--surface-2)] transition-colors flex items-center justify-center"
             >
                 @if($isOperationRunning && $lastOperation === 'push')
                     <x-phosphor-circle-notch-light class="w-4 h-4 animate-spin" />
@@ -22,7 +22,7 @@
                 @endif
             </flux:button>
             @if(($aheadBehind['ahead'] ?? 0) > 0)
-                <span style="top: 2px; right: 2px;" class="absolute w-2 h-2 rounded-full bg-[#40a02b] pointer-events-none ring-1 ring-[#eff1f5]"></span>
+                <span style="top: 2px; right: 2px;" class="absolute w-2 h-2 rounded-full bg-[var(--color-green)] pointer-events-none ring-1 ring-[#eff1f5]"></span>
             @endif
         </div>
     </flux:tooltip>
@@ -35,7 +35,7 @@
             variant="ghost" 
             size="xs"
             square
-            class="text-[#8c8fa1] hover:text-[#6c6f85] hover:bg-[#dce0e8] transition-colors"
+            class="text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] hover:bg-[var(--surface-2)] transition-colors"
         >
             @if($isOperationRunning && $lastOperation === 'pull')
                 <x-phosphor-circle-notch-light class="w-4 h-4 animate-spin" />
@@ -44,7 +44,7 @@
             @endif
         </flux:button>
             @if(($aheadBehind['behind'] ?? 0) > 0)
-                <span style="top: 2px; right: 2px;" class="absolute w-2 h-2 rounded-full bg-[#fe640b] pointer-events-none ring-1 ring-[#eff1f5]"></span>
+                <span style="top: 2px; right: 2px;" class="absolute w-2 h-2 rounded-full bg-[var(--color-peach)] pointer-events-none ring-1 ring-[#eff1f5]"></span>
             @endif
         </div>
     </flux:tooltip>
@@ -56,7 +56,7 @@
             variant="ghost" 
             size="xs"
             square
-            class="text-[#8c8fa1] hover:text-[#6c6f85] hover:bg-[#dce0e8] transition-colors"
+            class="text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] hover:bg-[var(--surface-2)] transition-colors"
         >
             @if($isOperationRunning && $lastOperation === 'fetch')
                 <x-phosphor-circle-notch-light class="w-4 h-4 animate-spin" />
@@ -71,12 +71,12 @@
             <div>
                 <flux:heading size="lg" class="font-mono uppercase tracking-wider">Operation Log</flux:heading>
                 <flux:subheading class="font-mono">
-                    Last operation: <span class="text-[#4c4f69] font-semibold">{{ $lastOperation }}</span>
+                    Last operation: <span class="text-[var(--text-primary)] font-semibold">{{ $lastOperation }}</span>
                 </flux:subheading>
             </div>
 
-            <div class="p-4 bg-[#e6e9ef] border border-[#ccd0da] max-h-96 overflow-y-auto rounded">
-                <pre class="text-xs text-[#6c6f85] whitespace-pre-wrap break-words font-mono">{{ $operationOutput }}</pre>
+            <div class="p-4 bg-[var(--surface-1)] border border-[var(--border-default)] max-h-96 overflow-y-auto rounded">
+                <pre class="text-xs text-[var(--text-secondary)] whitespace-pre-wrap break-words font-mono">{{ $operationOutput }}</pre>
             </div>
 
             <div class="flex justify-end">
@@ -87,11 +87,11 @@
 
     <flux:modal x-model="confirmForcePush" class="space-y-6">
         <div>
-            <flux:heading size="lg" class="font-mono uppercase tracking-wider text-[#fe640b]">Force Push Warning</flux:heading>
+            <flux:heading size="lg" class="font-mono uppercase tracking-wider text-[var(--color-peach)]">Force Push Warning</flux:heading>
             <flux:subheading class="font-mono">
-                This will force push with <span class="text-[#fe640b] font-semibold">--force-with-lease</span> to prevent overwriting others' work.
+                This will force push with <span class="text-[var(--color-peach)] font-semibold">--force-with-lease</span> to prevent overwriting others' work.
                 <br><br>
-                <span class="text-[#4c4f69] font-semibold">Are you sure you want to continue?</span>
+                <span class="text-[var(--text-primary)] font-semibold">Are you sure you want to continue?</span>
             </flux:subheading>
         </div>
 

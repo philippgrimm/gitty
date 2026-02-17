@@ -9,20 +9,20 @@
             >
                 <div 
                     @click="expanded = !expanded"
-                    class="group px-4 py-1.5 hover:bg-[#eff1f5] cursor-pointer transition-colors flex items-center gap-2"
+                    class="group px-4 py-1.5 hover:bg-[var(--surface-0)] dark:hover:bg-[var(--surface-3)] cursor-pointer transition-colors flex items-center gap-2"
                     style="padding-left: {{ ($level * 16) + 16 }}px"
                 >
                     <div 
-                        class="text-[#9ca0b0] transition-transform duration-200"
+                        class="text-[var(--text-tertiary)] transition-transform duration-200"
                         :class="expanded ? 'rotate-90' : ''"
                     >
                         <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
                     </div>
-                    <x-phosphor-folder-simple class="w-3.5 h-3.5 text-[#9ca0b0]" />
-                    <div class="text-sm font-medium text-[#5c5f77] group-hover:text-[#4c4f69] transition-colors">
+                    <x-phosphor-folder-simple class="w-3.5 h-3.5 text-[var(--text-tertiary)]" />
+                    <div class="text-sm font-medium text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors">
                         {{ $node['name'] }}
                     </div>
-                    <span class="text-xs text-[#9ca0b0] ml-1">{{ count($node['children']) }}</span>
+                    <span class="text-xs text-[var(--text-tertiary)] ml-1">{{ count($node['children']) }}</span>
                 </div>
                 
                 <div x-show="expanded" x-collapse>
@@ -36,7 +36,7 @@
                 @click="handleFileClick('{{ $node['path'] }}', {{ $staged ? 'true' : 'false' }}, $event)"
                 @contextmenu="showContextMenu('{{ $node['path'] }}', {{ $staged ? 'true' : 'false' }}, $event)"
                 class="group px-4 py-1.5 cursor-pointer flex items-center gap-3 relative"
-                :class="{ 'bg-[rgba(8,76,207,0.15)]': isSelected('{{ $node['path'] }}'), 'bg-white hover:bg-[#eff1f5] transition-colors duration-150': !isSelected('{{ $node['path'] }}') }"
+                :class="{ 'bg-[rgba(8,76,207,0.15)]': isSelected('{{ $node['path'] }}'), 'bg-white dark:bg-[var(--surface-0)] hover:bg-[var(--surface-0)] dark:hover:bg-[var(--surface-3)] transition-colors duration-150': !isSelected('{{ $node['path'] }}') }"
                 style="padding-left: {{ ($level * 16) + 16 }}px"
             >
                 <div class="flex items-center gap-2.5 flex-1 min-w-0 pr-0 {{ $staged ? 'group-hover:pr-10' : 'group-hover:pr-16' }} transition-all duration-150">
@@ -52,9 +52,9 @@
                             default => ['label' => '?', 'color' => 'zinc', 'icon' => '?'],
                         };
                     @endphp
-                    <div class="w-2 h-2 rounded-full shrink-0 {{ match($statusConfig['color']) { 'yellow' => 'bg-[#df8e1d]', 'green' => 'bg-[#40a02b]', 'red' => 'bg-[#d20f39]', 'blue' => 'bg-[#084CCF]', 'orange' => 'bg-[#fe640b]', default => 'bg-[#9ca0b0]' } }}"></div>
+                    <div class="w-2 h-2 rounded-full shrink-0 {{ match($statusConfig['color']) { 'yellow' => 'bg-[var(--color-yellow)]', 'green' => 'bg-[var(--color-green)]', 'red' => 'bg-[var(--color-red)]', 'blue' => 'bg-[#084CCF]', 'orange' => 'bg-[var(--color-peach)]', default => 'bg-[#9ca0b0]' } }}"></div>
                     <flux:tooltip :content="$node['path']" delay="1000" class="min-w-0 flex-1">
-                        <div class="text-sm truncate text-[#5c5f77] group-hover:text-[#4c4f69] transition-colors duration-150">
+                        <div class="text-sm truncate text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors duration-150">
                             {{ $node['name'] }}
                         </div>
                     </flux:tooltip>
@@ -95,7 +95,7 @@
                                 variant="ghost" 
                                 size="xs"
                                 square
-                                class="text-[#d20f39] hover:text-[#d20f39]"
+                                class="text-[var(--color-red)] hover:text-[var(--color-red)]"
                             >
                                 <x-phosphor-arrow-counter-clockwise class="w-3.5 h-3.5" />
                             </flux:button>

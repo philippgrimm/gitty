@@ -10,6 +10,7 @@ use App\Services\Git\GitErrorHandler;
 use App\Services\Git\GitService;
 use App\Services\Git\RemoteService;
 use App\Services\Git\StashService;
+use App\Services\Git\TagService;
 use Illuminate\Support\Facades\Process;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -31,6 +32,14 @@ class RepoSidebar extends Component
     public bool $showAutoStashModal = false;
 
     public string $autoStashTargetBranch = '';
+
+    public bool $showCreateTagModal = false;
+
+    public string $newTagName = '';
+
+    public ?string $newTagMessage = null;
+
+    public ?string $newTagCommit = null;
 
     private ?string $lastSidebarHash = null;
 
@@ -65,7 +74,8 @@ class RepoSidebar extends Component
             ])
             ->toArray();
 
-        $tags = $this->fetchTags();
+        $tagService = new TagService($this->repoPath);
+        $tags = $tagService->tags()->toArray();
 
         $stashes = $stashService->stashList()
             ->map(fn ($stash) => [
@@ -205,28 +215,57 @@ class RepoSidebar extends Component
         $this->refreshSidebar();
     }
 
-    private function fetchTags(): array
+    public function createTag(): void
     {
-        $cache = new GitCacheService;
+        if (empty(trim($this->newTagName))) {
+            return;
+        }
 
-        return $cache->get($this->repoPath, 'tags', function () {
-            $result = Process::path($this->repoPath)->run('git tag -l --format=%(refname:short) %(objectname:short)');
+        try {
+            $tagService = new TagService($this->repoPath);
+            $tagService->createTag(
+                trim($this->newTagName),
+                $this->newTagMessage ? trim($this->newTagMessage) : null,
+                $this->newTagCommit ? trim($this->newTagCommit) : null
+            );
+            $this->showCreateTagModal = false;
+            $this->newTagName = '';
+            $this->newTagMessage = null;
+            $this->newTagCommit = null;
+            $this->refreshSidebar();
+            $this->dispatch('show-error', message: 'Tag created successfully', type: 'success');
+        } catch (\Exception $e) {
+            $this->dispatch('show-error', message: $e->getMessage(), type: 'error');
+        }
+    }
 
-            if ($result->exitCode() !== 0) {
-                return [];
-            }
+    public function deleteTag(string $name): void
+    {
+        try {
+            $tagService = new TagService($this->repoPath);
+            $tagService->deleteTag($name);
+            $this->refreshSidebar();
+            $this->dispatch('show-error', message: "Tag '{$name}' deleted", type: 'success');
+        } catch (\Exception $e) {
+            $this->dispatch('show-error', message: $e->getMessage(), type: 'error');
+        }
+    }
 
-            $lines = array_filter(explode("\n", trim($result->output())));
+    public function pushTag(string $name): void
+    {
+        try {
+            $tagService = new TagService($this->repoPath);
+            $tagService->pushTag($name);
+            $this->dispatch('show-error', message: "Tag '{$name}' pushed to remote", type: 'success');
+        } catch (\Exception $e) {
+            $this->dispatch('show-error', message: $e->getMessage(), type: 'error');
+        }
+    }
 
-            return collect($lines)->map(function ($line) {
-                $parts = preg_split('/\s+/', trim($line), 2);
-
-                return [
-                    'name' => $parts[0] ?? '',
-                    'sha' => $parts[1] ?? '',
-                ];
-            })->toArray();
-        }, 60);
+    #[On('palette-create-tag')]
+    public function handlePaletteCreateTag(): void
+    {
+        $this->showCreateTagModal = true;
     }
 
     public function render()

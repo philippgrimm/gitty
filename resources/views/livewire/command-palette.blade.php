@@ -21,7 +21,7 @@
     {{-- Card Container --}}
     <div class="relative flex items-start justify-center pt-[20vh]">
         <div 
-            class="w-full max-w-xl bg-white rounded-xl shadow-2xl border border-[#ccd0da] overflow-hidden mx-4"
+            class="w-full max-w-xl bg-white dark:bg-[var(--surface-0)] rounded-xl shadow-2xl border border-[var(--border-default)] overflow-hidden mx-4"
             x-transition:enter="transition ease-out duration-150"
             x-transition:enter-start="opacity-0 scale-95"
             x-transition:enter-end="opacity-100 scale-100"
@@ -63,12 +63,12 @@
         >
             @if($mode === 'input')
                 {{-- Input Mode Header --}}
-                <div class="px-4 py-2.5 border-b border-[#dce0e8]">
+                <div class="px-4 py-2.5 border-b border-[var(--border-subtle)]">
                     <div class="flex items-center gap-2">
-                        <button wire:click="cancelInput" class="text-[#8c8fa1] hover:text-[#4c4f69] transition-colors">
+                        <button wire:click="cancelInput" class="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors">
                             <x-phosphor-arrow-left class="w-4 h-4" />
                         </button>
-                        <span class="text-sm text-[#4c4f69] font-medium">Create Branch</span>
+                        <span class="text-sm text-[var(--text-primary)] font-medium">Create Branch</span>
                     </div>
                 </div>
 
@@ -79,29 +79,29 @@
                         wire:model="inputValue"
                         wire:keydown.enter.prevent="submitInput"
                         placeholder="Branch name (e.g., feature/my-feature)"
-                        class="w-full bg-transparent border border-[#ccd0da] rounded-lg outline-none text-sm text-[#4c4f69] placeholder-[#8c8fa1] font-mono px-3 py-2 focus:ring-1 focus:ring-[#084CCF] focus:border-[#084CCF]"
+                        class="w-full bg-transparent border border-[var(--border-default)] rounded-lg outline-none text-sm text-[var(--text-primary)] placeholder-[#8c8fa1] font-mono px-3 py-2 focus:ring-1 focus:ring-[#084CCF] focus:border-[#084CCF]"
                         x-ref="inputField"
                         x-effect="if($wire.mode === 'input') $nextTick(() => { $refs.inputField?.focus(); const len = $refs.inputField?.value?.length || 0; $refs.inputField?.setSelectionRange(len, len); })"
                     />
                     @if($inputError)
-                        <p class="text-[#d20f39] text-xs mt-1">{{ $inputError }}</p>
+                        <p class="text-[var(--color-red)] text-xs mt-1">{{ $inputError }}</p>
                     @endif
                 </div>
 
                 {{-- Footer hint --}}
-                <div class="px-4 py-2 border-t border-[#dce0e8] text-[10px] text-[#8c8fa1]">
+                <div class="px-4 py-2 border-t border-[var(--border-subtle)] text-[10px] text-[var(--text-tertiary)]">
                     ↵ create · esc back
                 </div>
             @else
                 {{-- Search Input Area --}}
-                <div class="px-4 py-2.5 border-b border-[#dce0e8]">
+                <div class="px-4 py-2.5 border-b border-[var(--border-subtle)]">
                     <div class="flex items-center gap-2">
-                        <x-phosphor-magnifying-glass-light class="w-4 h-4 text-[#8c8fa1] shrink-0" />
+                        <x-phosphor-magnifying-glass-light class="w-4 h-4 text-[var(--text-tertiary)] shrink-0" />
                         <input
                             type="text"
                             wire:model.live.debounce.150ms="query"
                             placeholder="Type a command..."
-                            class="w-full bg-transparent border-none outline-none text-sm text-[#4c4f69] placeholder-[#8c8fa1] font-mono p-0 focus:ring-0"
+                            class="w-full bg-transparent border-none outline-none text-sm text-[var(--text-primary)] placeholder-[#8c8fa1] font-mono p-0 focus:ring-0"
                             x-ref="searchInput"
                             x-effect="if($wire.isOpen) $nextTick(() => $refs.searchInput?.focus())"
                         />
@@ -118,15 +118,15 @@
                                     wire:click="executeCommand('{{ $command['id'] }}')"
                                 @endif
                                 class="flex items-center justify-between gap-3 px-4 py-2 transition-colors duration-75
-                                    {{ ($command['disabled'] ?? false) ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer hover:bg-[#eff1f5]' }}"
+                                    {{ ($command['disabled'] ?? false) ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer hover:bg-[var(--surface-0)] dark:hover:bg-[var(--surface-3)]' }}"
                                 x-bind:style="activeIndex === {{ $index }} && !{{ ($command['disabled'] ?? false) ? 'true' : 'false' }} ? 'background-color: rgba(8, 76, 207, 0.08)' : ''"
                             >
                                 <div class="flex items-center gap-3">
-                                    <x-dynamic-component :component="$command['icon']" class="w-4 h-4 text-[#9ca0b0] shrink-0" />
-                                    <span class="text-[13px] text-[#4c4f69]">{{ $command['label'] }}</span>
+                                    <x-dynamic-component :component="$command['icon']" class="w-4 h-4 text-[var(--text-tertiary)] shrink-0" />
+                                    <span class="text-[13px] text-[var(--text-primary)]">{{ $command['label'] }}</span>
                                 </div>
                                 @if($command['shortcut'])
-                                    <kbd class="text-[10px] text-[#6c6f85] bg-[#eff1f5] border border-[#ccd0da] rounded px-1.5 py-0.5 font-mono shrink-0">
+                                    <kbd class="text-[10px] text-[var(--text-secondary)] bg-[var(--surface-0)] border border-[var(--border-default)] rounded px-1.5 py-0.5 font-mono shrink-0">
                                         {{ $command['shortcut'] }}
                                     </kbd>
                                 @endif
@@ -135,11 +135,11 @@
                     </div>
 
                     {{-- Footer hints --}}
-                    <div class="px-4 py-2 border-t border-[#dce0e8] text-[10px] text-[#8c8fa1]">
+                    <div class="px-4 py-2 border-t border-[var(--border-subtle)] text-[10px] text-[var(--text-tertiary)]">
                         ↑↓ navigate · ↵ select · esc close
                     </div>
                 @else
-                    <div class="py-8 text-center text-sm text-[#8c8fa1]">
+                    <div class="py-8 text-center text-sm text-[var(--text-tertiary)]">
                         No commands found
                     </div>
                 @endif

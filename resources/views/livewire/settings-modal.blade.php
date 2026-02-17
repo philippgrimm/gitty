@@ -9,7 +9,7 @@
 
         <div class="space-y-6">
             <div class="space-y-4">
-                <div class="text-xs uppercase tracking-wider font-medium text-[#9ca0b0] border-b border-[#ccd0da] pb-2">
+                <div class="text-xs uppercase tracking-wider font-medium text-[var(--text-tertiary)] border-b border-[var(--border-default)] pb-2">
                     Git
                 </div>
                 
@@ -44,7 +44,7 @@
             </div>
 
             <div class="space-y-4">
-                <div class="text-xs uppercase tracking-wider font-medium text-[#9ca0b0] border-b border-[#ccd0da] pb-2">
+                <div class="text-xs uppercase tracking-wider font-medium text-[var(--text-tertiary)] border-b border-[var(--border-default)] pb-2">
                     Editor
                 </div>
                 
@@ -60,20 +60,22 @@
             </div>
 
             <div class="space-y-4">
-                <div class="text-xs uppercase tracking-wider font-medium text-[#9ca0b0] border-b border-[#ccd0da] pb-2">
+                <div class="text-xs uppercase tracking-wider font-medium text-[var(--text-tertiary)] border-b border-[var(--border-default)] pb-2">
                     Appearance
                 </div>
                 
                 <flux:field>
                     <flux:label class="font-mono">Theme</flux:label>
-                    <flux:select wire:model="theme" class="font-mono" disabled>
+                    <flux:select wire:model.live="theme" class="font-mono">
+                        <flux:select.option value="light">Light</flux:select.option>
                         <flux:select.option value="dark">Dark</flux:select.option>
+                        <flux:select.option value="system">System</flux:select.option>
                     </flux:select>
                 </flux:field>
             </div>
 
             <div class="space-y-4">
-                <div class="text-xs uppercase tracking-wider font-medium text-[#9ca0b0] border-b border-[#ccd0da] pb-2">
+                <div class="text-xs uppercase tracking-wider font-medium text-[var(--text-tertiary)] border-b border-[var(--border-default)] pb-2">
                     Confirmations
                 </div>
                 
@@ -89,7 +91,7 @@
             </div>
 
             <div class="space-y-4">
-                <div class="text-xs uppercase tracking-wider font-medium text-[#9ca0b0] border-b border-[#ccd0da] pb-2">
+                <div class="text-xs uppercase tracking-wider font-medium text-[var(--text-tertiary)] border-b border-[var(--border-default)] pb-2">
                     Display
                 </div>
                 
@@ -100,11 +102,11 @@
             </div>
         </div>
 
-        <div class="flex items-center justify-between border-t border-[#ccd0da] pt-4">
+        <div class="flex items-center justify-between border-t border-[var(--border-default)] pt-4">
             <flux:button 
                 variant="ghost" 
                 wire:click="resetToDefaults"
-                class="text-xs uppercase tracking-wider text-[#fe640b] hover:text-[#fe640b]"
+                class="text-xs uppercase tracking-wider text-[var(--color-peach)] hover:text-[var(--color-peach)]"
             >
                 Reset to Defaults
             </flux:button>
