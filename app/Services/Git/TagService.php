@@ -70,7 +70,7 @@ class TagService extends AbstractGitService
 
     public function pushTag(string $name, string $remote = 'origin'): void
     {
-        $result = $this->commandRunner->run("push {$remote}", [$name]);
+        $result = $this->commandRunner->run('push', [$remote, $name]);
         if (! $result->successful()) {
             throw new \RuntimeException('Failed to push tag: '.$result->errorOutput());
         }

@@ -108,7 +108,7 @@ class ConflictService extends AbstractGitService
         }
 
         // Fallback: get commit message from MERGE_HEAD
-        $result = $this->commandRunner->run('log -1 --format=%s MERGE_HEAD 2>/dev/null');
+        $result = $this->commandRunner->run('log -1 --format=%s MERGE_HEAD');
         if ($result->successful()) {
             return trim($result->output());
         }
@@ -118,7 +118,7 @@ class ConflictService extends AbstractGitService
 
     private function getFileVersion(string $file, int $stage): string
     {
-        $result = $this->commandRunner->run("show :{$stage}:\"{$file}\" 2>/dev/null");
+        $result = $this->commandRunner->run('show', [":{$stage}:{$file}"]);
 
         // If the stage doesn't exist (e.g., file was added in one branch), return empty
         if ($result->exitCode() !== 0) {
@@ -131,7 +131,7 @@ class ConflictService extends AbstractGitService
     private function isBinaryFile(string $file): bool
     {
         // Use git diff --numstat to detect binary files (shows "- -" for binary)
-        $result = $this->commandRunner->run("diff --numstat HEAD -- \"{$file}\" 2>/dev/null");
+        $result = $this->commandRunner->run('diff --numstat HEAD --', [$file]);
 
         if ($result->exitCode() !== 0) {
             return false;

@@ -105,10 +105,10 @@ test('it gets merge head branch from MERGE_MSG', function () {
 
 test('it gets conflict versions for a file', function () {
     Process::fake([
-        'git show :1:"test.txt" 2>/dev/null' => "base content\n",
-        'git show :2:"test.txt" 2>/dev/null' => "ours content\n",
-        'git show :3:"test.txt" 2>/dev/null' => "theirs content\n",
-        'git diff --numstat HEAD -- "test.txt" 2>/dev/null' => Process::result(output: '1	1	test.txt', exitCode: 0),
+        "git show ':1:test.txt'" => "base content\n",
+        "git show ':2:test.txt'" => "ours content\n",
+        "git show ':3:test.txt'" => "theirs content\n",
+        "git diff --numstat HEAD -- 'test.txt'" => Process::result(output: '1	1	test.txt', exitCode: 0),
         'git status --porcelain=v2' => 'u UU N... 100644 100644 100644 000000 abc123 def456 ghi789 test.txt',
     ]);
 

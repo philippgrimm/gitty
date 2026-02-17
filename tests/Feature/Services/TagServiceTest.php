@@ -122,29 +122,29 @@ test('deleteTag throws exception on failure', function () {
 
 test('pushTag pushes tag to default remote', function () {
     Process::fake([
-        "git push origin 'v1.0.0'" => Process::result(''),
+        "git push 'origin' 'v1.0.0'" => Process::result(''),
     ]);
 
     $tagService = new TagService($this->testRepoPath);
     $tagService->pushTag('v1.0.0');
 
-    Process::assertRan("git push origin 'v1.0.0'");
+    Process::assertRan("git push 'origin' 'v1.0.0'");
 });
 
 test('pushTag pushes tag to specified remote', function () {
     Process::fake([
-        "git push upstream 'v2.0.0'" => Process::result(''),
+        "git push 'upstream' 'v2.0.0'" => Process::result(''),
     ]);
 
     $tagService = new TagService($this->testRepoPath);
     $tagService->pushTag('v2.0.0', 'upstream');
 
-    Process::assertRan("git push upstream 'v2.0.0'");
+    Process::assertRan("git push 'upstream' 'v2.0.0'");
 });
 
 test('pushTag throws exception on failure', function () {
     Process::fake([
-        "git push origin 'v1.0.0'" => Process::result('', 'fatal: remote not found', 1),
+        "git push 'origin' 'v1.0.0'" => Process::result('', 'fatal: remote not found', 1),
     ]);
 
     $tagService = new TagService($this->testRepoPath);
