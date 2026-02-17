@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Git;
 
+use App\DTOs\AheadBehind;
 use App\DTOs\Commit;
 use App\DTOs\DiffResult;
 use App\DTOs\GitStatus;
@@ -127,7 +128,7 @@ class GitService extends AbstractGitService
         return $this->currentBranch() === '(detached)';
     }
 
-    public function aheadBehind(): array
+    public function aheadBehind(): AheadBehind
     {
         $status = $this->status();
 

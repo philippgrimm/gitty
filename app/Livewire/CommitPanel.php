@@ -47,7 +47,7 @@ class CommitPanel extends Component
         $gitService = new GitService($this->repoPath);
         $status = $gitService->status();
         $this->stagedCount = $status->changedFiles
-            ->filter(fn ($file) => $file['indexStatus'] !== '.' && $file['indexStatus'] !== '?')
+            ->filter(fn ($file) => $file->indexStatus !== '.' && $file->indexStatus !== '?')
             ->count();
 
         $this->currentPrefill = $this->getCommitPrefill();

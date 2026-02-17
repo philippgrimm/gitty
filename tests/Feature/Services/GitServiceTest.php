@@ -25,7 +25,9 @@ test('it parses porcelain v2 status with clean working tree', function () {
     expect($status)->toBeInstanceOf(GitStatus::class)
         ->and($status->branch)->toBe('main')
         ->and($status->upstream)->toBe('origin/main')
-        ->and($status->aheadBehind)->toBe(['ahead' => 0, 'behind' => 0])
+        ->and($status->aheadBehind)->toBeInstanceOf(\App\DTOs\AheadBehind::class)
+        ->and($status->aheadBehind->ahead)->toBe(0)
+        ->and($status->aheadBehind->behind)->toBe(0)
         ->and($status->changedFiles)->toHaveCount(0);
 });
 
@@ -38,9 +40,9 @@ test('it parses porcelain v2 status with unstaged changes', function () {
     $status = $service->status();
 
     expect($status->changedFiles)->toHaveCount(2)
-        ->and($status->changedFiles->first()['path'])->toBe('README.md')
-        ->and($status->changedFiles->first()['indexStatus'])->toBe('.')
-        ->and($status->changedFiles->first()['worktreeStatus'])->toBe('M');
+        ->and($status->changedFiles->first()->path)->toBe('README.md')
+        ->and($status->changedFiles->first()->indexStatus)->toBe('.')
+        ->and($status->changedFiles->first()->worktreeStatus)->toBe('M');
 });
 
 test('it parses porcelain v2 status with staged changes', function () {
@@ -52,9 +54,9 @@ test('it parses porcelain v2 status with staged changes', function () {
     $status = $service->status();
 
     expect($status->changedFiles)->toHaveCount(2)
-        ->and($status->changedFiles->first()['indexStatus'])->toBe('M')
-        ->and($status->changedFiles->first()['worktreeStatus'])->toBe('.')
-        ->and($status->changedFiles->last()['indexStatus'])->toBe('A');
+        ->and($status->changedFiles->first()->indexStatus)->toBe('M')
+        ->and($status->changedFiles->first()->worktreeStatus)->toBe('.')
+        ->and($status->changedFiles->last()->indexStatus)->toBe('A');
 });
 
 test('it parses porcelain v2 status with renamed files', function () {
@@ -66,9 +68,9 @@ test('it parses porcelain v2 status with renamed files', function () {
     $status = $service->status();
 
     expect($status->changedFiles)->toHaveCount(1)
-        ->and($status->changedFiles->first()['indexStatus'])->toBe('R')
-        ->and($status->changedFiles->first()['path'])->toBe('new-name.txt')
-        ->and($status->changedFiles->first()['oldPath'])->toBe('old-name.txt');
+        ->and($status->changedFiles->first()->indexStatus)->toBe('R')
+        ->and($status->changedFiles->first()->path)->toBe('new-name.txt')
+        ->and($status->changedFiles->first()->oldPath)->toBe('old-name.txt');
 });
 
 test('it detects detached HEAD state', function () {
@@ -90,7 +92,9 @@ test('it calculates ahead/behind commits', function () {
     $service = new GitService('/tmp/gitty-test-repo');
     $aheadBehind = $service->aheadBehind();
 
-    expect($aheadBehind)->toBe(['ahead' => 3, 'behind' => 2]);
+    expect($aheadBehind)->toBeInstanceOf(\App\DTOs\AheadBehind::class)
+        ->and($aheadBehind->ahead)->toBe(3)
+        ->and($aheadBehind->behind)->toBe(2);
 });
 
 test('it parses git log output', function () {

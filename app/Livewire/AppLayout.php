@@ -96,8 +96,8 @@ class AppLayout extends Component
 
             return [
                 'branch' => $status->branch,
-                'ahead' => $status->aheadBehind['ahead'] ?? 0,
-                'behind' => $status->aheadBehind['behind'] ?? 0,
+                'ahead' => $status->aheadBehind->ahead,
+                'behind' => $status->aheadBehind->behind,
             ];
         } catch (\Exception $e) {
             return [];

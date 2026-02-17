@@ -991,7 +991,7 @@ Max Concurrent: 6 (Waves 2 & 3 combined)
 
 ---
 
-- [ ] 13. Update GitStatus to Use ChangedFile DTO
+- [x] 13. Update GitStatus to Use ChangedFile DTO
 
   **What to do**:
   - **TDD**: Update existing `GitStatus` tests to expect `ChangedFile` objects instead of arrays

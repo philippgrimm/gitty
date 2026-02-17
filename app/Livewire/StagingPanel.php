@@ -59,23 +59,26 @@ class StagingPanel extends Component
             $this->untrackedFiles = collect();
 
             foreach ($status->changedFiles as $file) {
-                $indexStatus = $file['indexStatus'];
-                $worktreeStatus = $file['worktreeStatus'];
-                $path = $file['path'];
+                $fileArray = [
+                    'path' => $file->path,
+                    'oldPath' => $file->oldPath,
+                    'indexStatus' => $file->indexStatus,
+                    'worktreeStatus' => $file->worktreeStatus,
+                ];
 
-                if ($indexStatus === '?' && $worktreeStatus === '?') {
-                    $this->untrackedFiles->push($file);
+                if ($file->isUntracked()) {
+                    $this->untrackedFiles->push($fileArray);
                 } else {
-                    if ($worktreeStatus !== '.') {
-                        $this->unstagedFiles->push($file);
+                    if ($file->worktreeStatus !== '.') {
+                        $this->unstagedFiles->push($fileArray);
                     }
-                    if ($indexStatus !== '.' && $indexStatus !== '?') {
-                        $this->stagedFiles->push($file);
+                    if ($file->isStaged()) {
+                        $this->stagedFiles->push($fileArray);
                     }
                 }
             }
 
-            $this->lastAheadBehind = $status->aheadBehind;
+            $this->lastAheadBehind = ['ahead' => $status->aheadBehind->ahead, 'behind' => $status->aheadBehind->behind];
             $this->error = '';
         } catch (\Exception $e) {
             $this->error = GitErrorHandler::translate($e->getMessage());

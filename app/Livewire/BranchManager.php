@@ -48,7 +48,7 @@ class BranchManager extends Component
 
             $status = $gitService->status();
             $this->currentBranch = $status->branch;
-            $this->aheadBehind = $status->aheadBehind;
+            $this->aheadBehind = ['ahead' => $status->aheadBehind->ahead, 'behind' => $status->aheadBehind->behind];
             $this->isDetachedHead = $gitService->isDetachedHead();
 
             $this->branches = $branchService->branches()

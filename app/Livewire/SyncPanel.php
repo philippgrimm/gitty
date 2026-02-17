@@ -34,7 +34,7 @@ class SyncPanel extends Component
         try {
             $gitService = new GitService($this->repoPath);
             $status = $gitService->status();
-            $this->aheadBehind = $status->aheadBehind;
+            $this->aheadBehind = ['ahead' => $status->aheadBehind->ahead, 'behind' => $status->aheadBehind->behind];
         } catch (\Exception $e) {
             $this->aheadBehind = ['ahead' => 0, 'behind' => 0];
         }
@@ -54,7 +54,7 @@ class SyncPanel extends Component
         try {
             $gitService = new GitService($this->repoPath);
             $status = $gitService->status();
-            $this->aheadBehind = $status->aheadBehind;
+            $this->aheadBehind = ['ahead' => $status->aheadBehind->ahead, 'behind' => $status->aheadBehind->behind];
         } catch (\Exception $e) {
             $this->aheadBehind = ['ahead' => 0, 'behind' => 0];
         }
