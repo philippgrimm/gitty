@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Livewire;
 
-use App\Services\Git\GitErrorHandler;
+use App\Livewire\Concerns\HandlesGitOperations;
 use App\Services\Git\GitService;
 use App\Services\NotificationService;
 use Illuminate\Support\Facades\Process;
@@ -13,6 +13,8 @@ use Livewire\Component;
 
 class SyncPanel extends Component
 {
+    use HandlesGitOperations;
+
     public string $repoPath;
 
     public bool $isOperationRunning = false;
@@ -62,189 +64,116 @@ class SyncPanel extends Component
 
     public function syncPush(): void
     {
-        $this->error = '';
-        $this->isOperationRunning = true;
-
-        try {
+        $this->executeSyncOperation(function () {
             $gitService = new GitService($this->repoPath);
             $currentBranch = $gitService->currentBranch();
 
             if ($gitService->isDetachedHead()) {
-                $this->error = 'Cannot push from detached HEAD state';
-                $this->isOperationRunning = false;
-
-                return;
+                throw new \RuntimeException('Cannot push from detached HEAD state');
             }
 
             $result = Process::path($this->repoPath)->run("git push origin {$currentBranch}");
 
             if ($result->exitCode() !== 0) {
-                $errorMsg = trim($result->errorOutput() ?: $result->output());
-                $this->error = GitErrorHandler::translate($errorMsg);
-                $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
-                $this->isOperationRunning = false;
-
-                return;
+                throw new \RuntimeException(trim($result->errorOutput() ?: $result->output()));
             }
 
             $this->operationOutput = trim($result->output());
-            $this->lastOperation = 'push';
-            $this->isOperationRunning = false;
-            $this->refreshAheadBehindData();
-            $this->dispatch('status-updated', stagedCount: 0, aheadBehind: $this->aheadBehind);
 
             $commitCount = $this->aheadBehind['ahead'] ?? 0;
-            $notificationService = app(NotificationService::class);
-            $notificationService->notify(
+            app(NotificationService::class)->notify(
                 'Push Complete',
                 "Pushed {$commitCount} commit(s) to origin/{$currentBranch}"
             );
-        } catch (\Exception $e) {
-            $this->error = GitErrorHandler::translate($e->getMessage());
-            $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
-            $this->isOperationRunning = false;
-        }
+        }, 'push');
     }
 
     public function syncPull(): void
     {
-        $this->error = '';
-        $this->isOperationRunning = true;
-
-        try {
+        $this->executeSyncOperation(function () {
             $gitService = new GitService($this->repoPath);
             $currentBranch = $gitService->currentBranch();
 
             if ($gitService->isDetachedHead()) {
-                $this->error = 'Cannot pull from detached HEAD state';
-                $this->isOperationRunning = false;
-
-                return;
+                throw new \RuntimeException('Cannot pull from detached HEAD state');
             }
 
             $result = Process::path($this->repoPath)->run("git pull origin {$currentBranch}");
 
             if ($result->exitCode() !== 0) {
-                $errorMsg = trim($result->errorOutput() ?: $result->output());
-                $this->error = GitErrorHandler::translate($errorMsg);
-                $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
-                $this->isOperationRunning = false;
-
-                return;
+                throw new \RuntimeException(trim($result->errorOutput() ?: $result->output()));
             }
 
             $this->operationOutput = trim($result->output());
-            $this->lastOperation = 'pull';
-            $this->isOperationRunning = false;
-            $this->refreshAheadBehindData();
-            $this->dispatch('status-updated', stagedCount: 0, aheadBehind: $this->aheadBehind);
 
-            $notificationService = app(NotificationService::class);
-            $notificationService->notify(
+            app(NotificationService::class)->notify(
                 'Pull Complete',
                 "Pulled new commits from origin/{$currentBranch}"
             );
-        } catch (\Exception $e) {
-            $this->error = GitErrorHandler::translate($e->getMessage());
-            $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
-            $this->isOperationRunning = false;
-        }
+        }, 'pull');
     }
 
     public function syncFetch(): void
     {
-        $this->error = '';
-        $this->isOperationRunning = true;
-
-        try {
+        $this->executeSyncOperation(function () {
             $result = Process::path($this->repoPath)->run('git fetch origin');
 
             if ($result->exitCode() !== 0) {
-                $errorMsg = trim($result->errorOutput() ?: $result->output());
-                $this->error = GitErrorHandler::translate($errorMsg);
-                $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
-                $this->isOperationRunning = false;
-
-                return;
+                throw new \RuntimeException(trim($result->errorOutput() ?: $result->output()));
             }
 
             $this->operationOutput = trim($result->output());
-            $this->lastOperation = 'fetch';
-            $this->isOperationRunning = false;
-            $this->refreshAheadBehindData();
-            $this->dispatch('status-updated', stagedCount: 0, aheadBehind: $this->aheadBehind);
-        } catch (\Exception $e) {
-            $this->error = GitErrorHandler::translate($e->getMessage());
-            $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
-            $this->isOperationRunning = false;
-        }
+        }, 'fetch');
     }
 
     public function syncFetchAll(): void
     {
-        $this->error = '';
-        $this->isOperationRunning = true;
-
-        try {
+        $this->executeSyncOperation(function () {
             $result = Process::path($this->repoPath)->run('git fetch --all');
 
             if ($result->exitCode() !== 0) {
-                $errorMsg = trim($result->errorOutput() ?: $result->output());
-                $this->error = GitErrorHandler::translate($errorMsg);
-                $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
-                $this->isOperationRunning = false;
-
-                return;
+                throw new \RuntimeException(trim($result->errorOutput() ?: $result->output()));
             }
 
             $this->operationOutput = trim($result->output());
-            $this->lastOperation = 'fetch-all';
-            $this->isOperationRunning = false;
-            $this->refreshAheadBehindData();
-            $this->dispatch('status-updated', stagedCount: 0, aheadBehind: $this->aheadBehind);
-        } catch (\Exception $e) {
-            $this->error = GitErrorHandler::translate($e->getMessage());
-            $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
-            $this->isOperationRunning = false;
-        }
+        }, 'fetch-all');
     }
 
     public function syncForcePushWithLease(): void
     {
-        $this->error = '';
-        $this->isOperationRunning = true;
-
-        try {
+        $this->executeSyncOperation(function () {
             $gitService = new GitService($this->repoPath);
             $currentBranch = $gitService->currentBranch();
 
             if ($gitService->isDetachedHead()) {
-                $this->error = 'Cannot push from detached HEAD state';
-                $this->isOperationRunning = false;
-
-                return;
+                throw new \RuntimeException('Cannot push from detached HEAD state');
             }
 
             $result = Process::path($this->repoPath)->run("git push --force-with-lease origin {$currentBranch}");
 
             if ($result->exitCode() !== 0) {
-                $errorMsg = trim($result->errorOutput() ?: $result->output());
-                $this->error = GitErrorHandler::translate($errorMsg);
-                $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
-                $this->isOperationRunning = false;
-
-                return;
+                throw new \RuntimeException(trim($result->errorOutput() ?: $result->output()));
             }
 
             $this->operationOutput = trim($result->output());
-            $this->lastOperation = 'force-push';
-            $this->isOperationRunning = false;
+        }, 'force-push');
+    }
+
+    private function executeSyncOperation(callable $operation, string $operationName): void
+    {
+        $this->error = '';
+        $this->isOperationRunning = true;
+
+        $this->executeGitOperation(function () use ($operation, $operationName) {
+            $operation();
+            $this->lastOperation = $operationName;
             $this->refreshAheadBehindData();
+        }, dispatchStatusUpdate: false);
+
+        $this->isOperationRunning = false;
+
+        if (empty($this->error)) {
             $this->dispatch('status-updated', stagedCount: 0, aheadBehind: $this->aheadBehind);
-        } catch (\Exception $e) {
-            $this->error = GitErrorHandler::translate($e->getMessage());
-            $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
-            $this->isOperationRunning = false;
         }
     }
 

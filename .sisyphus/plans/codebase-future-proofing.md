@@ -1050,7 +1050,7 @@ Max Concurrent: 6 (Waves 2 & 3 combined)
 
 ---
 
-- [ ] 14. Refactor StagingPanel Boilerplate
+- [x] 14. Refactor StagingPanel Boilerplate
 
   **What to do**:
   - Add `use HandlesGitOperations` trait to `StagingPanel`
@@ -1111,7 +1111,7 @@ Max Concurrent: 6 (Waves 2 & 3 combined)
 
 ---
 
-- [ ] 15. Refactor DiffViewer DTO Reconstruction
+- [x] 15. Refactor DiffViewer DTO Reconstruction
 
   **What to do**:
   - Extract a helper method `hydrateDiffFileAndHunk(int $fileIndex, int $hunkIndex): array` that reconstructs `DiffFile` and `Hunk` objects from the stored array data
@@ -1166,7 +1166,7 @@ Max Concurrent: 6 (Waves 2 & 3 combined)
 
 ---
 
-- [ ] 16. Refactor SyncPanel Boilerplate
+- [x] 16. Refactor SyncPanel Boilerplate
 
   **What to do**:
   - Add `use HandlesGitOperations` to SyncPanel
