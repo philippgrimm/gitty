@@ -64,6 +64,13 @@ class BranchService extends AbstractGitService
         $this->cache->invalidateGroup($this->repoPath, 'branches');
     }
 
+    public function isCommitOnRemote(string $sha): bool
+    {
+        $result = $this->commandRunner->run('branch -r --contains', [$sha]);
+
+        return $result->successful() && ! empty(trim($result->output()));
+    }
+
     public function mergeBranch(string $name): MergeResult
     {
         $result = $this->commandRunner->run('merge', [$name]);

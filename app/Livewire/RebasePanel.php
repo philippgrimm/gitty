@@ -151,10 +151,9 @@ class RebasePanel extends Component
     private function checkIfCommitsPushed(): bool
     {
         try {
-            $result = \Illuminate\Support\Facades\Process::path($this->repoPath)
-                ->run("git branch -r --contains {$this->ontoCommit}");
+            $branchService = new \App\Services\Git\BranchService($this->repoPath);
 
-            return $result->successful() && ! empty(trim($result->output()));
+            return $branchService->isCommitOnRemote($this->ontoCommit);
         } catch (\Exception) {
             return false;
         }

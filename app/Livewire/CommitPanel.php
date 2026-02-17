@@ -8,7 +8,6 @@ use App\Services\Git\CommitService;
 use App\Services\Git\GitErrorHandler;
 use App\Services\Git\GitService;
 use App\Services\SettingsService;
-use Illuminate\Support\Facades\Process;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
@@ -292,9 +291,10 @@ class CommitPanel extends Component
         }
 
         // Check git config for commit.template
-        $result = Process::path($this->repoPath)->run('git config --get commit.template');
-        if ($result->successful() && trim($result->output())) {
-            $path = trim($result->output());
+        $gitService = new GitService($this->repoPath);
+        $templatePath = $gitService->getConfigValue('commit.template');
+        if ($templatePath) {
+            $path = $templatePath;
             // Expand ~ to home directory
             $path = str_replace('~', $_SERVER['HOME'] ?? '', $path);
             if (file_exists($path)) {

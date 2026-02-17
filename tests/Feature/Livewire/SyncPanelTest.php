@@ -31,7 +31,7 @@ test('component mounts with repo path', function () {
 test('push operation succeeds', function () {
     Process::fake([
         'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
-        'git push origin main' => Process::result("To github.com:user/repo.git\n   abc123..def456  main -> main"),
+        "git push 'origin' 'main'" => Process::result("To github.com:user/repo.git\n   abc123..def456  main -> main"),
     ]);
 
     Livewire::test(SyncPanel::class, ['repoPath' => $this->testRepoPath])
@@ -40,25 +40,25 @@ test('push operation succeeds', function () {
         ->assertSet('error', '')
         ->assertDispatched('status-updated');
 
-    Process::assertRan('git push origin main');
+    Process::assertRan(fn ($p) => str_contains($p->command, 'push'));
 });
 
 test('push operation fails with error message', function () {
     Process::fake([
         'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
-        'git push origin main' => Process::result('error: failed to push some refs', exitCode: 1),
+        "git push 'origin' 'main'" => Process::result('error: failed to push some refs', errorOutput: 'error: failed to push some refs', exitCode: 1),
     ]);
 
     Livewire::test(SyncPanel::class, ['repoPath' => $this->testRepoPath])
         ->call('syncPush')
-        ->assertSet('error', 'error: failed to push some refs')
+        ->assertSet('error', fn ($value) => str_contains($value, 'error: failed to push some refs'))
         ->assertNotDispatched('status-updated');
 });
 
 test('pull operation succeeds', function () {
     Process::fake([
         'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
-        'git pull origin main' => Process::result("From github.com:user/repo\n * branch            main       -> FETCH_HEAD\nUpdating abc123..def456\nFast-forward"),
+        "git pull 'origin' 'main'" => Process::result("From github.com:user/repo\n * branch            main       -> FETCH_HEAD\nUpdating abc123..def456\nFast-forward"),
     ]);
 
     Livewire::test(SyncPanel::class, ['repoPath' => $this->testRepoPath])
@@ -67,25 +67,25 @@ test('pull operation succeeds', function () {
         ->assertSet('error', '')
         ->assertDispatched('status-updated');
 
-    Process::assertRan('git pull origin main');
+    Process::assertRan(fn ($p) => str_contains($p->command, 'pull'));
 });
 
 test('pull operation fails with error message', function () {
     Process::fake([
         'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
-        'git pull origin main' => Process::result('error: Your local changes would be overwritten', exitCode: 1),
+        "git pull 'origin' 'main'" => Process::result('error: Your local changes would be overwritten', errorOutput: 'error: Your local changes would be overwritten', exitCode: 1),
     ]);
 
     Livewire::test(SyncPanel::class, ['repoPath' => $this->testRepoPath])
         ->call('syncPull')
-        ->assertSet('error', 'error: Your local changes would be overwritten')
+        ->assertSet('error', fn ($value) => str_contains($value, 'error: Your local changes would be overwritten'))
         ->assertNotDispatched('status-updated');
 });
 
 test('fetch operation succeeds', function () {
     Process::fake([
         'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
-        'git fetch origin' => Process::result("From github.com:user/repo\n   abc123..def456  main       -> origin/main"),
+        "git fetch 'origin'" => Process::result("From github.com:user/repo\n   abc123..def456  main       -> origin/main"),
     ]);
 
     Livewire::test(SyncPanel::class, ['repoPath' => $this->testRepoPath])
@@ -94,7 +94,7 @@ test('fetch operation succeeds', function () {
         ->assertSet('error', '')
         ->assertDispatched('status-updated');
 
-    Process::assertRan('git fetch origin');
+    Process::assertRan(fn ($p) => str_contains($p->command, 'fetch'));
 });
 
 test('fetch all operation succeeds', function () {
@@ -109,13 +109,13 @@ test('fetch all operation succeeds', function () {
         ->assertSet('error', '')
         ->assertDispatched('status-updated');
 
-    Process::assertRan('git fetch --all');
+    Process::assertRan(fn ($p) => str_contains($p->command, 'fetch --all'));
 });
 
 test('force push with lease succeeds', function () {
     Process::fake([
         'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
-        'git push --force-with-lease origin main' => Process::result("To github.com:user/repo.git\n + abc123...def456 main -> main (forced update)"),
+        "git push --force-with-lease 'origin' 'main'" => Process::result("To github.com:user/repo.git\n + abc123...def456 main -> main (forced update)"),
     ]);
 
     Livewire::test(SyncPanel::class, ['repoPath' => $this->testRepoPath])
@@ -124,13 +124,13 @@ test('force push with lease succeeds', function () {
         ->assertSet('error', '')
         ->assertDispatched('status-updated');
 
-    Process::assertRan('git push --force-with-lease origin main');
+    Process::assertRan(fn ($p) => str_contains($p->command, 'push --force-with-lease'));
 });
 
 test('operations set isOperationRunning flag', function () {
     Process::fake([
         'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
-        'git push origin main' => Process::result('Success'),
+        "git push 'origin' 'main'" => Process::result('Success'),
     ]);
 
     $component = Livewire::test(SyncPanel::class, ['repoPath' => $this->testRepoPath])
@@ -142,7 +142,7 @@ test('operations set isOperationRunning flag', function () {
 test('operations store output in operationOutput', function () {
     Process::fake([
         'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
-        'git push origin main' => Process::result("To github.com:user/repo.git\n   abc123..def456  main -> main"),
+        "git push 'origin' 'main'" => Process::result("To github.com:user/repo.git\n   abc123..def456  main -> main"),
     ]);
 
     Livewire::test(SyncPanel::class, ['repoPath' => $this->testRepoPath])

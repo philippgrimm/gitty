@@ -200,10 +200,9 @@ class HistoryPanel extends Component
             }
 
             // Check if commit exists in remote
-            $result = \Illuminate\Support\Facades\Process::path($this->repoPath)
-                ->run("git branch -r --contains {$sha}");
+            $branchService = new \App\Services\Git\BranchService($this->repoPath);
 
-            return $result->successful() && ! empty(trim($result->output()));
+            return $branchService->isCommitOnRemote($sha);
         } catch (\Exception) {
             return false;
         }

@@ -40,6 +40,15 @@ class StashService extends AbstractGitService
         $this->cache->invalidateGroup($this->repoPath, 'status');
     }
 
+    public function tryStashApply(int $index): bool
+    {
+        $result = $this->commandRunner->run("stash apply stash@{{$index}}");
+
+        $this->cache->invalidateGroup($this->repoPath, 'status');
+
+        return $result->successful();
+    }
+
     public function stashPop(int $index): void
     {
         $this->commandRunner->run("stash pop stash@{{$index}}");

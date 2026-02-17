@@ -10,7 +10,6 @@ use App\Services\Git\DiffService;
 use App\Services\Git\GitErrorHandler;
 use App\Services\Git\GitService;
 use App\Services\SettingsService;
-use Illuminate\Support\Facades\Process;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
@@ -355,9 +354,13 @@ class DiffViewer extends Component
 
     private function getFileSize(string $file): int
     {
-        $result = Process::path($this->repoPath)->run("git cat-file -s HEAD:\"{$file}\" 2>/dev/null || echo 0");
+        try {
+            $gitService = new GitService($this->repoPath);
 
-        return (int) trim($result->output());
+            return $gitService->getTrackedFileSize($file);
+        } catch (\Exception) {
+            return 0;
+        }
     }
 
     private function mapExtensionToLanguage(string $extension): string
@@ -439,10 +442,15 @@ class DiffViewer extends Component
         $newSize = 0;
 
         // Try to get old version from git (HEAD)
-        $result = Process::path($this->repoPath)->run("git show HEAD:\"{$file}\" 2>/dev/null");
-        if ($result->successful() && ! empty($result->output())) {
-            $oldImage = 'data:'.$mimeType.';base64,'.base64_encode($result->output());
-            $oldSize = strlen($result->output());
+        try {
+            $gitService = new GitService($this->repoPath);
+            $oldContent = $gitService->getFileContentAtHead($file);
+            if ($oldContent !== null) {
+                $oldImage = 'data:'.$mimeType.';base64,'.base64_encode($oldContent);
+                $oldSize = strlen($oldContent);
+            }
+        } catch (\Exception) {
+            // Invalid repo path — no old image available
         }
 
         // Try to get new version from working directory

@@ -17,7 +17,7 @@ beforeEach(function () {
 test('getTemplates returns conventional commit types', function () {
     Process::fake([
         'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
-        'git config --get commit.template' => Process::result('', exitCode: 1),
+        "git config --get 'commit.template'" => Process::result('', exitCode: 1),
     ]);
 
     $component = Livewire::test(CommitPanel::class, ['repoPath' => $this->testRepoPath]);
@@ -105,7 +105,7 @@ test('loadCustomTemplate reads from git config commit.template', function () {
     Process::fake([
         'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
         'git log --oneline -n 10' => Process::result(GitOutputFixtures::logOneline()),
-        'git config --get commit.template' => Process::result($customTemplatePath),
+        "git config --get 'commit.template'" => Process::result($customTemplatePath),
     ]);
 
     $component = Livewire::test(CommitPanel::class, ['repoPath' => $this->testRepoPath]);
@@ -123,7 +123,7 @@ test('getTemplates returns only conventional commits when no custom template exi
     Process::fake([
         'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
         'git log --oneline -n 10' => Process::result(GitOutputFixtures::logOneline()),
-        'git config --get commit.template' => Process::result('', exitCode: 1),
+        "git config --get 'commit.template'" => Process::result('', exitCode: 1),
     ]);
 
     $component = Livewire::test(CommitPanel::class, ['repoPath' => $this->testRepoPath]);

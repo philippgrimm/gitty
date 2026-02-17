@@ -10,7 +10,6 @@ use App\Services\Git\GitErrorHandler;
 use App\Services\Git\GitService;
 use App\Services\Git\StashService;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Process;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
@@ -164,9 +163,9 @@ class BranchManager extends Component
             $branchService->switchBranch($this->autoStashTargetBranch);
 
             // Try to restore stashed changes
-            $applyResult = Process::path($this->repoPath)->run('git stash apply stash@{0}');
+            $applySucceeded = $stashService->tryStashApply(0);
 
-            if ($applyResult->exitCode() === 0) {
+            if ($applySucceeded) {
                 // Success - drop the stash
                 $stashService->stashDrop(0);
                 $this->dispatch('show-error', message: "Switched to {$this->autoStashTargetBranch} (changes restored)", type: 'success', persistent: false);

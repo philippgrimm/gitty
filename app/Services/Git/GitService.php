@@ -134,4 +134,37 @@ class GitService extends AbstractGitService
 
         return $status->aheadBehind;
     }
+
+    public function getTrackedFileSize(string $file): int
+    {
+        $result = $this->commandRunner->run('cat-file -s', ["HEAD:{$file}"]);
+
+        if (! $result->successful()) {
+            return 0;
+        }
+
+        return (int) trim($result->output());
+    }
+
+    public function getFileContentAtHead(string $file): ?string
+    {
+        $result = $this->commandRunner->run('show', ["HEAD:{$file}"]);
+
+        if (! $result->successful() || empty($result->output())) {
+            return null;
+        }
+
+        return $result->output();
+    }
+
+    public function getConfigValue(string $key): ?string
+    {
+        $result = $this->commandRunner->run('config --get', [$key]);
+
+        if (! $result->successful() || empty(trim($result->output()))) {
+            return null;
+        }
+
+        return trim($result->output());
+    }
 }

@@ -11,7 +11,6 @@ use App\Services\Git\GitService;
 use App\Services\Git\StagingService;
 use App\Services\Git\StashService;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Process;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -226,9 +225,9 @@ class StagingPanel extends Component
 
     private function getCurrentBranch(): string
     {
-        $result = Process::path($this->repoPath)->run('git rev-parse --abbrev-ref HEAD');
+        $gitService = new GitService($this->repoPath);
 
-        return trim($result->output());
+        return $gitService->currentBranch();
     }
 
     private function dispatchStatusUpdate(): void

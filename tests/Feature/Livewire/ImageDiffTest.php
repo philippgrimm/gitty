@@ -16,7 +16,10 @@ function callPrivateMethod(object $object, string $method, ...$args): mixed
 }
 
 beforeEach(function () {
-    $this->repoPath = '/fake/repo/path';
+    $this->repoPath = '/tmp/gitty-image-test-repo';
+    if (! is_dir($this->repoPath.'/.git')) {
+        mkdir($this->repoPath.'/.git', 0755, true);
+    }
 });
 
 test('isImageFile returns true for image extensions', function () {
@@ -52,19 +55,18 @@ test('isImageFile returns false for non-image extensions', function () {
 
 test('getImageData returns correct structure for new image', function () {
     Process::fake([
-        'git show HEAD:"new-image.png" 2>/dev/null' => Process::result(output: '', exitCode: 1),
+        "git show 'HEAD:test-new-image.png'" => Process::result(output: '', exitCode: 1),
     ]);
-
-    $component = Livewire::test(DiffViewer::class, ['repoPath' => $this->repoPath]);
 
     $imageContent = base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==');
 
-    $tempFile = sys_get_temp_dir().'/test-new-image.png';
+    $tempFile = $this->repoPath.'/test-new-image.png';
     file_put_contents($tempFile, $imageContent);
 
-    $component->set('repoPath', sys_get_temp_dir());
+    $component = Livewire::test(DiffViewer::class, ['repoPath' => $this->repoPath]);
+    $instance = $component->instance();
 
-    $imageData = callPrivateMethod($component->instance(), 'getImageData', 'test-new-image.png');
+    $imageData = callPrivateMethod($instance, 'getImageData', 'test-new-image.png');
 
     expect($imageData)->toBeArray()
         ->and($imageData)->toHaveKeys(['oldImage', 'newImage', 'oldSize', 'newSize', 'extension'])
@@ -81,7 +83,7 @@ test('getImageData returns correct structure for deleted image', function () {
     $imageContent = base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==');
 
     Process::fake([
-        'git show HEAD:"deleted-image.png" 2>/dev/null' => Process::result(output: $imageContent, exitCode: 0),
+        "git show 'HEAD:deleted-image.png'" => Process::result(output: $imageContent, exitCode: 0),
     ]);
 
     $component = Livewire::test(DiffViewer::class, ['repoPath' => $this->repoPath]);
@@ -102,13 +104,13 @@ test('getImageData returns correct structure for modified image', function () {
     $newImageContent = base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAFUlEQVR42mNk+M9Qz8DAwMDIwMAAAAFCAQFAQs8AAAAASUVORK5CYII=');
 
     Process::fake([
-        'git show HEAD:"test-modified-image.png" 2>/dev/null' => Process::result(output: $oldImageContent, exitCode: 0),
+        "git show 'HEAD:test-modified-image.png'" => Process::result(output: $oldImageContent, exitCode: 0),
     ]);
 
-    $tempFile = sys_get_temp_dir().'/test-modified-image.png';
+    $tempFile = $this->repoPath.'/test-modified-image.png';
     file_put_contents($tempFile, $newImageContent);
 
-    $component = Livewire::test(DiffViewer::class, ['repoPath' => sys_get_temp_dir()]);
+    $component = Livewire::test(DiffViewer::class, ['repoPath' => $this->repoPath]);
     $instance = $component->instance();
 
     $imageData = callPrivateMethod($instance, 'getImageData', 'test-modified-image.png');
@@ -160,14 +162,14 @@ test('loadDiff sets isImage and imageData for image files', function () {
     $imageContent = base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==');
 
     Process::fake([
-        'git show HEAD:"test.png" 2>/dev/null' => Process::result(output: $imageContent, exitCode: 0),
+        "git show 'HEAD:test.png'" => Process::result(output: $imageContent, exitCode: 0),
     ]);
 
     // Create temp file
-    $tempFile = sys_get_temp_dir().'/test.png';
+    $tempFile = $this->repoPath.'/test.png';
     file_put_contents($tempFile, $imageContent);
 
-    $component = Livewire::test(DiffViewer::class, ['repoPath' => sys_get_temp_dir()]);
+    $component = Livewire::test(DiffViewer::class, ['repoPath' => $this->repoPath]);
 
     $component->call('loadDiff', 'test.png', false);
 
@@ -188,7 +190,7 @@ test('loadDiff does not treat non-image files as images', function () {
             output: "diff --git a/test.txt b/test.txt\nindex abc..def 100644\n--- a/test.txt\n+++ b/test.txt\n@@ -1 +1 @@\n-old\n+new\n",
             exitCode: 0
         ),
-        'git cat-file -s HEAD:"test.txt" 2>/dev/null || echo 0' => Process::result(output: '100', exitCode: 0),
+        "git cat-file -s 'HEAD:test.txt'" => Process::result(output: '100', exitCode: 0),
     ]);
 
     $component = Livewire::test(DiffViewer::class, ['repoPath' => $this->repoPath]);
@@ -203,13 +205,13 @@ test('component renders image comparison for new image', function () {
     $imageContent = base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==');
 
     Process::fake([
-        'git show HEAD:"new.png" 2>/dev/null' => Process::result(output: '', exitCode: 1),
+        "git show 'HEAD:new.png'" => Process::result(output: '', exitCode: 1),
     ]);
 
-    $tempFile = sys_get_temp_dir().'/new.png';
+    $tempFile = $this->repoPath.'/new.png';
     file_put_contents($tempFile, $imageContent);
 
-    $component = Livewire::test(DiffViewer::class, ['repoPath' => sys_get_temp_dir()])
+    $component = Livewire::test(DiffViewer::class, ['repoPath' => $this->repoPath])
         ->call('loadDiff', 'new.png', false);
 
     $component->assertSee('NEW')
@@ -222,13 +224,13 @@ test('component renders image comparison for modified image', function () {
     $imageContent = base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==');
 
     Process::fake([
-        'git show HEAD:"modified.png" 2>/dev/null' => Process::result(output: $imageContent, exitCode: 0),
+        "git show 'HEAD:modified.png'" => Process::result(output: $imageContent, exitCode: 0),
     ]);
 
-    $tempFile = sys_get_temp_dir().'/modified.png';
+    $tempFile = $this->repoPath.'/modified.png';
     file_put_contents($tempFile, $imageContent);
 
-    $component = Livewire::test(DiffViewer::class, ['repoPath' => sys_get_temp_dir()])
+    $component = Livewire::test(DiffViewer::class, ['repoPath' => $this->repoPath])
         ->call('loadDiff', 'modified.png', false);
 
     $component->assertSee('MODIFIED')
@@ -244,7 +246,7 @@ test('component renders image comparison for deleted image', function () {
     $imageContent = base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==');
 
     Process::fake([
-        'git show HEAD:"deleted.png" 2>/dev/null' => Process::result(output: $imageContent, exitCode: 0),
+        "git show 'HEAD:deleted.png'" => Process::result(output: $imageContent, exitCode: 0),
     ]);
 
     $component = Livewire::test(DiffViewer::class, ['repoPath' => $this->repoPath])

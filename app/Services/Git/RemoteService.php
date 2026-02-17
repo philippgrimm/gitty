@@ -26,34 +26,51 @@ class RemoteService extends AbstractGitService
         );
     }
 
-    public function push(string $remote, string $branch): void
+    public function push(string $remote, string $branch): string
     {
-        $this->commandRunner->run('push', [$remote, $branch]);
+        $result = $this->commandRunner->runOrFail('push', [$remote, $branch], 'Git push failed');
 
         $this->cache->invalidateGroup($this->repoPath, 'branches');
+
+        return $result->output();
     }
 
-    public function pull(string $remote, string $branch): void
+    public function pull(string $remote, string $branch): string
     {
-        $this->commandRunner->run('pull', [$remote, $branch]);
+        $result = $this->commandRunner->runOrFail('pull', [$remote, $branch], 'Git pull failed');
 
         $this->cache->invalidateGroup($this->repoPath, 'status');
         $this->cache->invalidateGroup($this->repoPath, 'history');
         $this->cache->invalidateGroup($this->repoPath, 'branches');
+
+        return $result->output();
     }
 
-    public function fetch(string $remote): void
+    public function fetch(string $remote): string
     {
-        $this->commandRunner->run('fetch', [$remote]);
+        $result = $this->commandRunner->runOrFail('fetch', [$remote], 'Git fetch failed');
 
         $this->invalidateRemoteGroups();
+
+        return $result->output();
     }
 
-    public function fetchAll(): void
+    public function fetchAll(): string
     {
-        $this->commandRunner->run('fetch --all');
+        $result = $this->commandRunner->runOrFail('fetch --all', [], 'Git fetch all failed');
 
         $this->invalidateRemoteGroups();
+
+        return $result->output();
+    }
+
+    public function forcePushWithLease(string $remote, string $branch): string
+    {
+        $result = $this->commandRunner->runOrFail('push --force-with-lease', [$remote, $branch], 'Git force push failed');
+
+        $this->cache->invalidateGroup($this->repoPath, 'branches');
+
+        return $result->output();
     }
 
     private function invalidateRemoteGroups(): void

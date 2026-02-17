@@ -6,8 +6,8 @@ namespace App\Livewire;
 
 use App\Livewire\Concerns\HandlesGitOperations;
 use App\Services\Git\GitService;
+use App\Services\Git\RemoteService;
 use App\Services\NotificationService;
-use Illuminate\Support\Facades\Process;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
@@ -64,7 +64,10 @@ class SyncPanel extends Component
 
     public function syncPush(): void
     {
-        $this->executeSyncOperation(function () {
+        $commitCount = $this->aheadBehind['ahead'] ?? 0;
+        $currentBranch = null;
+
+        $this->executeSyncOperation(function () use (&$currentBranch) {
             $gitService = new GitService($this->repoPath);
             $currentBranch = $gitService->currentBranch();
 
@@ -72,25 +75,24 @@ class SyncPanel extends Component
                 throw new \RuntimeException('Cannot push from detached HEAD state');
             }
 
-            $result = Process::path($this->repoPath)->run("git push origin {$currentBranch}");
+            $remoteService = new RemoteService($this->repoPath);
 
-            if ($result->exitCode() !== 0) {
-                throw new \RuntimeException(trim($result->errorOutput() ?: $result->output()));
-            }
+            return $remoteService->push('origin', $currentBranch);
+        }, 'push');
 
-            $this->operationOutput = trim($result->output());
-
-            $commitCount = $this->aheadBehind['ahead'] ?? 0;
+        if (empty($this->error) && $currentBranch) {
             app(NotificationService::class)->notify(
                 'Push Complete',
                 "Pushed {$commitCount} commit(s) to origin/{$currentBranch}"
             );
-        }, 'push');
+        }
     }
 
     public function syncPull(): void
     {
-        $this->executeSyncOperation(function () {
+        $currentBranch = null;
+
+        $this->executeSyncOperation(function () use (&$currentBranch) {
             $gitService = new GitService($this->repoPath);
             $currentBranch = $gitService->currentBranch();
 
@@ -98,44 +100,34 @@ class SyncPanel extends Component
                 throw new \RuntimeException('Cannot pull from detached HEAD state');
             }
 
-            $result = Process::path($this->repoPath)->run("git pull origin {$currentBranch}");
+            $remoteService = new RemoteService($this->repoPath);
 
-            if ($result->exitCode() !== 0) {
-                throw new \RuntimeException(trim($result->errorOutput() ?: $result->output()));
-            }
+            return $remoteService->pull('origin', $currentBranch);
+        }, 'pull');
 
-            $this->operationOutput = trim($result->output());
-
+        if (empty($this->error) && $currentBranch) {
             app(NotificationService::class)->notify(
                 'Pull Complete',
                 "Pulled new commits from origin/{$currentBranch}"
             );
-        }, 'pull');
+        }
     }
 
     public function syncFetch(): void
     {
         $this->executeSyncOperation(function () {
-            $result = Process::path($this->repoPath)->run('git fetch origin');
+            $remoteService = new RemoteService($this->repoPath);
 
-            if ($result->exitCode() !== 0) {
-                throw new \RuntimeException(trim($result->errorOutput() ?: $result->output()));
-            }
-
-            $this->operationOutput = trim($result->output());
+            return $remoteService->fetch('origin');
         }, 'fetch');
     }
 
     public function syncFetchAll(): void
     {
         $this->executeSyncOperation(function () {
-            $result = Process::path($this->repoPath)->run('git fetch --all');
+            $remoteService = new RemoteService($this->repoPath);
 
-            if ($result->exitCode() !== 0) {
-                throw new \RuntimeException(trim($result->errorOutput() ?: $result->output()));
-            }
-
-            $this->operationOutput = trim($result->output());
+            return $remoteService->fetchAll();
         }, 'fetch-all');
     }
 
@@ -149,23 +141,21 @@ class SyncPanel extends Component
                 throw new \RuntimeException('Cannot push from detached HEAD state');
             }
 
-            $result = Process::path($this->repoPath)->run("git push --force-with-lease origin {$currentBranch}");
+            $remoteService = new RemoteService($this->repoPath);
 
-            if ($result->exitCode() !== 0) {
-                throw new \RuntimeException(trim($result->errorOutput() ?: $result->output()));
-            }
-
-            $this->operationOutput = trim($result->output());
+            return $remoteService->forcePushWithLease('origin', $currentBranch);
         }, 'force-push');
     }
 
     private function executeSyncOperation(callable $operation, string $operationName): void
     {
         $this->error = '';
+        $this->operationOutput = '';
         $this->isOperationRunning = true;
 
         $this->executeGitOperation(function () use ($operation, $operationName) {
-            $operation();
+            $output = $operation();
+            $this->operationOutput = is_string($output) ? trim($output) : '';
             $this->lastOperation = $operationName;
             $this->refreshAheadBehindData();
         }, dispatchStatusUpdate: false);
