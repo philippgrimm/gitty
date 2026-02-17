@@ -75,11 +75,11 @@ Transform gitty from a staging-focused git tool into a full professional macOS g
 - Tests for all new features (Pest feature tests)
 
 ### Definition of Done
-- [ ] All 19 features implemented and accessible from UI
-- [ ] All new features have Pest feature tests passing
-- [ ] No existing tests broken (`php artisan test --compact` → all green)
-- [ ] Dark mode toggle works (Latte ↔ Mocha)
-- [ ] Command palette updated with new commands for all features
+- [x] All 19 features implemented and accessible from UI
+- [x] All new features have Pest feature tests passing
+- [x] No existing tests broken (`php artisan test --compact` → all green)
+- [x] Dark mode toggle works (Latte ↔ Mocha)
+- [x] Command palette updated with new commands for all features
 
 ### Must Have
 - Follow existing Livewire + Git Service + DTO architecture
@@ -1298,7 +1298,7 @@ Wave 5 (Final — Integration):
 
 ### INTEGRATION
 
-- [ ] 20. Integration Testing & Polish
+- [x] 20. Integration Testing & Polish
 
   **What to do**:
   - Run full test suite: `php artisan test --compact` → ALL PASS

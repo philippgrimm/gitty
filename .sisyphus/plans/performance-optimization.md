@@ -170,7 +170,7 @@ Parallel Speedup: ~40% faster than sequential (3 tasks per wave)
 
 ### Wave 1: Perceived Speed (Frontend Only)
 
-- [ ] 1. Add wire:key to all file list iterations
+- [x] 1. Add wire:key to all file list iterations
 
   **What to do**:
   - Add `wire:key="staged-{{ $file['path'] }}"` to each file item in the staged files loop in `staging-panel.blade.php` (line 91)
@@ -244,7 +244,7 @@ Parallel Speedup: ~40% faster than sequential (3 tasks per wave)
 
 ---
 
-- [ ] 2. Add wire:loading states + button disabling to staging actions
+- [x] 2. Add wire:loading states + button disabling to staging actions
 
   **What to do**:
   - Add `wire:loading` indicators to all stage/unstage/discard buttons in `staging-panel.blade.php`:
@@ -329,7 +329,7 @@ Parallel Speedup: ~40% faster than sequential (3 tasks per wave)
 
 ---
 
-- [ ] 3. Debounce live inputs
+- [x] 3. Debounce live inputs
 
   **What to do**:
   - Change commit message textarea from `wire:model.live="message"` to `wire:model.blur="message"` in `commit-panel.blade.php` (line 14). The commit message only matters when the user clicks commit, so blur is more appropriate than debounce — it sends once when leaving the field, not every 300ms while typing.
@@ -524,7 +524,7 @@ Parallel Speedup: ~40% faster than sequential (3 tasks per wave)
 
 ---
 
-- [ ] 5. Optimize polling intervals + hash-based skip
+- [x] 5. Optimize polling intervals + hash-based skip
 
   **What to do**:
   - **Increase polling intervals** to reduce baseline git command overhead:
@@ -620,7 +620,7 @@ Parallel Speedup: ~40% faster than sequential (3 tasks per wave)
 
 ---
 
-- [ ] 6. Cache fetchTags() + service reuse
+- [x] 6. Cache fetchTags() + service reuse
 
   **What to do**:
   - **Cache fetchTags()** in `RepoSidebar.php`:
@@ -713,7 +713,7 @@ Parallel Speedup: ~40% faster than sequential (3 tasks per wave)
 
 ### Wave 3: Diff Viewer Overhaul
 
-- [ ] 7. Replace Shiki with client-side Highlight.js
+- [x] 7. Replace Shiki with client-side Highlight.js
 
   **What to do**:
   - **Install Highlight.js** via npm: `npm install highlight.js`
@@ -817,7 +817,7 @@ Parallel Speedup: ~40% faster than sequential (3 tasks per wave)
 
 ---
 
-- [ ] 8. Refactor diff viewer to client-side rendering (remove renderedHtml from state)
+- [x] 8. Refactor diff viewer to client-side rendering (remove renderedHtml from state)
 
   **What to do**:
   - **Remove `$renderedHtml` from DiffViewer component state**:
