@@ -6,29 +6,16 @@ namespace App\Services\Git;
 
 use App\DTOs\Remote;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Process;
 
-class RemoteService
+class RemoteService extends AbstractGitService
 {
-    private GitCacheService $cache;
-
-    public function __construct(
-        protected string $repoPath,
-    ) {
-        $gitDir = rtrim($this->repoPath, '/').'/.git';
-        if (! is_dir($gitDir)) {
-            throw new \InvalidArgumentException("Not a valid git repository: {$this->repoPath}");
-        }
-        $this->cache = new GitCacheService;
-    }
-
     public function remotes(): Collection
     {
         return $this->cache->get(
             $this->repoPath,
             'remotes',
             function () {
-                $result = Process::path($this->repoPath)->run('git remote -v');
+                $result = $this->commandRunner->run('remote -v');
                 $lines = array_filter(explode("\n", trim($result->output())));
 
                 $remotes = Remote::fromRemoteLines($lines);
@@ -41,14 +28,14 @@ class RemoteService
 
     public function push(string $remote, string $branch): void
     {
-        Process::path($this->repoPath)->run("git push {$remote} {$branch}");
+        $this->commandRunner->run('push', [$remote, $branch]);
 
         $this->cache->invalidateGroup($this->repoPath, 'branches');
     }
 
     public function pull(string $remote, string $branch): void
     {
-        Process::path($this->repoPath)->run("git pull {$remote} {$branch}");
+        $this->commandRunner->run('pull', [$remote, $branch]);
 
         $this->cache->invalidateGroup($this->repoPath, 'status');
         $this->cache->invalidateGroup($this->repoPath, 'history');
@@ -57,14 +44,14 @@ class RemoteService
 
     public function fetch(string $remote): void
     {
-        Process::path($this->repoPath)->run("git fetch {$remote}");
+        $this->commandRunner->run('fetch', [$remote]);
 
         $this->invalidateRemoteGroups();
     }
 
     public function fetchAll(): void
     {
-        Process::path($this->repoPath)->run('git fetch --all');
+        $this->commandRunner->run('fetch --all');
 
         $this->invalidateRemoteGroups();
     }

@@ -18,7 +18,7 @@ test('it creates a stash', function () {
     $service = new StashService('/tmp/gitty-test-repo');
     $service->stash('WIP: testing feature', false);
 
-    Process::assertRan('git stash push -m "WIP: testing feature"');
+    Process::assertRan("git stash push -m 'WIP: testing feature'");
 });
 
 test('it creates a stash with untracked files', function () {
@@ -27,7 +27,7 @@ test('it creates a stash with untracked files', function () {
     $service = new StashService('/tmp/gitty-test-repo');
     $service->stash('WIP: testing feature', true);
 
-    Process::assertRan('git stash push -u -m "WIP: testing feature"');
+    Process::assertRan("git stash push -u -m 'WIP: testing feature'");
 });
 
 test('it lists all stashes', function () {

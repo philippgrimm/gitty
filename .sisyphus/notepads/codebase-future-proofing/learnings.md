@@ -160,3 +160,43 @@ Still using old pattern (check with `grep "public function __construct" app/Serv
 - TagService
 - RebaseService
 - etc.
+
+## RemoteService & StashService Migration (Completed)
+
+Successfully migrated both services to extend `AbstractGitService`.
+
+### RemoteService Changes:
+- Removed constructor, Process import, and cache property
+- Replaced all Process calls:
+  - `remotes()`: `run('remote -v')` — no args
+  - `push()`: `run('push', [$remote, $branch])` — both user input
+  - `pull()`: `run('pull', [$remote, $branch])`
+  - `fetch()`: `run('fetch', [$remote])`
+  - `fetchAll()`: `run('fetch --all')` — no args
+
+### StashService Changes:
+- Removed constructor, Process import, and cache property
+- Replaced all Process calls:
+  - `stash()`: Used conditional subcommand `'stash push -u -m'` or `'stash push -m'`
+  - `stashList()`: `run('stash list')`
+  - `stashApply/Pop/Drop()`: Integer index interpolated into subcommand (safe)
+  - `stashFiles()`: `run('stash push -u -m', [$message, '--', ...$paths])`
+  - `generateStashMessage()`: `run('rev-parse --abbrev-ref HEAD')`
+
+### Test Updates:
+- **RemoteServiceTest**: Updated to expect single-quoted args:
+  - `"git push 'origin' 'main'"`
+  - `"git pull 'origin' 'main'"`
+  - `"git fetch 'origin'"`
+- **StashServiceTest**: Updated to expect single-quoted message:
+  - `"git stash push -m 'WIP: testing feature'"`
+  - `"git stash push -u -m 'WIP: testing feature'"`
+- Closure-based assertions in stashFiles tests still work as expected
+
+### Key Patterns:
+- Flags in subcommand, user input in args array
+- Integer values safe to interpolate
+- escapeshellarg wraps in single quotes: `'value'`
+- Array merge for variable-length args: `array_merge([$message, '--'], $paths)`
+
+All tests pass. Migration complete.

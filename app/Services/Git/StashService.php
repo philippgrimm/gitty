@@ -6,31 +6,13 @@ namespace App\Services\Git;
 
 use App\DTOs\Stash;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Process;
 
-class StashService
+class StashService extends AbstractGitService
 {
-    private GitCacheService $cache;
-
-    public function __construct(
-        protected string $repoPath,
-    ) {
-        $gitDir = rtrim($this->repoPath, '/').'/.git';
-        if (! is_dir($gitDir)) {
-            throw new \InvalidArgumentException("Not a valid git repository: {$this->repoPath}");
-        }
-        $this->cache = new GitCacheService;
-    }
-
     public function stash(string $message, bool $includeUntracked): void
     {
-        $command = 'git stash push';
-        if ($includeUntracked) {
-            $command .= ' -u';
-        }
-        $command .= " -m \"{$message}\"";
-
-        Process::path($this->repoPath)->run($command);
+        $subcommand = $includeUntracked ? 'stash push -u -m' : 'stash push -m';
+        $this->commandRunner->run($subcommand, [$message]);
 
         $this->cache->invalidateGroup($this->repoPath, 'stashes');
         $this->cache->invalidateGroup($this->repoPath, 'status');
@@ -42,7 +24,7 @@ class StashService
             $this->repoPath,
             'stashes',
             function () {
-                $result = Process::path($this->repoPath)->run('git stash list');
+                $result = $this->commandRunner->run('stash list');
                 $lines = array_filter(explode("\n", trim($result->output())));
 
                 return collect($lines)->map(fn ($line) => Stash::fromStashLine($line));
@@ -53,14 +35,14 @@ class StashService
 
     public function stashApply(int $index): void
     {
-        Process::path($this->repoPath)->run("git stash apply stash@{{$index}}");
+        $this->commandRunner->run("stash apply stash@{{$index}}");
 
         $this->cache->invalidateGroup($this->repoPath, 'status');
     }
 
     public function stashPop(int $index): void
     {
-        Process::path($this->repoPath)->run("git stash pop stash@{{$index}}");
+        $this->commandRunner->run("stash pop stash@{{$index}}");
 
         $this->cache->invalidateGroup($this->repoPath, 'stashes');
         $this->cache->invalidateGroup($this->repoPath, 'status');
@@ -68,7 +50,7 @@ class StashService
 
     public function stashDrop(int $index): void
     {
-        Process::path($this->repoPath)->run("git stash drop stash@{{$index}}");
+        $this->commandRunner->run("stash drop stash@{{$index}}");
 
         $this->cache->invalidateGroup($this->repoPath, 'stashes');
     }
@@ -80,12 +62,8 @@ class StashService
         }
 
         $message = $this->generateStashMessage($paths);
-        $escapedPaths = array_map(fn ($path) => escapeshellarg($path), $paths);
-        $pathsString = implode(' ', $escapedPaths);
-
-        $command = "git stash push -u -m \"{$message}\" -- {$pathsString}";
-
-        Process::path($this->repoPath)->run($command);
+        $args = array_merge([$message, '--'], $paths);
+        $this->commandRunner->run('stash push -u -m', $args);
 
         $this->cache->invalidateGroup($this->repoPath, 'stashes');
         $this->cache->invalidateGroup($this->repoPath, 'status');
@@ -99,7 +77,7 @@ class StashService
             return 'Stash: '.implode(', ', $basenames);
         }
 
-        $result = Process::path($this->repoPath)->run('git rev-parse --abbrev-ref HEAD');
+        $result = $this->commandRunner->run('rev-parse --abbrev-ref HEAD');
         $branch = trim($result->output());
 
         return 'Stash: '.count($paths).' files on '.$branch;

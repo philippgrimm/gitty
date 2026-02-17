@@ -32,7 +32,7 @@ test('it pushes to remote', function () {
     $service = new RemoteService('/tmp/gitty-test-repo');
     $service->push('origin', 'main');
 
-    Process::assertRan('git push origin main');
+    Process::assertRan("git push 'origin' 'main'");
 });
 
 test('it pulls from remote', function () {
@@ -41,7 +41,7 @@ test('it pulls from remote', function () {
     $service = new RemoteService('/tmp/gitty-test-repo');
     $service->pull('origin', 'main');
 
-    Process::assertRan('git pull origin main');
+    Process::assertRan("git pull 'origin' 'main'");
 });
 
 test('it fetches from specific remote', function () {
@@ -50,7 +50,7 @@ test('it fetches from specific remote', function () {
     $service = new RemoteService('/tmp/gitty-test-repo');
     $service->fetch('origin');
 
-    Process::assertRan('git fetch origin');
+    Process::assertRan("git fetch 'origin'");
 });
 
 test('it fetches from all remotes', function () {
