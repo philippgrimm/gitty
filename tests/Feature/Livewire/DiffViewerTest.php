@@ -26,7 +26,7 @@ it('mounts with empty state', function () {
 
 it('loads diff for unstaged file', function () {
     Process::fake([
-        'git diff -- README.md' => GitOutputFixtures::diffUnstaged(),
+        "git diff -- 'README.md'" => GitOutputFixtures::diffUnstaged(),
     ]);
 
     Livewire::test(DiffViewer::class, ['repoPath' => $this->testRepoPath])
@@ -38,12 +38,12 @@ it('loads diff for unstaged file', function () {
         ->assertSee('+3')
         ->assertSee('-1');
 
-    Process::assertRan('git diff -- README.md');
+    Process::assertRan("git diff -- 'README.md'");
 });
 
 it('loads diff for staged file', function () {
     Process::fake([
-        'git diff --cached -- src/App.php' => GitOutputFixtures::diffStaged(),
+        "git diff --cached -- 'src/App.php'" => GitOutputFixtures::diffStaged(),
     ]);
 
     Livewire::test(DiffViewer::class, ['repoPath' => $this->testRepoPath])
@@ -55,13 +55,13 @@ it('loads diff for staged file', function () {
         ->assertSee('+1')
         ->assertSee('-1');
 
-    Process::assertRan('git diff --cached -- src/App.php');
+    Process::assertRan("git diff --cached -- 'src/App.php'");
 });
 
 it('handles empty diff', function () {
     Process::fake([
-        'git diff -- empty.txt' => '',
-        'git status --porcelain=v2 -- empty.txt' => '',
+        "git diff -- 'empty.txt'" => '',
+        "git status --porcelain=v2 -- 'empty.txt'" => '',
     ]);
 
     Livewire::test(DiffViewer::class, ['repoPath' => $this->testRepoPath])
@@ -72,9 +72,9 @@ it('handles empty diff', function () {
 
 it('loads diff for untracked file', function () {
     Process::fake([
-        'git diff -- new-file.txt' => '',
-        'git status --porcelain=v2 -- new-file.txt' => GitOutputFixtures::statusWithSingleUntrackedFile(),
-        'git diff --no-index -- /dev/null new-file.txt' => GitOutputFixtures::diffUntracked(),
+        "git diff -- 'new-file.txt'" => '',
+        "git status --porcelain=v2 -- 'new-file.txt'" => GitOutputFixtures::statusWithSingleUntrackedFile(),
+        "git diff --no-index -- '/dev/null' 'new-file.txt'" => GitOutputFixtures::diffUntracked(),
     ]);
 
     Livewire::test(DiffViewer::class, ['repoPath' => $this->testRepoPath])
@@ -86,7 +86,7 @@ it('loads diff for untracked file', function () {
         ->assertSee('ADDED')
         ->assertSee('+2');
 
-    Process::assertRan('git diff --no-index -- /dev/null new-file.txt');
+    Process::assertRan("git diff --no-index -- '/dev/null' 'new-file.txt'");
 });
 
 it('handles image file as image diff', function () {
@@ -98,7 +98,7 @@ it('handles image file as image diff', function () {
 
 it('listens to file-selected event', function () {
     Process::fake([
-        'git diff -- README.md' => GitOutputFixtures::diffUnstaged(),
+        "git diff -- 'README.md'" => GitOutputFixtures::diffUnstaged(),
     ]);
 
     Livewire::test(DiffViewer::class, ['repoPath' => $this->testRepoPath])
@@ -107,12 +107,12 @@ it('listens to file-selected event', function () {
         ->assertSet('isStaged', false)
         ->assertSee('README.md');
 
-    Process::assertRan('git diff -- README.md');
+    Process::assertRan("git diff -- 'README.md'");
 });
 
 it('displays status badge for modified file', function () {
     Process::fake([
-        'git diff -- README.md' => GitOutputFixtures::diffUnstaged(),
+        "git diff -- 'README.md'" => GitOutputFixtures::diffUnstaged(),
     ]);
 
     Livewire::test(DiffViewer::class, ['repoPath' => $this->testRepoPath])
@@ -122,7 +122,7 @@ it('displays status badge for modified file', function () {
 
 it('renders diff html with syntax highlighting', function () {
     Process::fake([
-        'git diff --cached -- src/App.php' => GitOutputFixtures::diffStaged(),
+        "git diff --cached -- 'src/App.php'" => GitOutputFixtures::diffStaged(),
     ]);
 
     $component = Livewire::test(DiffViewer::class, ['repoPath' => $this->testRepoPath])
@@ -140,7 +140,7 @@ it('renders diff html with syntax highlighting', function () {
 
 it('stores parsed diff data with hunks for staging operations', function () {
     Process::fake([
-        'git diff -- README.md' => GitOutputFixtures::diffUnstaged(),
+        "git diff -- 'README.md'" => GitOutputFixtures::diffUnstaged(),
     ]);
 
     $component = Livewire::test(DiffViewer::class, ['repoPath' => $this->testRepoPath])
@@ -157,7 +157,7 @@ it('stores parsed diff data with hunks for staging operations', function () {
 
 it('stages a hunk from unstaged diff', function () {
     Process::fake([
-        'git diff -- README.md' => GitOutputFixtures::diffUnstaged(),
+        "git diff -- 'README.md'" => GitOutputFixtures::diffUnstaged(),
         'git apply --cached' => Process::result(),
     ]);
 
@@ -171,7 +171,7 @@ it('stages a hunk from unstaged diff', function () {
 
 it('unstages a hunk from staged diff', function () {
     Process::fake([
-        'git diff --cached -- src/App.php' => GitOutputFixtures::diffStaged(),
+        "git diff --cached -- 'src/App.php'" => GitOutputFixtures::diffStaged(),
         'git apply --cached --reverse' => Process::result(),
     ]);
 
@@ -185,7 +185,7 @@ it('unstages a hunk from staged diff', function () {
 
 it('reloads diff after staging a hunk', function () {
     Process::fake([
-        'git diff -- README.md' => GitOutputFixtures::diffUnstaged(),
+        "git diff -- 'README.md'" => GitOutputFixtures::diffUnstaged(),
         'git apply --cached' => Process::result(),
     ]);
 
@@ -194,12 +194,12 @@ it('reloads diff after staging a hunk', function () {
         ->call('stageHunk', 0, 0);
 
     // Should have called git diff twice: once for initial load, once after staging
-    Process::assertRan('git diff -- README.md', 2);
+    Process::assertRan("git diff -- 'README.md'", 2);
 });
 
 it('renders stage button for unstaged diff', function () {
     Process::fake([
-        'git diff -- README.md' => GitOutputFixtures::diffUnstaged(),
+        "git diff -- 'README.md'" => GitOutputFixtures::diffUnstaged(),
     ]);
 
     Livewire::test(DiffViewer::class, ['repoPath' => $this->testRepoPath])
@@ -210,7 +210,7 @@ it('renders stage button for unstaged diff', function () {
 
 it('renders unstage button for staged diff', function () {
     Process::fake([
-        'git diff --cached -- src/App.php' => GitOutputFixtures::diffStaged(),
+        "git diff --cached -- 'src/App.php'" => GitOutputFixtures::diffStaged(),
     ]);
 
     Livewire::test(DiffViewer::class, ['repoPath' => $this->testRepoPath])

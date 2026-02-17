@@ -5,69 +5,45 @@ declare(strict_types=1);
 namespace App\Services\Git;
 
 use App\DTOs\MergeResult;
-use Illuminate\Support\Facades\Process;
 
-class CommitService
+class CommitService extends AbstractGitService
 {
-    private GitCacheService $cache;
-
-    public function __construct(
-        protected string $repoPath,
-    ) {
-        $gitDir = rtrim($this->repoPath, '/').'/.git';
-        if (! is_dir($gitDir)) {
-            throw new \InvalidArgumentException("Not a valid git repository: {$this->repoPath}");
-        }
-        $this->cache = new GitCacheService;
-    }
-
     public function commit(string $message): void
     {
-        $this->runCommit("git commit -m \"{$message}\"", 'Git commit failed');
-    }
-
-    public function commitAmend(string $message): void
-    {
-        $this->runCommit("git commit --amend -m \"{$message}\"", 'Git commit amend failed');
-    }
-
-    public function commitAndPush(string $message): void
-    {
-        $this->runCommit("git commit -m \"{$message}\"", 'Git commit failed');
-
-        $pushResult = Process::path($this->repoPath)->run('git push');
-
-        if ($pushResult->exitCode() !== 0) {
-            throw new \RuntimeException('Git push failed: '.$pushResult->errorOutput());
-        }
-    }
-
-    private function runCommit(string $command, string $errorPrefix): void
-    {
-        $result = Process::path($this->repoPath)->run($command);
-
-        if ($result->exitCode() !== 0) {
-            throw new \RuntimeException($errorPrefix.': '.$result->errorOutput());
-        }
+        $this->commandRunner->runOrFail('commit -m', [$message], 'Git commit failed');
 
         $this->cache->invalidateGroup($this->repoPath, 'status');
         $this->cache->invalidateGroup($this->repoPath, 'history');
     }
 
+    public function commitAmend(string $message): void
+    {
+        $this->commandRunner->runOrFail('commit --amend -m', [$message], 'Git commit amend failed');
+
+        $this->cache->invalidateGroup($this->repoPath, 'status');
+        $this->cache->invalidateGroup($this->repoPath, 'history');
+    }
+
+    public function commitAndPush(string $message): void
+    {
+        $this->commandRunner->runOrFail('commit -m', [$message], 'Git commit failed');
+
+        $this->cache->invalidateGroup($this->repoPath, 'status');
+        $this->cache->invalidateGroup($this->repoPath, 'history');
+
+        $this->commandRunner->runOrFail('push', [], 'Git push failed');
+    }
+
     public function lastCommitMessage(): string
     {
-        $result = Process::path($this->repoPath)->run('git log -1 --pretty=%B');
+        $result = $this->commandRunner->run('log -1 --pretty=%B');
 
         return trim($result->output());
     }
 
     public function undoLastCommit(): void
     {
-        $process = Process::path($this->repoPath)->run('git reset --soft HEAD~1');
-
-        if (! $process->successful()) {
-            throw new \RuntimeException('Git reset failed: '.$process->errorOutput());
-        }
+        $this->commandRunner->runOrFail('reset --soft HEAD~1', [], 'Git reset failed');
 
         $this->cache->invalidateGroup($this->repoPath, 'status');
         $this->cache->invalidateGroup($this->repoPath, 'history');
@@ -75,28 +51,32 @@ class CommitService
 
     public function isLastCommitPushed(): bool
     {
-        $gitService = new GitService($this->repoPath);
-        $status = $gitService->status();
+        $result = $this->commandRunner->run('status --porcelain=v2 --branch');
+        $output = $result->output();
 
-        if (empty($status->upstream)) {
+        // Check if there's an upstream
+        if (! str_contains($output, '# branch.upstream')) {
             return false;
         }
 
-        $aheadBehind = $gitService->aheadBehind();
+        // Check ahead count
+        if (preg_match('/# branch\.ab \+(\d+) -(\d+)/', $output, $matches)) {
+            return (int) $matches[1] === 0;
+        }
 
-        return ($aheadBehind['ahead'] ?? 0) === 0;
+        return true;
     }
 
     public function isLastCommitMerge(): bool
     {
-        $process = Process::path($this->repoPath)->run('git rev-parse HEAD^2 2>/dev/null');
+        $result = $this->commandRunner->run('rev-parse HEAD^2 2>/dev/null');
 
-        return $process->successful();
+        return $result->successful();
     }
 
     public function cherryPick(string $sha): MergeResult
     {
-        $result = Process::path($this->repoPath)->run("git cherry-pick {$sha}");
+        $result = $this->commandRunner->run('cherry-pick', [$sha]);
 
         $mergeResult = MergeResult::fromMergeOutput($result->output().$result->errorOutput(), $result->exitCode());
 
@@ -108,11 +88,7 @@ class CommitService
 
     public function cherryPickAbort(): void
     {
-        $result = Process::path($this->repoPath)->run('git cherry-pick --abort');
-
-        if (! $result->successful()) {
-            throw new \RuntimeException('Git cherry-pick abort failed: '.$result->errorOutput());
-        }
+        $this->commandRunner->runOrFail('cherry-pick --abort', [], 'Git cherry-pick abort failed');
 
         $this->cache->invalidateGroup($this->repoPath, 'status');
         $this->cache->invalidateGroup($this->repoPath, 'history');
@@ -120,11 +96,7 @@ class CommitService
 
     public function cherryPickContinue(): void
     {
-        $result = Process::path($this->repoPath)->run('git cherry-pick --continue');
-
-        if (! $result->successful()) {
-            throw new \RuntimeException('Git cherry-pick continue failed: '.$result->errorOutput());
-        }
+        $this->commandRunner->runOrFail('cherry-pick --continue', [], 'Git cherry-pick continue failed');
 
         $this->cache->invalidateGroup($this->repoPath, 'status');
         $this->cache->invalidateGroup($this->repoPath, 'history');

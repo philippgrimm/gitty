@@ -47,27 +47,27 @@ test('component separates files into unstaged, staged, and untracked', function 
 test('component stages a file', function () {
     Process::fake([
         'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithUnstagedChanges()),
-        'git add README.md' => Process::result(''),
+        "git add 'README.md'" => Process::result(''),
     ]);
 
     Livewire::test(StagingPanel::class, ['repoPath' => $this->testRepoPath])
         ->call('stageFile', 'README.md')
         ->assertDispatched('status-updated');
 
-    Process::assertRan('git add README.md');
+    Process::assertRan("git add 'README.md'");
 });
 
 test('component unstages a file', function () {
     Process::fake([
         'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
-        'git reset HEAD README.md' => Process::result(''),
+        "git reset HEAD 'README.md'" => Process::result(''),
     ]);
 
     Livewire::test(StagingPanel::class, ['repoPath' => $this->testRepoPath])
         ->call('unstageFile', 'README.md')
         ->assertDispatched('status-updated');
 
-    Process::assertRan('git reset HEAD README.md');
+    Process::assertRan("git reset HEAD 'README.md'");
 });
 
 test('component stages all files', function () {
@@ -99,14 +99,14 @@ test('component unstages all files', function () {
 test('component discards a file', function () {
     Process::fake([
         'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithUnstagedChanges()),
-        'git checkout -- README.md' => Process::result(''),
+        "git checkout -- 'README.md'" => Process::result(''),
     ]);
 
     Livewire::test(StagingPanel::class, ['repoPath' => $this->testRepoPath])
         ->call('discardFile', 'README.md')
         ->assertDispatched('status-updated');
 
-    Process::assertRan('git checkout -- README.md');
+    Process::assertRan("git checkout -- 'README.md'");
 });
 
 test('component discards all files', function () {

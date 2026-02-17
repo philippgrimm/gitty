@@ -1,0 +1,27 @@
+# Task 4: ChangedFile DTO + AheadBehind Value Object
+# Date: 2026-02-17
+
+## ChangedFile Tests
+```
+php artisan test --compact --filter=ChangedFile
+
+Tests:    11 passed (25 assertions)
+Duration: 0.96s
+```
+
+## AheadBehind Tests
+```
+php artisan test --compact --filter=AheadBehind
+
+Tests:    8 passed (9 assertions)
+Duration: 0.71s
+```
+
+## Files Created
+- app/DTOs/ChangedFile.php (readonly class, 6 methods)
+- app/DTOs/AheadBehind.php (readonly class, 2 methods)
+- tests/Unit/DTOs/ChangedFileTest.php (11 tests)
+- tests/Unit/DTOs/AheadBehindTest.php (8 tests)
+
+## Pint Status
+vendor/bin/pint --dirty --format agent → PASS

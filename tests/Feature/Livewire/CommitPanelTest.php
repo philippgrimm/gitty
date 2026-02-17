@@ -41,7 +41,7 @@ test('component counts staged files correctly', function () {
 test('component commits with message', function () {
     Process::fake([
         'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
-        'git commit -m "feat: add new feature"' => Process::result(''),
+        "git commit -m 'feat: add new feature'" => Process::result(''),
     ]);
 
     Livewire::test(CommitPanel::class, ['repoPath' => $this->testRepoPath])
@@ -51,13 +51,13 @@ test('component commits with message', function () {
         ->assertSet('isAmend', false)
         ->assertDispatched('committed');
 
-    Process::assertRan('git commit -m "feat: add new feature"');
+    Process::assertRan("git commit -m 'feat: add new feature'");
 });
 
 test('component commits and pushes', function () {
     Process::fake([
         'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
-        'git commit -m "feat: add new feature"' => Process::result(''),
+        "git commit -m 'feat: add new feature'" => Process::result(''),
         'git push' => Process::result(''),
     ]);
 
@@ -68,14 +68,14 @@ test('component commits and pushes', function () {
         ->assertSet('isAmend', false)
         ->assertDispatched('committed');
 
-    Process::assertRan('git commit -m "feat: add new feature"');
+    Process::assertRan("git commit -m 'feat: add new feature'");
     Process::assertRan('git push');
 });
 
 test('component amends commit', function () {
     Process::fake([
         'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
-        'git commit --amend -m "feat: updated feature"' => Process::result(''),
+        "git commit --amend -m 'feat: updated feature'" => Process::result(''),
     ]);
 
     Livewire::test(CommitPanel::class, ['repoPath' => $this->testRepoPath])
@@ -86,7 +86,7 @@ test('component amends commit', function () {
         ->assertSet('isAmend', false)
         ->assertDispatched('committed');
 
-    Process::assertRan('git commit --amend -m "feat: updated feature"');
+    Process::assertRan("git commit --amend -m 'feat: updated feature'");
 });
 
 test('component toggles amend and loads last commit message', function () {
@@ -134,7 +134,7 @@ test('component refreshes staged count on status-updated event', function () {
 test('component handles commit failure with error message', function () {
     Process::fake([
         'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
-        'git commit -m "feat: add feature"' => function () {
+        "git commit -m 'feat: add feature'" => function () {
             return Process::result('error: commit failed', exitCode: 1);
         },
     ]);

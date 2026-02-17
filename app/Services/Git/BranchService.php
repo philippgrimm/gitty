@@ -7,29 +7,16 @@ namespace App\Services\Git;
 use App\DTOs\Branch;
 use App\DTOs\MergeResult;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Process;
 
-class BranchService
+class BranchService extends AbstractGitService
 {
-    private GitCacheService $cache;
-
-    public function __construct(
-        protected string $repoPath,
-    ) {
-        $gitDir = rtrim($this->repoPath, '/').'/.git';
-        if (! is_dir($gitDir)) {
-            throw new \InvalidArgumentException("Not a valid git repository: {$this->repoPath}");
-        }
-        $this->cache = new GitCacheService;
-    }
-
     public function branches(): Collection
     {
         return $this->cache->get(
             $this->repoPath,
             'branches',
             function () {
-                $result = Process::path($this->repoPath)->run('git branch -a -vv');
+                $result = $this->commandRunner->run('branch -a -vv');
                 $lines = array_filter(explode("\n", trim($result->output())));
 
                 return collect($lines)->map(fn ($line) => Branch::fromBranchLine($line));
@@ -40,7 +27,7 @@ class BranchService
 
     public function switchBranch(string $name): void
     {
-        $result = Process::path($this->repoPath)->run("git checkout {$name}");
+        $result = $this->commandRunner->run('checkout', [$name]);
 
         if ($result->exitCode() !== 0) {
             $errorMsg = trim($result->errorOutput() ?: $result->output());
@@ -53,7 +40,7 @@ class BranchService
 
     public function createBranch(string $name, string $from): void
     {
-        $result = Process::path($this->repoPath)->run("git checkout -b {$name} {$from}");
+        $result = $this->commandRunner->run('checkout -b', [$name, $from]);
 
         if ($result->exitCode() !== 0) {
             $errorMsg = trim($result->errorOutput() ?: $result->output());
@@ -67,7 +54,7 @@ class BranchService
     public function deleteBranch(string $name, bool $force): void
     {
         $flag = $force ? '-D' : '-d';
-        $result = Process::path($this->repoPath)->run("git branch {$flag} {$name}");
+        $result = $this->commandRunner->run("branch {$flag}", [$name]);
 
         if ($result->exitCode() !== 0) {
             $errorMsg = trim($result->errorOutput() ?: $result->output());
@@ -79,7 +66,7 @@ class BranchService
 
     public function mergeBranch(string $name): MergeResult
     {
-        $result = Process::path($this->repoPath)->run("git merge {$name}");
+        $result = $this->commandRunner->run('merge', [$name]);
 
         $this->cache->invalidateGroup($this->repoPath, 'status');
         $this->cache->invalidateGroup($this->repoPath, 'history');

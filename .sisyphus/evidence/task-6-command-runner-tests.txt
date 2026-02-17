@@ -1,0 +1,22 @@
+# Task 6: GitCommandRunner
+# Date: 2026-02-17
+
+## GitCommandRunner Tests
+```
+php artisan test --compact --filter=GitCommandRunnerTest
+
+Tests:    9 passed (11 assertions)
+Duration: 3.85s
+```
+
+## Files Created
+- app/Services/Git/GitCommandRunner.php (3 public methods: run, runOrFail, runWithInput)
+- tests/Feature/Services/GitCommandRunnerTest.php (9 tests)
+
+## Key Features
+- run(): Executes git command with escapeshellarg() on all arguments
+- runOrFail(): Same as run() but throws RuntimeException on non-zero exit
+- runWithInput(): Pipes stdin for commands like git apply
+
+## Pint Status
+vendor/bin/pint --dirty --format agent → PASS

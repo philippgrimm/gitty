@@ -33,7 +33,7 @@ test('it switches to a branch', function () {
     $service = new BranchService('/tmp/gitty-test-repo');
     $service->switchBranch('feature/new-ui');
 
-    Process::assertRan('git checkout feature/new-ui');
+    Process::assertRan("git checkout 'feature/new-ui'");
 });
 
 test('it creates a new branch', function () {
@@ -42,7 +42,7 @@ test('it creates a new branch', function () {
     $service = new BranchService('/tmp/gitty-test-repo');
     $service->createBranch('feature/test', 'main');
 
-    Process::assertRan('git checkout -b feature/test main');
+    Process::assertRan("git checkout -b 'feature/test' 'main'");
 });
 
 test('it deletes a branch', function () {
@@ -51,7 +51,7 @@ test('it deletes a branch', function () {
     $service = new BranchService('/tmp/gitty-test-repo');
     $service->deleteBranch('feature/old', false);
 
-    Process::assertRan('git branch -d feature/old');
+    Process::assertRan("git branch -d 'feature/old'");
 });
 
 test('it force deletes a branch', function () {
@@ -60,12 +60,12 @@ test('it force deletes a branch', function () {
     $service = new BranchService('/tmp/gitty-test-repo');
     $service->deleteBranch('feature/old', true);
 
-    Process::assertRan('git branch -D feature/old');
+    Process::assertRan("git branch -D 'feature/old'");
 });
 
 test('it merges a branch', function () {
     Process::fake([
-        'git merge feature/new-ui' => Process::result(
+        "git merge 'feature/new-ui'" => Process::result(
             output: 'Merge made by the \'recursive\' strategy.',
             exitCode: 0
         ),

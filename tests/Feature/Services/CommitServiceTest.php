@@ -16,7 +16,7 @@ test('it creates a commit with message', function () {
     $service = new CommitService('/tmp/gitty-test-repo');
     $service->commit('feat: add new feature');
 
-    Process::assertRan('git commit -m "feat: add new feature"');
+    Process::assertRan("git commit -m 'feat: add new feature'");
 });
 
 test('it amends the last commit', function () {
@@ -25,7 +25,7 @@ test('it amends the last commit', function () {
     $service = new CommitService('/tmp/gitty-test-repo');
     $service->commitAmend('feat: updated feature');
 
-    Process::assertRan('git commit --amend -m "feat: updated feature"');
+    Process::assertRan("git commit --amend -m 'feat: updated feature'");
 });
 
 test('it commits and pushes', function () {
@@ -34,7 +34,7 @@ test('it commits and pushes', function () {
     $service = new CommitService('/tmp/gitty-test-repo');
     $service->commitAndPush('feat: add feature');
 
-    Process::assertRan('git commit -m "feat: add feature"');
+    Process::assertRan("git commit -m 'feat: add feature'");
     Process::assertRan('git push');
 });
 

@@ -744,7 +744,7 @@ Max Concurrent: 6 (Waves 2 & 3 combined)
 
 ---
 
-- [ ] 8. Migrate GitService + StagingService to AbstractGitService
+- [x] 8. Migrate GitService + StagingService to AbstractGitService
 
   **What to do**:
   - **TDD**: Run existing tests first to confirm they pass. Then refactor.
@@ -809,7 +809,7 @@ Max Concurrent: 6 (Waves 2 & 3 combined)
 
 ---
 
-- [ ] 9. Migrate BranchService + CommitService to AbstractGitService
+- [x] 9. Migrate BranchService + CommitService to AbstractGitService
 
   **What to do**:
   - Same approach as Task 8:

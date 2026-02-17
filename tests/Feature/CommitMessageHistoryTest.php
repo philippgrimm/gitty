@@ -21,7 +21,7 @@ beforeEach(function () {
 test('commit stores message in history', function () {
     Process::fake([
         'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
-        'git commit -m "feat: add new feature"' => Process::result('[main 1234567890abcdef1234567890abcdef12345678] feat: add new feature'),
+        "git commit -m 'feat: add new feature'" => Process::result('[main 1234567890abcdef1234567890abcdef12345678] feat: add new feature'),
         'git log --oneline -n 10' => Process::result(GitOutputFixtures::logOneline()),
     ]);
 
@@ -127,7 +127,7 @@ test('selecting from dropdown fills textarea', function () {
 test('commit and push stores message in history', function () {
     Process::fake([
         'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
-        'git commit -m "feat: add feature"' => Process::result('[main 1234567890abcdef1234567890abcdef12345678] feat: add feature'),
+        "git commit -m 'feat: add feature'" => Process::result('[main 1234567890abcdef1234567890abcdef12345678] feat: add feature'),
         'git push' => Process::result(''),
         'git log --oneline -n 10' => Process::result(GitOutputFixtures::logOneline()),
     ]);
@@ -145,7 +145,7 @@ test('commit and push stores message in history', function () {
 test('history index resets after commit', function () {
     Process::fake([
         'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
-        'git commit -m "feat: new commit"' => Process::result('[main 1234567890abcdef1234567890abcdef12345678] feat: new commit'),
+        "git commit -m 'feat: new commit'" => Process::result('[main 1234567890abcdef1234567890abcdef12345678] feat: new commit'),
         'git log --oneline -n 10' => Process::result(GitOutputFixtures::logOneline()),
     ]);
 

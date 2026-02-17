@@ -45,42 +45,42 @@ test('component switches to another branch', function () {
     Process::fake([
         'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusAheadBehind()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
-        'git checkout main' => Process::result(''),
+        "git checkout 'main'" => Process::result(''),
     ]);
 
     Livewire::test(BranchManager::class, ['repoPath' => $this->testRepoPath])
         ->call('switchBranch', 'main')
         ->assertDispatched('status-updated');
 
-    Process::assertRan('git checkout main');
+    Process::assertRan("git checkout 'main'");
 });
 
 test('component creates new branch via palette event', function () {
     Process::fake([
         'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
-        'git checkout -b feature/new-feature main' => Process::result(''),
+        "git checkout -b 'feature/new-feature' 'main'" => Process::result(''),
     ]);
 
     Livewire::test(BranchManager::class, ['repoPath' => $this->testRepoPath])
         ->call('handlePaletteCreateBranch', 'feature/new-feature')
         ->assertDispatched('status-updated');
 
-    Process::assertRan('git checkout -b feature/new-feature main');
+    Process::assertRan("git checkout -b 'feature/new-feature' 'main'");
 });
 
 test('component deletes branch', function () {
     Process::fake([
         'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
-        'git branch -d feature/new-ui' => Process::result(''),
+        "git branch -d 'feature/new-ui'" => Process::result(''),
     ]);
 
     Livewire::test(BranchManager::class, ['repoPath' => $this->testRepoPath])
         ->call('deleteBranch', 'feature/new-ui')
         ->assertDispatched('status-updated');
 
-    Process::assertRan('git branch -d feature/new-ui');
+    Process::assertRan("git branch -d 'feature/new-ui'");
 });
 
 test('component prevents deleting current branch', function () {
@@ -93,14 +93,14 @@ test('component prevents deleting current branch', function () {
         ->call('deleteBranch', 'main')
         ->assertSet('error', 'Cannot delete the current branch');
 
-    Process::assertNotRan('git branch -d main');
+    Process::assertNotRan("git branch -d 'main'");
 });
 
 test('component merges branch successfully', function () {
     Process::fake([
         'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
-        'git merge feature/new-ui' => Process::result('Fast-forward merge completed'),
+        "git merge 'feature/new-ui'" => Process::result('Fast-forward merge completed'),
     ]);
 
     Livewire::test(BranchManager::class, ['repoPath' => $this->testRepoPath])
@@ -108,14 +108,14 @@ test('component merges branch successfully', function () {
         ->assertDispatched('status-updated')
         ->assertSet('error', '');
 
-    Process::assertRan('git merge feature/new-ui');
+    Process::assertRan("git merge 'feature/new-ui'");
 });
 
 test('component shows conflict warning when merge has conflicts', function () {
     Process::fake([
         'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
-        'git merge feature/new-ui' => function () {
+        "git merge 'feature/new-ui'" => function () {
             return Process::result('CONFLICT (content): Merge conflict in README.md', exitCode: 1);
         },
     ]);
@@ -175,7 +175,7 @@ test('component dispatches success toast on successful merge', function () {
     Process::fake([
         'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
-        'git merge feature/new-ui' => Process::result('Fast-forward merge completed'),
+        "git merge 'feature/new-ui'" => Process::result('Fast-forward merge completed'),
     ]);
 
     Livewire::test(BranchManager::class, ['repoPath' => $this->testRepoPath])
@@ -191,7 +191,7 @@ test('component does not dispatch success toast when merge has conflicts', funct
     Process::fake([
         'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
-        'git merge feature/new-ui' => function () {
+        "git merge 'feature/new-ui'" => function () {
             return Process::result('CONFLICT (content): Merge conflict in README.md', exitCode: 1);
         },
     ]);
@@ -207,7 +207,7 @@ test('switchBranch shows auto-stash modal when checkout fails due to dirty tree'
     Process::fake([
         'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
-        'git checkout feature/new-ui' => function () {
+        "git checkout 'feature/new-ui'" => function () {
             return Process::result(
                 output: '',
                 errorOutput: "error: Your local changes to the following files would be overwritten by checkout\nPlease commit your changes or stash them before you switch branches.",
@@ -227,7 +227,7 @@ test('switchBranch shows error toast for non-dirty-tree errors', function () {
     Process::fake([
         'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
-        'git checkout feature/nonexistent' => function () {
+        "git checkout 'feature/nonexistent'" => function () {
             return Process::result(
                 output: '',
                 errorOutput: "pathspec 'feature/nonexistent' did not match any file(s) known to git",
@@ -247,7 +247,7 @@ test('confirmAutoStash stashes switches and restores changes', function () {
         'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
         'git stash push *' => Process::result('Saved working directory and index state'),
-        'git checkout feature/new-ui' => Process::result('Switched to branch \'feature/new-ui\''),
+        "git checkout 'feature/new-ui'" => Process::result('Switched to branch \'feature/new-ui\''),
         'git stash apply stash@{0}' => Process::result('On branch feature/new-ui\nChanges not staged for commit:\n  modified:   README.md'),
         'git stash drop stash@{0}' => Process::result('Dropped stash@{0}'),
     ]);
@@ -265,7 +265,7 @@ test('confirmAutoStash stashes switches and restores changes', function () {
         });
 
     Process::assertRan(fn ($process) => str_contains($process->command, 'git stash push'));
-    Process::assertRan('git checkout feature/new-ui');
+    Process::assertRan("git checkout 'feature/new-ui'");
     Process::assertRan('git stash apply stash@{0}');
     Process::assertRan('git stash drop stash@{0}');
 });
@@ -275,7 +275,7 @@ test('confirmAutoStash shows warning when stash apply conflicts', function () {
         'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
         'git stash push *' => Process::result('Saved working directory and index state'),
-        'git checkout feature/new-ui' => Process::result('Switched to branch \'feature/new-ui\''),
+        "git checkout 'feature/new-ui'" => Process::result('Switched to branch \'feature/new-ui\''),
         'git stash apply stash@{0}' => function () {
             return Process::result(
                 output: 'CONFLICT (content): Merge conflict in file.txt',
