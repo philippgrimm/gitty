@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Git;
 
+use App\DTOs\MergeResult;
 use Illuminate\Support\Facades\Process;
 
 class CommitService
@@ -91,5 +92,41 @@ class CommitService
         $process = Process::path($this->repoPath)->run('git rev-parse HEAD^2 2>/dev/null');
 
         return $process->successful();
+    }
+
+    public function cherryPick(string $sha): MergeResult
+    {
+        $result = Process::path($this->repoPath)->run("git cherry-pick {$sha}");
+
+        $mergeResult = MergeResult::fromMergeOutput($result->output().$result->errorOutput(), $result->exitCode());
+
+        $this->cache->invalidateGroup($this->repoPath, 'status');
+        $this->cache->invalidateGroup($this->repoPath, 'history');
+
+        return $mergeResult;
+    }
+
+    public function cherryPickAbort(): void
+    {
+        $result = Process::path($this->repoPath)->run('git cherry-pick --abort');
+
+        if (! $result->successful()) {
+            throw new \RuntimeException('Git cherry-pick abort failed: '.$result->errorOutput());
+        }
+
+        $this->cache->invalidateGroup($this->repoPath, 'status');
+        $this->cache->invalidateGroup($this->repoPath, 'history');
+    }
+
+    public function cherryPickContinue(): void
+    {
+        $result = Process::path($this->repoPath)->run('git cherry-pick --continue');
+
+        if (! $result->successful()) {
+            throw new \RuntimeException('Git cherry-pick continue failed: '.$result->errorOutput());
+        }
+
+        $this->cache->invalidateGroup($this->repoPath, 'status');
+        $this->cache->invalidateGroup($this->repoPath, 'history');
     }
 }

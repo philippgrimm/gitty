@@ -152,9 +152,11 @@
                  @mouseup.window="stopDrag()"
                  @file-selected.window="activeRightPanel = 'diff'"
                  @toggle-history-panel.window="activeRightPanel = activeRightPanel === 'history' ? 'diff' : 'history'"
-            >
-                @livewire('conflict-resolver', ['repoPath' => $repoPath], key('conflict-resolver-' . $repoPath))
-                {{-- Staging + Commit Panel --}}
+                 @show-blame.window="activeRightPanel = 'blame'"
+             >
+                 @livewire('conflict-resolver', ['repoPath' => $repoPath], key('conflict-resolver-' . $repoPath))
+                 @livewire('rebase-panel', ['repoPath' => $repoPath], key('rebase-panel-' . $repoPath))
+                 {{-- Staging + Commit Panel --}}
                 <div class="flex flex-col overflow-hidden"
                      :style="'width: ' + effectiveWidth + 'px'"
                 >
@@ -182,6 +184,9 @@
                     </div>
                     <div x-show="activeRightPanel === 'history'" class="h-full">
                         @livewire('history-panel', ['repoPath' => $repoPath], key('history-panel-' . $repoPath))
+                    </div>
+                    <div x-show="activeRightPanel === 'blame'" class="h-full">
+                        @livewire('blame-view', ['repoPath' => $repoPath], key('blame-view-' . $repoPath))
                     </div>
                 </div>
             </div>

@@ -209,6 +209,12 @@ class RepoSidebar extends Component
         $this->autoStashTargetBranch = '';
     }
 
+    #[On('status-updated')]
+    public function handleStatusUpdated(): void
+    {
+        $this->refreshSidebar();
+    }
+
     #[On('stash-created')]
     public function handleStashCreated(): void
     {

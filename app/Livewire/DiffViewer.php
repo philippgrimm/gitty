@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Livewire;
 
+use App\Services\EditorService;
 use App\Services\Git\DiffService;
 use App\Services\Git\GitErrorHandler;
 use App\Services\Git\GitService;
+use App\Services\SettingsService;
 use Illuminate\Support\Facades\Process;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -29,6 +31,10 @@ class DiffViewer extends Component
 
     public bool $isLargeFile = false;
 
+    public bool $isImage = false;
+
+    public ?array $imageData = null;
+
     public string $error = '';
 
     public string $diffViewMode = 'unified';
@@ -38,6 +44,8 @@ class DiffViewer extends Component
         $this->isEmpty = true;
         $this->isBinary = false;
         $this->isLargeFile = false;
+        $this->isImage = false;
+        $this->imageData = null;
         $this->files = null;
         $this->error = '';
     }
@@ -53,6 +61,26 @@ class DiffViewer extends Component
         $this->toggleDiffViewMode();
     }
 
+    public function openInEditor(?int $line = null): void
+    {
+        if ($this->file === null) {
+            return;
+        }
+
+        try {
+            $editorService = new EditorService(new SettingsService);
+            $editorService->openFile($this->repoPath, $this->file, $line ?? 1);
+        } catch (\Exception $e) {
+            $this->dispatch('show-error', message: 'No editor configured or detected', type: 'error', persistent: false);
+        }
+    }
+
+    #[On('palette-open-in-editor')]
+    public function handlePaletteOpenInEditor(): void
+    {
+        $this->openInEditor();
+    }
+
     #[On('file-selected')]
     public function onFileSelected(string $file, bool $staged): void
     {
@@ -66,6 +94,22 @@ class DiffViewer extends Component
         $this->error = '';
 
         try {
+            // Check if image file BEFORE normal diff parsing
+            if ($this->isImageFile($file)) {
+                $this->isImage = true;
+                $this->isEmpty = false;
+                $this->isBinary = false;
+                $this->isLargeFile = false;
+                $this->imageData = $this->getImageData($file);
+                $this->diffData = null;
+                $this->files = null;
+
+                return;
+            }
+
+            $this->isImage = false;
+            $this->imageData = null;
+
             $fileSize = $this->getFileSize($file);
             if ($fileSize > 1048576) {
                 $this->isLargeFile = true;
@@ -469,5 +513,71 @@ class DiffViewer extends Component
         }
         $left = [];
         $right = [];
+    }
+
+    private function isImageFile(string $file): bool
+    {
+        $extension = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+
+        return in_array($extension, ['png', 'jpg', 'jpeg', 'gif', 'svg', 'webp', 'ico', 'bmp']);
+    }
+
+    private function getImageData(string $file): array
+    {
+        $extension = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+        $mimeType = $this->getMimeType($extension);
+
+        $oldImage = null;
+        $newImage = null;
+        $oldSize = 0;
+        $newSize = 0;
+
+        // Try to get old version from git (HEAD)
+        $result = Process::path($this->repoPath)->run("git show HEAD:\"{$file}\" 2>/dev/null");
+        if ($result->successful() && ! empty($result->output())) {
+            $oldImage = 'data:'.$mimeType.';base64,'.base64_encode($result->output());
+            $oldSize = strlen($result->output());
+        }
+
+        // Try to get new version from working directory
+        $filePath = $this->repoPath.'/'.$file;
+        if (file_exists($filePath)) {
+            $content = file_get_contents($filePath);
+            $newImage = 'data:'.$mimeType.';base64,'.base64_encode($content);
+            $newSize = strlen($content);
+        }
+
+        return [
+            'oldImage' => $oldImage,
+            'newImage' => $newImage,
+            'oldSize' => $oldSize,
+            'newSize' => $newSize,
+            'extension' => $extension,
+        ];
+    }
+
+    private function getMimeType(string $extension): string
+    {
+        return match ($extension) {
+            'png' => 'image/png',
+            'jpg', 'jpeg' => 'image/jpeg',
+            'gif' => 'image/gif',
+            'svg' => 'image/svg+xml',
+            'webp' => 'image/webp',
+            'ico' => 'image/x-icon',
+            'bmp' => 'image/bmp',
+            default => 'application/octet-stream',
+        };
+    }
+
+    private function formatFileSize(int $bytes): string
+    {
+        if ($bytes < 1024) {
+            return $bytes.' B';
+        } elseif ($bytes < 1048576) {
+            return round($bytes / 1024, 1).' KB';
+        }
+
+        return round($bytes / 1048576, 1).' MB';
     }
 }

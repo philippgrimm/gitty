@@ -43,7 +43,7 @@ class SyncPanel extends Component
     #[On('remote-updated')]
     public function refreshAheadBehind(int $stagedCount = 0, array $aheadBehind = []): void
     {
-        if (! empty($aheadBehind)) {
+        if (! empty($aheadBehind) && array_key_exists('ahead', $aheadBehind) && array_key_exists('behind', $aheadBehind)) {
             $this->aheadBehind = $aheadBehind;
         }
     }

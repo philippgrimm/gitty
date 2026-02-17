@@ -75,7 +75,8 @@ class CommandPalette extends Component
                 'stage-all', 'unstage-all', 'discard-all', 'stash-all', 'toggle-view',
                 'commit', 'commit-push', 'toggle-amend', 'push', 'pull', 'fetch',
                 'fetch-all', 'force-push', 'create-branch', 'select-all', 'toggle-history',
-                'abort-merge', 'create-tag', 'toggle-diff-view',
+                'abort-merge', 'create-tag', 'toggle-diff-view', 'open-in-editor',
+                'continue-rebase', 'abort-rebase',
             ], true);
         }
 
@@ -296,6 +297,33 @@ class CommandPalette extends Component
                 'keywords' => ['tag', 'create', 'version', 'release'],
                 'requiresInput' => false,
                 'icon' => 'phosphor-tag',
+            ],
+            [
+                'id' => 'open-in-editor',
+                'label' => 'Open in Editor',
+                'shortcut' => null,
+                'event' => 'palette-open-in-editor',
+                'keywords' => ['editor', 'open', 'code', 'vscode', 'cursor', 'sublime'],
+                'requiresInput' => false,
+                'icon' => 'phosphor-code',
+            ],
+            [
+                'id' => 'continue-rebase',
+                'label' => 'Continue Rebase',
+                'shortcut' => null,
+                'event' => 'palette-continue-rebase',
+                'keywords' => ['rebase', 'continue', 'resume'],
+                'requiresInput' => false,
+                'icon' => 'phosphor-git-merge',
+            ],
+            [
+                'id' => 'abort-rebase',
+                'label' => 'Abort Rebase',
+                'shortcut' => null,
+                'event' => 'palette-abort-rebase',
+                'keywords' => ['rebase', 'abort', 'cancel'],
+                'requiresInput' => false,
+                'icon' => 'phosphor-x-circle',
             ],
             [
                 'id' => 'select-all',

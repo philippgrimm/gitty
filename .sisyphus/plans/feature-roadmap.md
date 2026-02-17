@@ -339,7 +339,7 @@ Wave 5 (Final — Integration):
 
 ---
 
-- [ ] 3. Merge Conflict Resolution UI
+- [x] 3. Merge Conflict Resolution UI
 
   **What to do**:
   - Create `app/Livewire/ConflictResolver.php` component
@@ -410,7 +410,7 @@ Wave 5 (Final — Integration):
 
 ---
 
-- [ ] 4. Git Reset / Revert
+- [x] 4. Git Reset / Revert
 
   **What to do**:
   - Create `app/Services/Git/ResetService.php`:
@@ -538,7 +538,7 @@ Wave 5 (Final — Integration):
 
 ---
 
-- [ ] 6. Side-by-side Diff View
+- [x] 6. Side-by-side Diff View
 
   **What to do**:
   - Add `diffViewMode` property to `DiffViewer.php` — `'unified'` (default) or `'split'`
@@ -593,7 +593,7 @@ Wave 5 (Final — Integration):
 
 ---
 
-- [ ] 7. Interactive Rebase
+- [x] 7. Interactive Rebase
 
   **What to do**:
   - Create `app/Services/Git/RebaseService.php`:
@@ -656,7 +656,7 @@ Wave 5 (Final — Integration):
 
 ---
 
-- [ ] 8. Cherry-pick
+- [x] 8. Cherry-pick
 
   **What to do**:
   - Add to `app/Services/Git/CommitService.php`:
@@ -706,7 +706,7 @@ Wave 5 (Final — Integration):
 
 ---
 
-- [ ] 9. File Blame / Annotation View
+- [x] 9. File Blame / Annotation View
 
   **What to do**:
   - Create `app/Services/Git/BlameService.php`:
@@ -871,7 +871,7 @@ Wave 5 (Final — Integration):
 
 ---
 
-- [ ] 12. Image Diff
+- [x] 12. Image Diff
 
   **What to do**:
   - Extend `app/Livewire/DiffViewer.php` to detect image files by extension
@@ -923,7 +923,7 @@ Wave 5 (Final — Integration):
 
 ---
 
-- [ ] 13. Tag Management UI
+- [x] 13. Tag Management UI
 
   **What to do**:
   - Create `app/Services/Git/TagService.php`:
@@ -1046,7 +1046,7 @@ Wave 5 (Final — Integration):
 
 ### TIER 4 — DELIGHT & DIFFERENTIATION
 
-- [ ] 15. Commit Message Templates / Conventional Commits
+- [x] 15. Commit Message Templates / Conventional Commits
 
   **What to do**:
   - Extend `app/Livewire/CommitPanel.php`:
@@ -1092,7 +1092,7 @@ Wave 5 (Final — Integration):
 
 ---
 
-- [ ] 16. Open in External Editor
+- [x] 16. Open in External Editor
 
   **What to do**:
   - Extend `app/Services/SettingsService.php` with editor detection:

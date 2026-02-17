@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Livewire;
 
+use App\Services\Git\CommitService;
 use App\Services\Git\GitService;
 use App\Services\Git\ResetService;
 use Illuminate\Support\Collection;
@@ -28,15 +29,23 @@ class HistoryPanel extends Component
 
     public bool $showRevertModal = false;
 
+    public bool $showCherryPickModal = false;
+
     public ?string $resetTargetSha = null;
 
     public ?string $resetTargetMessage = null;
+
+    public ?string $cherryPickTargetSha = null;
+
+    public ?string $cherryPickTargetMessage = null;
 
     public string $resetMode = 'soft';
 
     public string $hardResetConfirmText = '';
 
     public bool $targetCommitPushed = false;
+
+    public int $rebaseCommitCount = 5;
 
     private ?Collection $commits = null;
 
@@ -195,6 +204,40 @@ class HistoryPanel extends Component
         } catch (\Exception) {
             return false;
         }
+    }
+
+    public function promptCherryPick(string $sha, string $message): void
+    {
+        $this->cherryPickTargetSha = $sha;
+        $this->cherryPickTargetMessage = $message;
+        $this->showCherryPickModal = true;
+    }
+
+    public function confirmCherryPick(): void
+    {
+        try {
+            $commitService = new CommitService($this->repoPath);
+            $result = $commitService->cherryPick($this->cherryPickTargetSha);
+
+            if ($result->hasConflicts) {
+                $this->showCherryPickModal = false;
+                $this->dispatch('show-error', message: 'Cherry-pick failed: conflicts detected. Resolve conflicts and continue or abort.');
+
+                return;
+            }
+
+            $this->showCherryPickModal = false;
+            $this->dispatch('status-updated');
+            $this->dispatch('show-success', message: 'Cherry-picked commit '.substr($this->cherryPickTargetSha, 0, 8));
+        } catch (\Exception $e) {
+            $this->showCherryPickModal = false;
+            $this->dispatch('show-error', message: $e->getMessage());
+        }
+    }
+
+    public function promptInteractiveRebase(string $sha): void
+    {
+        $this->dispatch('open-rebase-modal', ontoCommit: $sha, count: $this->rebaseCommitCount);
     }
 
     public function render()

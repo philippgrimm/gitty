@@ -39,6 +39,159 @@
                 <div class="text-[var(--text-tertiary)] uppercase tracking-wider text-sm">File too large (&gt;1MB) — diff skipped</div>
             </div>
         </div>
+    @elseif($isImage && $imageData)
+        {{-- Image Comparison View --}}
+        <div class="border-b border-[var(--border-default)] px-4 h-10 flex items-center bg-white dark:bg-[var(--surface-0)] sticky top-0 z-10" style="box-shadow: var(--shadow-sm)">
+            <div class="flex items-center justify-between gap-3 flex-1 overflow-hidden">
+                <div class="flex items-center gap-3 min-w-0 flex-1">
+                    <flux:tooltip :content="$file" class="min-w-0 flex-1">
+                        <span class="text-[var(--text-primary)] text-sm truncate block">{{ $file }}</span>
+                    </flux:tooltip>
+                    @php
+                        $isNew = $imageData['oldImage'] === null;
+                        $isDeleted = $imageData['newImage'] === null;
+                        $isModified = $imageData['oldImage'] !== null && $imageData['newImage'] !== null;
+                        
+                        $badgeColor = match(true) {
+                            $isNew => '#40a02b',
+                            $isDeleted => '#d20f39',
+                            $isModified => '#df8e1d',
+                            default => '#9ca0b0',
+                        };
+                        $badgeText = match(true) {
+                            $isNew => 'NEW',
+                            $isDeleted => 'DELETED',
+                            $isModified => 'MODIFIED',
+                            default => 'IMAGE',
+                        };
+                    @endphp
+                    <div class="flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-medium uppercase tracking-wider shrink-0 whitespace-nowrap" 
+                         style="background-color: {{ $badgeColor }}15; color: {{ $badgeColor }}">
+                        {{ $badgeText }}
+                    </div>
+                </div>
+                <div class="flex items-center gap-3 text-xs text-[var(--text-secondary)] font-mono shrink-0">
+                    @if($isModified)
+                        <span>{{ $this->formatFileSize($imageData['oldSize']) }}</span>
+                        <span class="text-[var(--text-tertiary)]">→</span>
+                        <span>{{ $this->formatFileSize($imageData['newSize']) }}</span>
+                        @php
+                            $delta = $imageData['newSize'] - $imageData['oldSize'];
+                        @endphp
+                        @if($delta > 0)
+                            <span class="text-[var(--color-red)]">+{{ $this->formatFileSize($delta) }}</span>
+                        @elseif($delta < 0)
+                            <span class="text-[var(--color-green)]">{{ $this->formatFileSize($delta) }}</span>
+                        @endif
+                    @elseif($isNew)
+                        <span>{{ $this->formatFileSize($imageData['newSize']) }}</span>
+                    @elseif($isDeleted)
+                        <span>{{ $this->formatFileSize($imageData['oldSize']) }}</span>
+                    @endif
+                </div>
+            </div>
+        </div>
+
+        <div class="flex-1 overflow-auto bg-[var(--surface-0)]"
+             x-data="{
+                 viewMode: 'side-by-side',
+                 sliderPosition: 50,
+                 isDragging: false,
+                 updateSlider(e) {
+                     if (!this.isDragging) return;
+                     const rect = e.currentTarget.getBoundingClientRect();
+                     const x = e.clientX - rect.left;
+                     this.sliderPosition = Math.max(0, Math.min(100, (x / rect.width) * 100));
+                 }
+             }"
+             @mouseup.window="isDragging = false"
+             @mousemove.window="updateSlider($event)">
+            @if($isModified)
+                {{-- Modified: Side-by-side with slider option --}}
+                <div class="p-4">
+                    <div class="flex items-center justify-center gap-2 mb-4">
+                        <button @click="viewMode = 'side-by-side'" 
+                                :class="viewMode === 'side-by-side' ? 'bg-[var(--color-accent)] text-white' : 'bg-white text-[var(--text-primary)]'"
+                                class="px-3 py-1.5 rounded text-xs font-medium uppercase tracking-wider border border-[var(--border-default)] transition-colors">
+                            Side by Side
+                        </button>
+                        <button @click="viewMode = 'slider'" 
+                                :class="viewMode === 'slider' ? 'bg-[var(--color-accent)] text-white' : 'bg-white text-[var(--text-primary)]'"
+                                class="px-3 py-1.5 rounded text-xs font-medium uppercase tracking-wider border border-[var(--border-default)] transition-colors">
+                            Slider
+                        </button>
+                    </div>
+
+                    <div x-show="viewMode === 'side-by-side'" class="grid grid-cols-2 gap-4">
+                        <div class="bg-white rounded-lg border border-[var(--border-default)] p-4">
+                            <div class="text-xs font-medium uppercase tracking-wider text-[var(--text-secondary)] mb-3">Before</div>
+                            <div class="flex items-center justify-center bg-[var(--surface-0)] rounded p-4">
+                                <img src="{{ $imageData['oldImage'] }}" alt="Before" class="max-w-full h-auto" style="max-height: 500px; object-fit: contain;" />
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-lg border border-[var(--border-default)] p-4">
+                            <div class="text-xs font-medium uppercase tracking-wider text-[var(--text-secondary)] mb-3">After</div>
+                            <div class="flex items-center justify-center bg-[var(--surface-0)] rounded p-4">
+                                <img src="{{ $imageData['newImage'] }}" alt="After" class="max-w-full h-auto" style="max-height: 500px; object-fit: contain;" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div x-show="viewMode === 'slider'" class="bg-white rounded-lg border border-[var(--border-default)] p-4">
+                        <div class="relative overflow-hidden select-none" 
+                             style="max-height: 600px;"
+                             @mousedown="isDragging = true"
+                             @mousemove="updateSlider($event)">
+                            <img src="{{ $imageData['newImage'] }}" alt="After" class="w-full h-auto pointer-events-none" />
+                            <div class="absolute inset-0 pointer-events-none" 
+                                 :style="`clip-path: inset(0 ${100 - sliderPosition}% 0 0);`">
+                                <img src="{{ $imageData['oldImage'] }}" alt="Before" class="w-full h-auto" />
+                            </div>
+                            <div class="absolute top-0 bottom-0 w-1 bg-white shadow-lg cursor-ew-resize pointer-events-none"
+                                 :style="`left: ${sliderPosition}%;`"></div>
+                            <div class="absolute top-4 left-4 px-2 py-1 rounded text-xs font-medium uppercase tracking-wider bg-white/90 text-[var(--text-primary)] border border-[var(--border-default)] pointer-events-none">
+                                Before
+                            </div>
+                            <div class="absolute top-4 right-4 px-2 py-1 rounded text-xs font-medium uppercase tracking-wider bg-white/90 text-[var(--text-primary)] border border-[var(--border-default)] pointer-events-none">
+                                After
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @elseif($isNew)
+                {{-- New Image --}}
+                <div class="p-4">
+                    <div class="bg-white rounded-lg border border-[var(--border-default)] p-4">
+                        <div class="flex items-center gap-2 mb-3">
+                            <div class="px-2 py-0.5 rounded text-xs font-medium uppercase tracking-wider" 
+                                 style="background-color: #40a02b15; color: #40a02b">
+                                NEW
+                            </div>
+                            <span class="text-xs text-[var(--text-secondary)] font-mono">{{ $this->formatFileSize($imageData['newSize']) }}</span>
+                        </div>
+                        <div class="flex items-center justify-center bg-[var(--surface-0)] rounded p-4">
+                            <img src="{{ $imageData['newImage'] }}" alt="New image" class="max-w-full h-auto" style="max-height: 600px; object-fit: contain;" />
+                        </div>
+                    </div>
+                </div>
+            @elseif($isDeleted)
+                {{-- Deleted Image --}}
+                <div class="p-4">
+                    <div class="bg-white rounded-lg border border-[var(--border-default)] p-4">
+                        <div class="flex items-center gap-2 mb-3">
+                            <div class="px-2 py-0.5 rounded text-xs font-medium uppercase tracking-wider" 
+                                 style="background-color: #d20f3915; color: #d20f39">
+                                DELETED
+                            </div>
+                            <span class="text-xs text-[var(--text-secondary)] font-mono">{{ $this->formatFileSize($imageData['oldSize']) }}</span>
+                        </div>
+                        <div class="flex items-center justify-center bg-[var(--surface-0)] rounded p-4">
+                            <img src="{{ $imageData['oldImage'] }}" alt="Deleted image" class="max-w-full h-auto" style="max-height: 600px; object-fit: contain;" />
+                        </div>
+                    </div>
+                </div>
+            @endif
+        </div>
     @elseif($isBinary)
         <div class="border-b border-[var(--border-default)] px-4 h-10 flex items-center bg-white dark:bg-[var(--surface-0)]">
             <div class="flex items-center gap-3 flex-1 overflow-hidden">
@@ -82,6 +235,18 @@
                     <div class="flex items-center gap-4 text-sm shrink-0">
                         <span class="text-[var(--color-green)] font-bold">+{{ $diffData['additions'] }}</span>
                         <span class="text-[var(--color-red)] font-bold">-{{ $diffData['deletions'] }}</span>
+                        <flux:tooltip content="View Blame">
+                            <flux:button @click="$dispatch('show-blame', { file: '{{ $file }}' })" variant="ghost" size="xs" square 
+                                class="flex items-center justify-center">
+                                <x-phosphor-identification-card class="w-4 h-4" />
+                            </flux:button>
+                        </flux:tooltip>
+                        <flux:tooltip content="Open in Editor">
+                            <flux:button wire:click="openInEditor" variant="ghost" size="xs" square 
+                                class="flex items-center justify-center">
+                                <x-phosphor-code class="w-4 h-4" />
+                            </flux:button>
+                        </flux:tooltip>
                         <flux:tooltip :content="$diffViewMode === 'unified' ? 'Switch to split view' : 'Switch to unified view'">
                             <flux:button wire:click="toggleDiffViewMode" variant="ghost" size="xs" square 
                                 class="flex items-center justify-center">

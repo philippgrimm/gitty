@@ -23,13 +23,13 @@
             >
                 <x-phosphor-git-branch-light class="w-3.5 h-3.5 text-[var(--text-secondary)] shrink-0" />
                 <span class="font-semibold text-[var(--text-primary)]">{{ $currentBranch }}</span>
-                @if($aheadBehind['ahead'] > 0 || $aheadBehind['behind'] > 0)
+                @if(($aheadBehind['ahead'] ?? 0) > 0 || ($aheadBehind['behind'] ?? 0) > 0)
                     <div class="flex items-center gap-1">
-                        @if($aheadBehind['ahead'] > 0)
-                            <span class="font-mono text-xs text-[var(--color-green)]">↑{{ $aheadBehind['ahead'] }}</span>
+                        @if(($aheadBehind['ahead'] ?? 0) > 0)
+                            <span class="font-mono text-xs text-[var(--color-green)]">↑{{ $aheadBehind['ahead'] ?? 0 }}</span>
                         @endif
-                        @if($aheadBehind['behind'] > 0)
-                            <span class="font-mono text-xs text-[var(--color-red)]">↓{{ $aheadBehind['behind'] }}</span>
+                        @if(($aheadBehind['behind'] ?? 0) > 0)
+                            <span class="font-mono text-xs text-[var(--color-red)]">↓{{ $aheadBehind['behind'] ?? 0 }}</span>
                         @endif
                     </div>
                 @endif

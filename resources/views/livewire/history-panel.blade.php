@@ -167,11 +167,26 @@
             <span>Revert this Commit</span>
         </button>
         <button 
+            @click="$wire.promptCherryPick(contextMenu.targetSha, $wire.commits.find(c => c.sha === contextMenu.targetSha)?.message || ''); hideContextMenu()"
+            class="w-full px-3 py-1.5 text-left hover:bg-[var(--surface-0)] dark:hover:bg-[var(--surface-3)] text-[var(--text-primary)] flex items-center gap-2"
+        >
+            <x-phosphor-git-commit class="w-4 h-4" />
+            <span>Cherry-pick this Commit</span>
+        </button>
+        <button 
             @click="$wire.promptReset(contextMenu.targetSha, $wire.commits.find(c => c.sha === contextMenu.targetSha)?.message || ''); hideContextMenu()"
             class="w-full px-3 py-1.5 text-left hover:bg-[var(--surface-0)] dark:hover:bg-[var(--surface-3)] text-[var(--text-primary)] flex items-center gap-2"
         >
             <x-phosphor-arrow-bend-up-left class="w-4 h-4" />
             <span>Reset to this Commit</span>
+        </button>
+        <div class="border-t border-[var(--border-subtle)] my-1"></div>
+        <button 
+            @click="$wire.promptInteractiveRebase(contextMenu.targetSha); hideContextMenu()"
+            class="w-full px-3 py-1.5 text-left hover:bg-[var(--surface-0)] dark:hover:bg-[var(--surface-3)] text-[var(--text-primary)] flex items-center gap-2"
+        >
+            <x-phosphor-git-merge class="w-4 h-4" />
+            <span>Interactive Rebase</span>
         </button>
     </div>
 
@@ -244,6 +259,19 @@
         <div class="flex gap-2 justify-end">
             <flux:button variant="ghost" wire:click="$set('showRevertModal', false)">Cancel</flux:button>
             <flux:button variant="primary" wire:click="confirmRevert">Revert</flux:button>
+        </div>
+    </flux:modal>
+
+    {{-- Cherry-pick Modal --}}
+    <flux:modal wire:model="showCherryPickModal" class="space-y-6">
+        <div>
+            <flux:heading size="lg">Cherry-pick Commit</flux:heading>
+            <flux:subheading>This will apply the changes from this commit to your current branch.</flux:subheading>
+            <div class="font-mono text-xs mt-2 text-[var(--text-secondary)]">{{ $cherryPickTargetSha ? substr($cherryPickTargetSha, 0, 8) : '' }} — {{ $cherryPickTargetMessage }}</div>
+        </div>
+        <div class="flex gap-2 justify-end">
+            <flux:button variant="ghost" wire:click="$set('showCherryPickModal', false)">Cancel</flux:button>
+            <flux:button variant="primary" wire:click="confirmCherryPick">Cherry-pick</flux:button>
         </div>
     </flux:modal>
 </div>
