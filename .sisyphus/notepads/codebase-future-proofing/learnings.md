@@ -299,3 +299,28 @@ public function stageFile(string $file): void
 - **DRY**: Eliminated 11 identical try/catch blocks
 - **Maintainability**: Single source of truth for error handling logic
 - **Readability**: Each method is now 5-7 lines instead of 15-20
+
+## Task 15: DiffViewer Refactoring (2026-02-17)
+
+### Refactoring Pattern Applied
+Successfully extracted duplicated DTO reconstruction logic from 4 methods in `DiffViewer.php`:
+- Created `hydrateDiffFileAndHunk()` helper method (40 lines)
+- Refactored `stageHunk()`, `unstageHunk()`, `stageSelectedLines()`, `unstageSelectedLines()`
+- Applied `HandlesGitOperations` trait for standardized error handling
+- Reduced file from 584 to 489 lines (95 line reduction)
+
+### Key Implementation Details
+1. **Helper Method Signature**: Returns tuple `array{0: \App\DTOs\DiffFile, 1: \App\DTOs\Hunk}`
+2. **Trait Integration**: Used `dispatchStatusUpdate: false` since DiffViewer dispatches `refresh-staging` instead
+3. **Arrow Function**: Used `fn()` syntax for single-line HunkLine mapping (cleaner than closure)
+4. **Error Property**: DiffViewer already had `public string $error = ''` required by trait
+
+### Pattern Reusability
+This same refactoring pattern can be applied to any Livewire component with:
+- Repeated DTO reconstruction from stored arrays
+- Multiple methods with identical try/catch blocks
+- Custom event dispatching (use `dispatchStatusUpdate: false`)
+
+### Test Coverage
+All 15 DiffViewerTest tests pass (62 assertions) — behavior 100% identical after refactoring.
+
