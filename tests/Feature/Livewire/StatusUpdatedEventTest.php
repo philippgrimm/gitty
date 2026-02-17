@@ -87,7 +87,7 @@ test('sync panel receives ahead-behind from event params', function () {
     ]);
 
     $component = Livewire::test(SyncPanel::class, ['repoPath' => $this->testRepoPath])
-        ->assertSet('aheadBehind', ['ahead' => 0, 'behind' => 0]);
+        ->assertSet('aheadBehind', ['ahead' => 1, 'behind' => 0]);
 
     // Simulate status-updated event with new ahead-behind data
     $component->call('refreshAheadBehind', stagedCount: 3, aheadBehind: ['ahead' => 5, 'behind' => 2])

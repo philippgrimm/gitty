@@ -24,7 +24,7 @@ test('stash panel displays stash list', function () {
         'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
         'git remote -v' => Process::result(GitOutputFixtures::remoteList()),
-        'git tag -l --format=%(refname:short) %(objectname:short)' => Process::result(''),
+        "git tag -l --sort=-creatordate --format='%(refname:short)|||%(objectname:short)|||%(creatordate:relative)|||%(contents:subject)'" => Process::result(''),
         'git stash list' => Process::result(GitOutputFixtures::stashList()),
         'git log --oneline -n 20' => Process::result(GitOutputFixtures::logOneline()),
     ]);
@@ -52,7 +52,7 @@ test('stash panel shows empty state when no stashes', function () {
         'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
         'git remote -v' => Process::result(GitOutputFixtures::remoteList()),
-        'git tag -l --format=%(refname:short) %(objectname:short)' => Process::result(''),
+        "git tag -l --sort=-creatordate --format='%(refname:short)|||%(objectname:short)|||%(creatordate:relative)|||%(contents:subject)'" => Process::result(''),
         'git stash list' => Process::result(''),
         'git log --oneline -n 20' => Process::result(GitOutputFixtures::logOneline()),
     ]);
@@ -81,7 +81,7 @@ test('stash panel shows stash count', function () {
         'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
         'git remote -v' => Process::result(GitOutputFixtures::remoteList()),
-        'git tag -l --format=%(refname:short) %(objectname:short)' => Process::result(''),
+        "git tag -l --sort=-creatordate --format='%(refname:short)|||%(objectname:short)|||%(creatordate:relative)|||%(contents:subject)'" => Process::result(''),
         'git stash list' => Process::result(GitOutputFixtures::stashList()),
         'git log --oneline -n 20' => Process::result(GitOutputFixtures::logOneline()),
     ]);

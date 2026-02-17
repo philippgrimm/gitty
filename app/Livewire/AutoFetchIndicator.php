@@ -6,6 +6,7 @@ namespace App\Livewire;
 
 use App\Services\AutoFetchService;
 use App\Services\Git\GitOperationQueue;
+use App\Services\NotificationService;
 use Livewire\Component;
 
 class AutoFetchIndicator extends Component

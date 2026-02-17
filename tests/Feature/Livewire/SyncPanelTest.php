@@ -3,9 +3,12 @@
 declare(strict_types=1);
 
 use App\Livewire\SyncPanel;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Process;
 use Livewire\Livewire;
 use Tests\Mocks\GitOutputFixtures;
+
+uses(RefreshDatabase::class);
 
 beforeEach(function () {
     $this->testRepoPath = '/tmp/gitty-test-repo';

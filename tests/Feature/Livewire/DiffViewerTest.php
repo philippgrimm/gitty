@@ -61,6 +61,7 @@ it('loads diff for staged file', function () {
 it('handles empty diff', function () {
     Process::fake([
         'git diff -- empty.txt' => '',
+        'git status --porcelain=v2 -- empty.txt' => '',
     ]);
 
     Livewire::test(DiffViewer::class, ['repoPath' => $this->testRepoPath])
@@ -69,23 +70,30 @@ it('handles empty diff', function () {
         ->assertSee('No changes to display');
 });
 
-it('handles binary file', function () {
-    $binaryDiff = <<<'OUTPUT'
-diff --git a/image.png b/image.png
-index b2c3d4e..f6a7b8c 100644
-Binary files a/image.png and b/image.png differ
-
-OUTPUT;
-
+it('loads diff for untracked file', function () {
     Process::fake([
-        'git diff -- image.png' => $binaryDiff,
+        'git diff -- new-file.txt' => '',
+        'git status --porcelain=v2 -- new-file.txt' => GitOutputFixtures::statusWithSingleUntrackedFile(),
+        'git diff --no-index -- /dev/null new-file.txt' => GitOutputFixtures::diffUntracked(),
     ]);
 
     Livewire::test(DiffViewer::class, ['repoPath' => $this->testRepoPath])
+        ->call('loadDiff', 'new-file.txt', false)
+        ->assertSet('file', 'new-file.txt')
+        ->assertSet('isStaged', false)
+        ->assertSet('isEmpty', false)
+        ->assertSee('new-file.txt')
+        ->assertSee('ADDED')
+        ->assertSee('+2');
+
+    Process::assertRan('git diff --no-index -- /dev/null new-file.txt');
+});
+
+it('handles image file as image diff', function () {
+    Livewire::test(DiffViewer::class, ['repoPath' => $this->testRepoPath])
         ->call('loadDiff', 'image.png', false)
-        ->assertSet('isBinary', true)
-        ->assertSee('Binary file')
-        ->assertSee('cannot display diff');
+        ->assertSet('isImage', true)
+        ->assertSet('isBinary', false);
 });
 
 it('listens to file-selected event', function () {

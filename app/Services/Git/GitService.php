@@ -107,8 +107,19 @@ class GitService
         }
 
         $result = Process::path($this->repoPath)->run($command);
+        $diffResult = DiffResult::fromDiffOutput($result->output());
 
-        return DiffResult::fromDiffOutput($result->output());
+        // For untracked files, git diff returns empty — use --no-index instead
+        if ($diffResult->files->isEmpty() && $file !== null && ! $staged) {
+            $statusResult = Process::path($this->repoPath)->run("git status --porcelain=v2 -- {$file}");
+            if (str_starts_with(trim($statusResult->output()), '?')) {
+                $untrackedResult = Process::path($this->repoPath)->run("git diff --no-index -- /dev/null {$file}");
+
+                return DiffResult::fromDiffOutput($untrackedResult->output());
+            }
+        }
+
+        return $diffResult;
     }
 
     public function currentBranch(): string

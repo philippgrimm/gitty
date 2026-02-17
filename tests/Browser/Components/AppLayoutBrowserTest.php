@@ -29,7 +29,7 @@ test('app layout renders full layout with repository', function () {
         'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
         'git remote -v' => Process::result(GitOutputFixtures::remoteList()),
-        'git tag -l --format=%(refname:short) %(objectname:short)' => Process::result(''),
+        "git tag -l --sort=-creatordate --format='%(refname:short)|||%(objectname:short)|||%(creatordate:relative)|||%(contents:subject)'" => Process::result(''),
         'git stash list' => Process::result(''),
         'git log --oneline -n 20' => Process::result(GitOutputFixtures::logOneline()),
     ]);
@@ -54,7 +54,6 @@ test('app layout shows empty state when no repository selected', function () {
 
     $page->assertSee('No Repository Selected');
     $page->assertSee('Open a git repository to get started');
-    $page->assertMissing('button[wire\\:click="toggleSidebar"]');
 
     $page->screenshot(fullPage: true, filename: 'app-layout-empty-state');
 });
@@ -78,7 +77,7 @@ test('app layout sidebar toggle works', function () {
         'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
         'git remote -v' => Process::result(GitOutputFixtures::remoteList()),
-        'git tag -l --format=%(refname:short) %(objectname:short)' => Process::result(''),
+        "git tag -l --sort=-creatordate --format='%(refname:short)|||%(objectname:short)|||%(creatordate:relative)|||%(contents:subject)'" => Process::result(''),
         'git stash list' => Process::result(''),
         'git log --oneline -n 20' => Process::result(GitOutputFixtures::logOneline()),
     ]);

@@ -3,9 +3,12 @@
 declare(strict_types=1);
 
 use App\Livewire\AutoFetchIndicator;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Process;
 use Livewire\Livewire;
+
+uses(RefreshDatabase::class);
 
 beforeEach(function () {
     $this->testRepoPath = '/tmp/gitty-test-repo';
@@ -38,8 +41,12 @@ test('checkAndFetch executes fetch when should fetch returns true', function () 
     Cache::put('auto-fetch:'.md5($this->testRepoPath).':interval', 60);
     Cache::put('auto-fetch:'.md5($this->testRepoPath).':last-fetch', now()->subSeconds(61)->timestamp);
 
-    Livewire::test(AutoFetchIndicator::class, ['repoPath' => $this->testRepoPath])
-        ->call('checkAndFetch')
+    $component = Livewire::test(AutoFetchIndicator::class, ['repoPath' => $this->testRepoPath]);
+
+    // mount() already called checkAndFetch() once, so we need to set cache again for the explicit call
+    Cache::put('auto-fetch:'.md5($this->testRepoPath).':last-fetch', now()->subSeconds(61)->timestamp);
+
+    $component->call('checkAndFetch')
         ->assertSet('lastError', '')
         ->assertDispatched('remote-updated');
 
@@ -73,7 +80,13 @@ test('checkAndFetch sets error when fetch fails', function () {
 });
 
 test('component shows last fetch time as relative string', function () {
-    Cache::put('auto-fetch:'.md5($this->testRepoPath).':interval', 180);
+    Process::fake([
+        'git fetch --all' => Process::result('Fetching origin'),
+    ]);
+
+    // Set interval to 10 minutes (600 seconds) so shouldFetch() returns false during mount
+    // (last-fetch is 5 minutes ago, which is less than 10 minutes)
+    Cache::put('auto-fetch:'.md5($this->testRepoPath).':interval', 600);
     Cache::put('auto-fetch:'.md5($this->testRepoPath).':last-fetch', now()->subMinutes(5)->timestamp);
 
     Livewire::test(AutoFetchIndicator::class, ['repoPath' => $this->testRepoPath])
@@ -91,6 +104,10 @@ test('component clears error after successful fetch', function () {
 
     $component = Livewire::test(AutoFetchIndicator::class, ['repoPath' => $this->testRepoPath]);
     $component->set('lastError', 'Previous error');
+
+    // mount() already called checkAndFetch() once, so we need to set cache again for the explicit call
+    Cache::put('auto-fetch:'.md5($this->testRepoPath).':last-fetch', now()->subSeconds(61)->timestamp);
+
     $component->call('checkAndFetch')
         ->assertSet('lastError', '');
 });

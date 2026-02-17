@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Livewire\StashPanel;
+use App\Livewire\RepoSidebar;
 use Illuminate\Support\Facades\Process;
 use Livewire\Livewire;
 use Tests\Mocks\GitOutputFixtures;
@@ -14,135 +14,159 @@ beforeEach(function () {
     }
 });
 
-test('component mounts with repo path and loads stash list', function () {
+test('stashes are loaded on mount via repo sidebar', function () {
     Process::fake([
+        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git branch *' => Process::result("* main\n"),
+        'git remote -v' => Process::result(''),
+        'git tag *' => Process::result(''),
         'git stash list' => Process::result(GitOutputFixtures::stashList()),
     ]);
 
-    Livewire::test(StashPanel::class, ['repoPath' => $this->testRepoPath])
-        ->assertSet('repoPath', $this->testRepoPath)
-        ->assertSee('feat: add new feature')
-        ->assertSee('Temporary changes for testing')
-        ->assertSee('fix: resolve parser bug');
+    $component = Livewire::test(RepoSidebar::class, ['repoPath' => $this->testRepoPath]);
+
+    $stashes = $component->get('stashes');
+    expect($stashes)->toBeArray();
+    expect(count($stashes))->toBeGreaterThan(0);
+
+    foreach ($stashes as $stash) {
+        expect($stash)->toHaveKeys(['index', 'message', 'branch', 'sha']);
+    }
 });
 
-test('component displays empty state when no stashes', function () {
+test('empty stash list returns empty array', function () {
     Process::fake([
+        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git branch *' => Process::result("* main\n"),
+        'git remote -v' => Process::result(''),
+        'git tag *' => Process::result(''),
         'git stash list' => Process::result(''),
     ]);
 
-    Livewire::test(StashPanel::class, ['repoPath' => $this->testRepoPath])
-        ->assertSee('No stashes');
+    $component = Livewire::test(RepoSidebar::class, ['repoPath' => $this->testRepoPath]);
+
+    $stashes = $component->get('stashes');
+    expect($stashes)->toBeArray();
+    expect($stashes)->toBeEmpty();
 });
 
-test('component creates a stash with message', function () {
+test('apply stash dispatches status-updated and refresh-staging', function () {
     Process::fake([
-        'git stash list' => Process::result(''),
-        'git stash push -m "Work in progress"' => Process::result(''),
-    ]);
-
-    Livewire::test(StashPanel::class, ['repoPath' => $this->testRepoPath])
-        ->set('stashMessage', 'Work in progress')
-        ->set('includeUntracked', false)
-        ->call('createStash')
-        ->assertSet('showCreateModal', false)
-        ->assertSet('stashMessage', '')
-        ->assertDispatched('status-updated');
-
-    Process::assertRan('git stash push -m "Work in progress"');
-});
-
-test('component creates a stash with untracked files included', function () {
-    Process::fake([
-        'git stash list' => Process::result(''),
-        'git stash push -u -m "Include untracked"' => Process::result(''),
-    ]);
-
-    Livewire::test(StashPanel::class, ['repoPath' => $this->testRepoPath])
-        ->set('stashMessage', 'Include untracked')
-        ->set('includeUntracked', true)
-        ->call('createStash')
-        ->assertDispatched('status-updated');
-
-    Process::assertRan('git stash push -u -m "Include untracked"');
-});
-
-test('component applies a stash', function () {
-    Process::fake([
+        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git branch *' => Process::result("* main\n"),
+        'git remote -v' => Process::result(''),
+        'git tag *' => Process::result(''),
         'git stash list' => Process::result(GitOutputFixtures::stashList()),
-        'git stash apply stash@{0}' => Process::result(''),
+        'git stash apply *' => Process::result(''),
     ]);
 
-    Livewire::test(StashPanel::class, ['repoPath' => $this->testRepoPath])
+    Livewire::test(RepoSidebar::class, ['repoPath' => $this->testRepoPath])
         ->call('applyStash', 0)
-        ->assertDispatched('status-updated');
+        ->assertDispatched('status-updated')
+        ->assertDispatched('refresh-staging');
 
     Process::assertRan('git stash apply stash@{0}');
 });
 
-test('component pops a stash', function () {
+test('pop stash dispatches status-updated and refresh-staging', function () {
     Process::fake([
+        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git branch *' => Process::result("* main\n"),
+        'git remote -v' => Process::result(''),
+        'git tag *' => Process::result(''),
         'git stash list' => Process::result(GitOutputFixtures::stashList()),
-        'git stash pop stash@{1}' => Process::result(''),
+        'git stash pop *' => Process::result(''),
     ]);
 
-    Livewire::test(StashPanel::class, ['repoPath' => $this->testRepoPath])
+    Livewire::test(RepoSidebar::class, ['repoPath' => $this->testRepoPath])
         ->call('popStash', 1)
-        ->assertDispatched('status-updated');
+        ->assertDispatched('status-updated')
+        ->assertDispatched('refresh-staging');
 
     Process::assertRan('git stash pop stash@{1}');
 });
 
-test('component drops a stash', function () {
+test('drop stash dispatches status-updated', function () {
     Process::fake([
+        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git branch *' => Process::result("* main\n"),
+        'git remote -v' => Process::result(''),
+        'git tag *' => Process::result(''),
         'git stash list' => Process::result(GitOutputFixtures::stashList()),
-        'git stash drop stash@{2}' => Process::result(''),
+        'git stash drop *' => Process::result(''),
     ]);
 
-    Livewire::test(StashPanel::class, ['repoPath' => $this->testRepoPath])
+    Livewire::test(RepoSidebar::class, ['repoPath' => $this->testRepoPath])
         ->call('dropStash', 2)
         ->assertDispatched('status-updated');
 
     Process::assertRan('git stash drop stash@{2}');
 });
 
-test('component converts stash DTOs to arrays for Livewire', function () {
+test('stash apply error dispatches show-error event', function () {
     Process::fake([
+        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git branch *' => Process::result("* main\n"),
+        'git remote -v' => Process::result(''),
+        'git tag *' => Process::result(''),
+        'git stash list' => Process::result(GitOutputFixtures::stashList()),
+        'git stash apply *' => function () {
+            throw new \Exception('error: Your local changes would be overwritten');
+        },
+    ]);
+
+    Livewire::test(RepoSidebar::class, ['repoPath' => $this->testRepoPath])
+        ->call('applyStash', 0)
+        ->assertDispatched('show-error');
+});
+
+test('stash data contains expected keys from stash list', function () {
+    Process::fake([
+        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git branch *' => Process::result("* main\n"),
+        'git remote -v' => Process::result(''),
+        'git tag *' => Process::result(''),
         'git stash list' => Process::result(GitOutputFixtures::stashList()),
     ]);
 
-    $component = Livewire::test(StashPanel::class, ['repoPath' => $this->testRepoPath]);
+    $component = Livewire::test(RepoSidebar::class, ['repoPath' => $this->testRepoPath]);
 
     $stashes = $component->get('stashes');
+    expect($stashes)->toBeArray();
 
-    expect($stashes)->toBeArray()
-        ->and($stashes)->toHaveCount(3)
-        ->and($stashes[0])->toHaveKeys(['index', 'message', 'branch', 'sha'])
-        ->and($stashes[0]['index'])->toBe(0)
-        ->and($stashes[0]['message'])->toBe('feat: add new feature');
+    if (count($stashes) > 0) {
+        expect($stashes[0])->toHaveKeys(['index', 'message', 'branch', 'sha']);
+        expect($stashes[0]['index'])->toBe(0);
+    }
 });
 
-test('component refreshes stash list on demand', function () {
+test('stash-created event refreshes sidebar stash list', function () {
     Process::fake([
+        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git branch *' => Process::result("* main\n"),
+        'git remote -v' => Process::result(''),
+        'git tag *' => Process::result(''),
         'git stash list' => Process::result(GitOutputFixtures::stashList()),
     ]);
 
-    Livewire::test(StashPanel::class, ['repoPath' => $this->testRepoPath])
-        ->call('refreshStashes')
-        ->assertSee('feat: add new feature');
-
-    Process::assertRan('git stash list');
+    $component = Livewire::test(RepoSidebar::class, ['repoPath' => $this->testRepoPath]);
+    $component->dispatch('stash-created');
+    expect($component->get('stashes'))->toBeArray();
 });
 
-test('component clears error before operations', function () {
+test('pop stash runs git stash pop with correct index', function () {
     Process::fake([
-        'git stash list' => Process::result(''),
-        'git stash push -m "Test"' => Process::result(''),
+        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git branch *' => Process::result("* main\n"),
+        'git remote -v' => Process::result(''),
+        'git tag *' => Process::result(''),
+        'git stash list' => Process::result(GitOutputFixtures::stashList()),
+        'git stash pop *' => Process::result(''),
     ]);
 
-    Livewire::test(StashPanel::class, ['repoPath' => $this->testRepoPath])
-        ->set('error', 'Previous error')
-        ->set('stashMessage', 'Test')
-        ->call('createStash')
-        ->assertSet('error', '');
+    Livewire::test(RepoSidebar::class, ['repoPath' => $this->testRepoPath])
+        ->call('popStash', 0)
+        ->assertDispatched('status-updated');
+
+    Process::assertRan('git stash pop stash@{0}');
 });

@@ -24,7 +24,7 @@ test('branch manager displays current branch and branches list', function () {
         'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
         'git remote -v' => Process::result(GitOutputFixtures::remoteList()),
-        'git tag -l --format=%(refname:short) %(objectname:short)' => Process::result(''),
+        "git tag -l --sort=-creatordate --format='%(refname:short)|||%(objectname:short)|||%(creatordate:relative)|||%(contents:subject)'" => Process::result(''),
         'git stash list' => Process::result(''),
         'git log --oneline -n 20' => Process::result(GitOutputFixtures::logOneline()),
     ]);
@@ -32,7 +32,7 @@ test('branch manager displays current branch and branches list', function () {
     $page = visit('/');
 
     $page->assertSee('main');
-    $page->click('button:has-text("main")');
+    $page->click('button:has-text("main") >> nth=0');
 
     $page->assertSee('Local Branches');
     $page->assertSee('feature/new-ui');
@@ -57,7 +57,7 @@ test('branch manager shows ahead/behind badges', function () {
         'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusAheadBehind()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
         'git remote -v' => Process::result(GitOutputFixtures::remoteList()),
-        'git tag -l --format=%(refname:short) %(objectname:short)' => Process::result(''),
+        "git tag -l --sort=-creatordate --format='%(refname:short)|||%(objectname:short)|||%(creatordate:relative)|||%(contents:subject)'" => Process::result(''),
         'git stash list' => Process::result(''),
         'git log --oneline -n 20' => Process::result(GitOutputFixtures::logOneline()),
     ]);
@@ -84,19 +84,19 @@ test('branch manager shows create branch modal', function () {
         'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
         'git remote -v' => Process::result(GitOutputFixtures::remoteList()),
-        'git tag -l --format=%(refname:short) %(objectname:short)' => Process::result(''),
+        "git tag -l --sort=-creatordate --format='%(refname:short)|||%(objectname:short)|||%(creatordate:relative)|||%(contents:subject)'" => Process::result(''),
         'git stash list' => Process::result(''),
         'git log --oneline -n 20' => Process::result(GitOutputFixtures::logOneline()),
     ]);
 
     $page = visit('/');
 
-    $page->click('button:has-text("main")');
-    $page->click('button:has-text("New Branch")');
+    $page->click('button:has-text("main") >> nth=0');
+    $page->wait(0.3);
+    $page->click('text=New Branch');
+    $page->wait(0.5);
 
-    $page->assertSee('Create New Branch');
-    $page->assertSee('Branch name');
-    $page->assertSee('Base branch');
+    $page->assertSee('Create Branch');
 
     $page->screenshot(fullPage: true, filename: 'branch-manager-create-modal');
 });

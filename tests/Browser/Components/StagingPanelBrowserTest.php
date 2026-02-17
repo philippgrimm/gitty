@@ -14,19 +14,26 @@ test('staging panel displays unstaged and staged files correctly', function () {
     BrowserTestHelper::setupMockRepo();
     BrowserTestHelper::ensureScreenshotsDirectory();
 
-    Repository::create([
+    $repo = Repository::create([
         'name' => 'gitty-test-repo',
         'path' => BrowserTestHelper::MOCK_REPO_PATH,
         'last_opened_at' => now(),
     ]);
 
+    cache()->put('current_repo_id', $repo->id);
+
     Process::fake([
         'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithMixedChanges()),
+        'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
+        'git remote -v' => Process::result(GitOutputFixtures::remoteList()),
+        "git tag -l --sort=-creatordate --format='%(refname:short)|||%(objectname:short)|||%(creatordate:relative)|||%(contents:subject)'" => Process::result(''),
+        'git stash list' => Process::result(''),
+        'git log --oneline -n 20' => Process::result(GitOutputFixtures::logOneline()),
     ]);
 
     $page = visit('/');
 
-    $page->assertSee('Staged Changes');
+    $page->assertSee('Staged');
     $page->assertSee('Changes');
     $page->assertSee('README.md');
     $page->assertSee('App.php');

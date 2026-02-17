@@ -22,7 +22,7 @@ test('auto-fetch indicator component renders with inactive state', function () {
 
     $component = Livewire::test(AutoFetchIndicator::class, ['repoPath' => BrowserTestHelper::MOCK_REPO_PATH]);
 
-    $component->assertSee('Auto-fetch off');
+    $component->assertSee('Auto-Fetch Off');
     $component->assertSet('isActive', false);
     $component->assertSet('isFetching', false);
 });
@@ -32,11 +32,13 @@ test('auto-fetch indicator component shows active state when enabled', function 
     BrowserTestHelper::ensureScreenshotsDirectory();
 
     $repoHash = md5(BrowserTestHelper::MOCK_REPO_PATH);
-    Cache::put('auto-fetch:'.$repoHash.':interval', 180);
+    // Use 600s interval so shouldFetch() returns false (5 min < 10 min), preventing mount from fetching
+    Cache::put('auto-fetch:'.$repoHash.':interval', 600);
     Cache::put('auto-fetch:'.$repoHash.':last-fetch', now()->subMinutes(5)->timestamp);
 
     Process::fake([
         'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git fetch --all' => Process::result('Fetching origin'),
     ]);
 
     $component = Livewire::test(AutoFetchIndicator::class, ['repoPath' => BrowserTestHelper::MOCK_REPO_PATH]);

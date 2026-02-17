@@ -29,7 +29,7 @@ test('full app renders with all panels visible', function () {
         'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithMixedChanges()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
         'git remote -v' => Process::result(GitOutputFixtures::remoteList()),
-        'git tag -l --format=%(refname:short) %(objectname:short)' => Process::result(''),
+        "git tag -l --sort=-creatordate --format='%(refname:short)|||%(objectname:short)|||%(creatordate:relative)|||%(contents:subject)'" => Process::result(''),
         'git stash list' => Process::result(GitOutputFixtures::stashList()),
         'git log --oneline -n 20' => Process::result(GitOutputFixtures::logOneline()),
     ]);
@@ -49,7 +49,7 @@ test('full app renders with all panels visible', function () {
     $page->assertSee('Stashes');
 
     // Verify staging panel
-    $page->assertSee('Staged Changes');
+    $page->assertSee('Staged');
     $page->assertSee('Changes');
     $page->assertSee('README.md');
     $page->assertSee('App.php');
@@ -82,7 +82,7 @@ test('selecting a file in staging panel triggers diff viewer to show content', f
         'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithMixedChanges()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
         'git remote -v' => Process::result(GitOutputFixtures::remoteList()),
-        'git tag -l --format=%(refname:short) %(objectname:short)' => Process::result(''),
+        "git tag -l --sort=-creatordate --format='%(refname:short)|||%(objectname:short)|||%(creatordate:relative)|||%(contents:subject)'" => Process::result(''),
         'git stash list' => Process::result(''),
         'git log --oneline -n 20' => Process::result(GitOutputFixtures::logOneline()),
         'git diff README.md' => Process::result(GitOutputFixtures::diffUnstaged()),
@@ -124,7 +124,7 @@ test('error banner appears when show-error event is dispatched', function () {
         'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
         'git remote -v' => Process::result(GitOutputFixtures::remoteList()),
-        'git tag -l --format=%(refname:short) %(objectname:short)' => Process::result(''),
+        "git tag -l --sort=-creatordate --format='%(refname:short)|||%(objectname:short)|||%(creatordate:relative)|||%(contents:subject)'" => Process::result(''),
         'git stash list' => Process::result(''),
         'git log --oneline -n 20' => Process::result(GitOutputFixtures::logOneline()),
     ]);
@@ -160,8 +160,8 @@ test('empty state renders when no repository is selected', function () {
     $page->assertSee('No Repository Selected');
     $page->assertSee('Open a git repository to get started');
 
-    // Verify sidebar toggle is not present (no repo loaded)
-    $page->assertMissing('button[wire\\:click="toggleSidebar"]');
+    // Sidebar toggle is always visible in the header
+    $page->assertVisible('button[wire\\:click="toggleSidebar"]');
 
     // Verify staging panel is not rendered
     $page->assertDontSee('Staged Changes');
@@ -191,7 +191,7 @@ test('full page screenshot of complete app layout with mixed changes', function 
         'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithMixedChanges()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
         'git remote -v' => Process::result(GitOutputFixtures::remoteList()),
-        'git tag -l --format=%(refname:short) %(objectname:short)' => Process::result(''),
+        "git tag -l --sort=-creatordate --format='%(refname:short)|||%(objectname:short)|||%(creatordate:relative)|||%(contents:subject)'" => Process::result(''),
         'git stash list' => Process::result(GitOutputFixtures::stashList()),
         'git log --oneline -n 20' => Process::result(GitOutputFixtures::logOneline()),
         'git diff README.md' => Process::result(GitOutputFixtures::diffUnstaged()),
@@ -206,8 +206,8 @@ test('full page screenshot of complete app layout with mixed changes', function 
     // Expand sidebar sections to show full data
     $page->click('button:has-text("Remotes")');
     $page->wait(0.2);
-    $page->click('button:has-text("Tags")');
-    $page->wait(0.2);
+    $page->click('div.cursor-pointer:has-text("Tags")');
+    $page->wait(0.3);
     $page->click('button:has-text("Stashes")');
     $page->wait(0.2);
 
@@ -238,7 +238,7 @@ test('cross-component event flow between staging and commit panels', function ()
         'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
         'git remote -v' => Process::result(GitOutputFixtures::remoteList()),
-        'git tag -l --format=%(refname:short) %(objectname:short)' => Process::result(''),
+        "git tag -l --sort=-creatordate --format='%(refname:short)|||%(objectname:short)|||%(creatordate:relative)|||%(contents:subject)'" => Process::result(''),
         'git stash list' => Process::result(''),
         'git log --oneline -n 20' => Process::result(GitOutputFixtures::logOneline()),
     ]);
@@ -246,7 +246,7 @@ test('cross-component event flow between staging and commit panels', function ()
     $page = visit('/');
 
     // Verify staging panel shows staged changes
-    $page->assertSee('Staged Changes');
+    $page->assertSee('Staged');
     $page->assertSee('README.md');
     $page->assertSee('new-file.txt');
 
@@ -278,7 +278,7 @@ test('sidebar sections expand to show full repository state', function () {
         'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
         'git remote -v' => Process::result(GitOutputFixtures::remoteList()),
-        'git tag -l --format=%(refname:short) %(objectname:short)' => Process::result(''),
+        "git tag -l --sort=-creatordate --format='%(refname:short)|||%(objectname:short)|||%(creatordate:relative)|||%(contents:subject)'" => Process::result(''),
         'git stash list' => Process::result(GitOutputFixtures::stashList()),
         'git log --oneline -n 20' => Process::result(GitOutputFixtures::logOneline()),
     ]);

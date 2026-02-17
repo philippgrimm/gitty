@@ -19,6 +19,6 @@ test('homepage loads successfully', function () {
 
     $page = visit('/');
 
-    $page->assertSee('Gitty');
+    $page->assertSee('No Repository Selected');
     $page->screenshot(fullPage: true, filename: 'homepage-smoke-test');
 });

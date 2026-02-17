@@ -121,3 +121,21 @@ test('it parses diff output', function () {
         ->and($diff->files->first()->additions)->toBe(3)
         ->and($diff->files->first()->deletions)->toBe(1);
 });
+
+test('it loads diff for untracked file', function () {
+    Process::fake([
+        'git diff -- new-file.txt' => '',
+        'git status --porcelain=v2 -- new-file.txt' => GitOutputFixtures::statusWithSingleUntrackedFile(),
+        'git diff --no-index -- /dev/null new-file.txt' => GitOutputFixtures::diffUntracked(),
+    ]);
+
+    $service = new GitService('/tmp/gitty-test-repo');
+    $diff = $service->diff('new-file.txt');
+
+    expect($diff)->toBeInstanceOf(DiffResult::class)
+        ->and($diff->files)->toHaveCount(1)
+        ->and($diff->files->first()->status)->toBe('added')
+        ->and($diff->files->first()->getDisplayPath())->toBe('new-file.txt')
+        ->and($diff->files->first()->additions)->toBe(2)
+        ->and($diff->files->first()->deletions)->toBe(0);
+});

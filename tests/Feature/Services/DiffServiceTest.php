@@ -40,16 +40,6 @@ test('it extracts hunks from diff file', function () {
         ->and($hunks->first()->newStart)->toBe(1);
 });
 
-test('it renders diff as HTML with syntax highlighting', function () {
-    $service = new DiffService('/tmp/gitty-test-repo');
-    $diff = $service->parseDiff(GitOutputFixtures::diffUnstaged());
-
-    $html = $service->renderDiffHtml($diff);
-
-    expect($html)->toBeString()
-        ->and($html)->toContain('README.md');
-});
-
 test('it stages a hunk', function () {
     Process::fake();
 

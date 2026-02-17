@@ -76,7 +76,7 @@ test('all returns all settings merged with defaults', function () {
     $all = $this->service->all();
 
     expect($all)->toBeArray();
-    expect($all)->toHaveCount(8);
+    expect($all)->toHaveCount(9);
     expect($all['theme'])->toBe('light');
     expect($all['auto_fetch_interval'])->toBe(300);
     expect($all['default_branch'])->toBe('main');
@@ -98,7 +98,7 @@ test('defaults returns all default values', function () {
     $defaults = $this->service->defaults();
 
     expect($defaults)->toBeArray();
-    expect($defaults)->toHaveCount(8);
+    expect($defaults)->toHaveCount(9);
     expect($defaults['auto_fetch_interval'])->toBe(180);
     expect($defaults['external_editor'])->toBe('');
     expect($defaults['theme'])->toBe('dark');

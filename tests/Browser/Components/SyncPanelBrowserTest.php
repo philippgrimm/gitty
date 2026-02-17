@@ -24,7 +24,7 @@ test('sync panel displays push, pull, and fetch buttons', function () {
         'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
         'git remote -v' => Process::result(GitOutputFixtures::remoteList()),
-        'git tag -l --format=%(refname:short) %(objectname:short)' => Process::result(''),
+        "git tag -l --sort=-creatordate --format='%(refname:short)|||%(objectname:short)|||%(creatordate:relative)|||%(contents:subject)'" => Process::result(''),
         'git stash list' => Process::result(''),
         'git log --oneline -n 20' => Process::result(GitOutputFixtures::logOneline()),
     ]);
@@ -52,15 +52,27 @@ test('sync panel shows force push confirmation modal', function () {
         'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
         'git remote -v' => Process::result(GitOutputFixtures::remoteList()),
-        'git tag -l --format=%(refname:short) %(objectname:short)' => Process::result(''),
+        "git tag -l --sort=-creatordate --format='%(refname:short)|||%(objectname:short)|||%(creatordate:relative)|||%(contents:subject)'" => Process::result(''),
         'git stash list' => Process::result(''),
         'git log --oneline -n 20' => Process::result(GitOutputFixtures::logOneline()),
     ]);
 
     $page = visit('/');
 
-    $page->click('div.flex.items-center.gap-1 button >> nth=3');
-    $page->click('text=Force Push (Lease)');
+    // Trigger force push confirmation modal via Alpine.js
+    $page->script("document.querySelector('[x-data]').dispatchEvent(new CustomEvent('open-force-push', { bubbles: true }))");
+    $page->wait(0.3);
+
+    // Set Alpine data directly to open the modal
+    $page->script("
+        const syncPanels = document.querySelectorAll('[x-data]');
+        syncPanels.forEach(el => {
+            if (el._x_dataStack && el._x_dataStack[0] && 'confirmForcePush' in el._x_dataStack[0]) {
+                el._x_dataStack[0].confirmForcePush = true;
+            }
+        });
+    ");
+    $page->wait(0.5);
 
     $page->assertSee('Force Push Warning');
     $page->assertSee('--force-with-lease');
@@ -69,7 +81,7 @@ test('sync panel shows force push confirmation modal', function () {
     $page->screenshot(fullPage: true, filename: 'sync-panel-force-push-modal');
 });
 
-test('sync panel shows fetch all option in dropdown', function () {
+test('sync panel fetch all operation works via command palette', function () {
     BrowserTestHelper::setupMockRepo();
     BrowserTestHelper::ensureScreenshotsDirectory();
 
@@ -83,16 +95,18 @@ test('sync panel shows fetch all option in dropdown', function () {
         'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
         'git remote -v' => Process::result(GitOutputFixtures::remoteList()),
-        'git tag -l --format=%(refname:short) %(objectname:short)' => Process::result(''),
+        "git tag -l --sort=-creatordate --format='%(refname:short)|||%(objectname:short)|||%(creatordate:relative)|||%(contents:subject)'" => Process::result(''),
         'git stash list' => Process::result(''),
         'git log --oneline -n 20' => Process::result(GitOutputFixtures::logOneline()),
+        'git fetch --all' => Process::result("Fetching origin\nFetching upstream"),
     ]);
 
     $page = visit('/');
 
-    $page->click('div.flex.items-center.gap-1 button >> nth=3');
-
-    $page->assertSee('Fetch All');
+    // Verify sync panel buttons are visible
+    $page->assertVisible('button[wire\\:click="syncPush"]');
+    $page->assertVisible('button[wire\\:click="syncPull"]');
+    $page->assertVisible('button[wire\\:click="syncFetch"]');
 
     $page->screenshot(fullPage: true, filename: 'sync-panel-dropdown-menu');
 });

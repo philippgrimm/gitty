@@ -9,10 +9,10 @@ uses()->beforeEach(function (): void {
     $this->artisan('migrate:fresh');
 });
 
-test('theme setting defaults to system', function (): void {
+test('theme setting defaults to dark', function (): void {
     $service = new SettingsService;
 
-    expect($service->get('theme'))->toBe('system');
+    expect($service->get('theme'))->toBe('dark');
 });
 
 test('theme can be set to light', function (): void {
@@ -39,16 +39,16 @@ test('theme persists across instances', function (): void {
 
 test('settings modal allows theme selection', function (): void {
     Livewire::test(\App\Livewire\SettingsModal::class)
-        ->assertSet('theme', 'system')
+        ->assertSet('theme', 'dark')
         ->set('theme', 'dark')
         ->call('save')
         ->assertDispatched('theme-updated', theme: 'dark');
 });
 
-test('theme setting resets to system on defaults', function (): void {
+test('theme setting resets to dark on defaults', function (): void {
     $service = new SettingsService;
-    $service->set('theme', 'dark');
+    $service->set('theme', 'light');
     $service->reset();
 
-    expect($service->get('theme'))->toBe('system');
+    expect($service->get('theme'))->toBe('dark');
 });

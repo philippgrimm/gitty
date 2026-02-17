@@ -92,7 +92,7 @@ test('component saves all 8 settings', function () {
         ->set('diffContextLines', 5)
         ->call('save');
 
-    expect(Setting::count())->toBe(8);
+    expect(Setting::count())->toBe(9);
     expect(Setting::where('key', 'external_editor')->value('value'))->toBe('code');
     expect(Setting::where('key', 'default_branch')->value('value'))->toBe('develop');
     expect(Setting::where('key', 'diff_context_lines')->value('value'))->toBe('5');

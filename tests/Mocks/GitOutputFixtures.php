@@ -72,6 +72,14 @@ OUTPUT;
 OUTPUT;
     }
 
+    public static function statusWithSingleUntrackedFile(): string
+    {
+        return <<<'OUTPUT'
+? new-file.txt
+
+OUTPUT;
+    }
+
     public static function statusWithDeletedFiles(): string
     {
         return <<<'OUTPUT'
@@ -207,6 +215,21 @@ index c3d4e5f..a7b8c9d 100644
 +        echo "Hello, Gitty!";
      }
  }
+
+OUTPUT;
+    }
+
+    public static function diffUntracked(): string
+    {
+        return <<<'OUTPUT'
+diff --git a/dev/null b/new-file.txt
+new file mode 100644
+index 0000000..e69de29
+--- /dev/null
++++ b/new-file.txt
+@@ -0,0 +1,2 @@
++Hello
++World
 
 OUTPUT;
     }

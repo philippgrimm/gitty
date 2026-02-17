@@ -6,6 +6,7 @@ namespace App\Livewire;
 
 use App\Services\Git\CommitService;
 use App\Services\Git\GitService;
+use App\Services\Git\GraphService;
 use App\Services\Git\ResetService;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\On;
