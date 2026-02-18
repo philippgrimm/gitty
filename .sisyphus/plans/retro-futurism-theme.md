@@ -1457,7 +1457,7 @@ Max Concurrent: 8 (Wave 2)
   - Files: Multiple blade templates
   - Pre-commit: `vendor/bin/pint --dirty --format agent`
 
-- [ ] 17. Create Playwright Visual Regression Tests
+- [x] 17. Create Playwright Visual Regression Tests
 
   **What to do**:
   - Create a Playwright test file that captures visual screenshots of 5 key screens in both light and dark modes (10 total):
@@ -1530,7 +1530,7 @@ Max Concurrent: 8 (Wave 2)
   - Files: `tests/`
   - Pre-commit: `php artisan test --compact`
 
-- [ ] 18. Run Full Verification (Grep, Contrast, Existing Tests)
+- [x] 18. Run Full Verification (Grep, Contrast, Existing Tests)
 
   **What to do**:
   - Run comprehensive verification to ensure theme replacement is complete:
