@@ -59,7 +59,7 @@
                     @dragover="dragOver({{ $index }}, $event)"
                     @drop="drop({{ $index }})"
                     @dragend="endDrag()"
-                    :class="dragOverIndex === {{ $index }} ? 'border-[#084CCF] bg-[rgba(8,76,207,0.05)]' : 'border-[var(--border-default)]'"
+                    :class="dragOverIndex === {{ $index }} ? 'border-[#18206F] bg-[rgba(24,32,111,0.05)]' : 'border-[var(--border-default)]'"
                     class="flex items-center gap-3 p-3 border rounded cursor-move transition-colors"
                 >
                     <div class="text-[var(--text-tertiary)]">
@@ -68,7 +68,7 @@
 
                     <div class="flex-1 min-w-0">
                         <div class="flex items-center gap-2 mb-1">
-                            <span class="text-xs text-[#084CCF] font-mono">{{ $commit['shortSha'] }}</span>
+                            <span class="text-xs text-[#18206F] font-mono">{{ $commit['shortSha'] }}</span>
                             <span class="text-sm text-[var(--text-primary)] truncate">{{ $commit['message'] }}</span>
                         </div>
                     </div>

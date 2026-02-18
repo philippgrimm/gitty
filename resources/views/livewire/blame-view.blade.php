@@ -48,7 +48,7 @@
                                     <span class="text-[var(--text-tertiary)]">{{ $line['date'] }}</span>
                                     <button 
                                         wire:click="selectCommit('{{ $line['commitSha'] }}')"
-                                        class="text-[#084CCF] hover:underline cursor-pointer"
+                                        class="text-[#18206F] hover:underline cursor-pointer"
                                         title="View commit {{ $line['shortSha'] }}"
                                     >{{ $line['shortSha'] }}</button>
                                 </div>

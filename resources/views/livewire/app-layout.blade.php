@@ -174,8 +174,8 @@
                 <div @mousedown.prevent="startDrag($event)"
                      class="w-[5px] flex-shrink-0 cursor-col-resize relative group/resize"
                 >
-                    <div class="absolute inset-y-0 left-[2px] w-px bg-[var(--border-default)] group-hover/resize:bg-[#084CCF] transition-colors"
-                         :class="isDragging && 'bg-[#084CCF]'"
+                    <div class="absolute inset-y-0 left-[2px] w-px bg-[var(--border-default)] group-hover/resize:bg-[#18206F] transition-colors"
+                         :class="isDragging && 'bg-[#18206F]'"
                     ></div>
                 </div>
 

@@ -65,14 +65,14 @@
                 $graphWidth = max(40, ($maxLane + 1) * 20);
                 
                 $laneColors = [
-                    '#1e66f5',
-                    '#8839ef',
-                    '#40a02b',
-                    '#fe640b',
-                    '#179299',
-                    '#d20f39',
-                    '#04a5e5',
-                    '#df8e1d',
+                    '#18206F',
+                    '#6B4BA0',
+                    '#267018',
+                    '#B04800',
+                    '#1A7A7A',
+                    '#C41030',
+                    '#2080B0',
+                    '#8A6410',
                 ];
             @endphp
 
@@ -92,7 +92,7 @@
                     wire:click="selectCommit('{{ $commit->sha }}')"
                     @contextmenu="showContextMenu('{{ $commit->sha }}', $event)"
                     class="flex cursor-pointer border-b border-[var(--border-subtle)] transition-colors duration-150"
-                    :class="$wire.selectedCommitSha === '{{ $commit->sha }}' ? 'bg-[rgba(8,76,207,0.15)]' : 'bg-white dark:bg-[var(--surface-0)] hover:bg-[var(--surface-0)] dark:hover:bg-[var(--surface-3)]'"
+                    :class="$wire.selectedCommitSha === '{{ $commit->sha }}' ? 'bg-[rgba(24,32,111,0.15)]' : 'bg-white dark:bg-[var(--surface-0)] hover:bg-[var(--surface-0)] dark:hover:bg-[var(--surface-3)]'"
                 >
                     {{-- Graph column --}}
                     @if($showGraph && $graphNode)
@@ -161,7 +161,7 @@
                         <div class="flex items-center justify-between gap-3 mb-1">
                             <div class="flex items-center gap-3 min-w-0">
                                 <flux:tooltip :content="$commit->sha" delay="500">
-                                    <span class="text-xs text-[#084CCF] font-mono">{{ $commit->shortSha }}</span>
+                                    <span class="text-xs text-[#18206F] font-mono">{{ $commit->shortSha }}</span>
                                 </flux:tooltip>
                                 @if(!empty($commit->author))
                                     <span class="text-sm text-[var(--text-primary)] truncate">{{ $commit->author }}</span>
@@ -189,16 +189,16 @@
                                         $displayRef = str_replace('tag: ', '', $displayRef);
                                         
                                         if ($isHead && !str_contains($ref, '->')) {
-                                            $bgColor = '#fe640b';
+                                            $bgColor = '#B04800';
                                             $textColor = '#ffffff';
                                         } elseif ($isTag) {
-                                            $bgColor = '#8839ef';
+                                            $bgColor = '#6B4BA0';
                                             $textColor = '#ffffff';
                                         } elseif ($isRemote) {
-                                            $bgColor = '#179299';
+                                            $bgColor = '#1A7A7A';
                                             $textColor = '#ffffff';
                                         } else {
-                                            $bgColor = '#40a02b';
+                                            $bgColor = '#267018';
                                             $textColor = '#ffffff';
                                         }
                                     @endphp
@@ -296,7 +296,7 @@
         
         <div class="space-y-3">
             <label class="flex items-start gap-3 p-3 rounded border cursor-pointer transition-colors"
-                :class="$wire.resetMode === 'soft' ? 'border-[#084CCF] bg-[rgba(8,76,207,0.05)]' : 'border-[var(--border-default)] hover:border-[var(--border-strong)]'">
+                :class="$wire.resetMode === 'soft' ? 'border-[#18206F] bg-[rgba(24,32,111,0.05)]' : 'border-[var(--border-default)] hover:border-[var(--border-strong)]'">
                 <input type="radio" wire:model.live="resetMode" value="soft" class="mt-0.5">
                 <div>
                     <div class="font-medium text-sm text-[var(--text-primary)]">Soft Reset</div>
@@ -305,7 +305,7 @@
             </label>
             
             <label class="flex items-start gap-3 p-3 rounded border cursor-pointer transition-colors"
-                :class="$wire.resetMode === 'mixed' ? 'border-[#084CCF] bg-[rgba(8,76,207,0.05)]' : 'border-[var(--border-default)] hover:border-[var(--border-strong)]'">
+                :class="$wire.resetMode === 'mixed' ? 'border-[#18206F] bg-[rgba(24,32,111,0.05)]' : 'border-[var(--border-default)] hover:border-[var(--border-strong)]'">
                 <input type="radio" wire:model.live="resetMode" value="mixed" class="mt-0.5">
                 <div>
                     <div class="font-medium text-sm text-[var(--text-primary)]">Mixed Reset</div>

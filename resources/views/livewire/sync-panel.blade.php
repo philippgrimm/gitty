@@ -27,7 +27,7 @@
                 @endif
             </flux:button>
             @if($ahead > 0)
-                <span style="top: 2px; right: 2px;" class="absolute w-2 h-2 rounded-full bg-[var(--color-green)] pointer-events-none ring-1 ring-[#eff1f5]"></span>
+                <span style="top: 2px; right: 2px;" class="absolute w-2 h-2 rounded-full bg-[var(--color-green)] pointer-events-none ring-1 ring-[#E8E5DF]"></span>
             @endif
         </div>
     </flux:tooltip>
@@ -49,7 +49,7 @@
             @endif
         </flux:button>
             @if($behind > 0)
-                <span style="top: 2px; right: 2px;" class="absolute w-2 h-2 rounded-full bg-[var(--color-peach)] pointer-events-none ring-1 ring-[#eff1f5]"></span>
+                <span style="top: 2px; right: 2px;" class="absolute w-2 h-2 rounded-full bg-[var(--color-peach)] pointer-events-none ring-1 ring-[#E8E5DF]"></span>
             @endif
         </div>
     </flux:tooltip>

@@ -17,7 +17,7 @@
             @apply bg-[var(--color-red)];
         }
         .status-dot-inactive {
-            @apply bg-[#6c6f85];
+            @apply bg-[#4A4E5E];
         }
     </style>
 

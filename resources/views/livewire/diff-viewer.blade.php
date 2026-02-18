@@ -28,7 +28,7 @@
                 <flux:tooltip :content="$file" class="min-w-0 flex-1">
                     <span class="text-[var(--text-primary)] text-sm truncate block">{{ $file }}</span>
                 </flux:tooltip>
-                <div class="flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-medium uppercase tracking-wider shrink-0 whitespace-nowrap" style="background-color: #fe640b15; color: #fe640b">
+                <div class="flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-medium uppercase tracking-wider shrink-0 whitespace-nowrap" style="background-color: #B0480015; color: #B04800">
                     LARGE FILE
                 </div>
             </div>
@@ -53,10 +53,10 @@
                         $isModified = $imageData['oldImage'] !== null && $imageData['newImage'] !== null;
                         
                         $badgeColor = match(true) {
-                            $isNew => '#40a02b',
-                            $isDeleted => '#d20f39',
-                            $isModified => '#df8e1d',
-                            default => '#9ca0b0',
+                            $isNew => '#267018',
+                            $isDeleted => '#C41030',
+                            $isModified => '#8A6410',
+                            default => '#686C7C',
                         };
                         $badgeText = match(true) {
                             $isNew => 'NEW',
@@ -164,7 +164,7 @@
                     <div class="bg-white rounded-lg border border-[var(--border-default)] p-4">
                         <div class="flex items-center gap-2 mb-3">
                             <div class="px-2 py-0.5 rounded text-xs font-medium uppercase tracking-wider" 
-                                 style="background-color: #40a02b15; color: #40a02b">
+                                 style="background-color: #26701815; color: #267018">
                                 NEW
                             </div>
                             <span class="text-xs text-[var(--text-secondary)] font-mono">{{ $this->formatFileSize($imageData['newSize']) }}</span>
@@ -180,7 +180,7 @@
                     <div class="bg-white rounded-lg border border-[var(--border-default)] p-4">
                         <div class="flex items-center gap-2 mb-3">
                             <div class="px-2 py-0.5 rounded text-xs font-medium uppercase tracking-wider" 
-                                 style="background-color: #d20f3915; color: #d20f39">
+                                 style="background-color: #C4103015; color: #C41030">
                                 DELETED
                             </div>
                             <span class="text-xs text-[var(--text-secondary)] font-mono">{{ $this->formatFileSize($imageData['oldSize']) }}</span>
@@ -198,7 +198,7 @@
                 <flux:tooltip :content="$file" class="min-w-0 flex-1">
                     <span class="text-[var(--text-primary)] text-sm truncate block">{{ $file }}</span>
                 </flux:tooltip>
-                <div class="flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-medium uppercase tracking-wider shrink-0 whitespace-nowrap" style="background-color: #9ca0b015; color: #9ca0b0">
+                <div class="flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-medium uppercase tracking-wider shrink-0 whitespace-nowrap" style="background-color: #686C7C15; color: #686C7C">
                     BINARY
                 </div>
             </div>
@@ -219,11 +219,11 @@
                     @if($diffData)
                         @php
                             $badgeColor = match(strtoupper($diffData['status'])) {
-                                'MODIFIED', 'M' => '#df8e1d',
-                                'ADDED', 'A' => '#40a02b',
-                                'DELETED', 'D' => '#d20f39',
-                                'RENAMED', 'R' => '#084CCF',
-                                default => '#9ca0b0',
+                                'MODIFIED', 'M' => '#8A6410',
+                                'ADDED', 'A' => '#267018',
+                                'DELETED', 'D' => '#C41030',
+                                'RENAMED', 'R' => '#18206F',
+                                default => '#686C7C',
                             };
                         @endphp
                         <div class="flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-medium uppercase tracking-wider shrink-0 whitespace-nowrap" style="background-color: {{ $badgeColor }}15; color: {{ $badgeColor }}">
@@ -388,7 +388,7 @@
                                                      data-line-type="{{ $line['type'] }}"
                                                      @click="toggle({{ $lineIndex }}, '{{ $line['type'] }}')"
                                                      @click.shift="rangeSelect({{ $lineIndex }}, '{{ $line['type'] }}')"
-                                                     :class="{ 'border-l-2 border-[#084CCF]': isSelected({{ $lineIndex }}) }"
+                                                     :class="{ 'border-l-2 border-[#18206F]': isSelected({{ $lineIndex }}) }"
                                                      style="cursor: {{ $line['type'] !== 'context' ? 'pointer' : 'default' }}">
                                                     <span class="line-number">{{ $line['oldLineNumber'] ?? '' }}</span>
                                                     <span class="line-number">{{ $line['newLineNumber'] ?? '' }}</span>

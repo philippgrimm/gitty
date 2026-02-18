@@ -36,7 +36,7 @@
                 @click="handleFileClick('{{ $node['path'] }}', {{ $staged ? 'true' : 'false' }}, $event)"
                 @contextmenu="showContextMenu('{{ $node['path'] }}', {{ $staged ? 'true' : 'false' }}, $event)"
                 class="group px-4 py-1.5 cursor-pointer flex items-center gap-3 relative"
-                :class="{ 'bg-[rgba(8,76,207,0.15)]': isSelected('{{ $node['path'] }}'), 'bg-white dark:bg-[var(--surface-0)] hover:bg-[var(--surface-0)] dark:hover:bg-[var(--surface-3)] transition-colors duration-150': !isSelected('{{ $node['path'] }}') }"
+                :class="{ 'bg-[rgba(24,32,111,0.15)]': isSelected('{{ $node['path'] }}'), 'bg-white dark:bg-[var(--surface-0)] hover:bg-[var(--surface-0)] dark:hover:bg-[var(--surface-3)] transition-colors duration-150': !isSelected('{{ $node['path'] }}') }"
                 style="padding-left: {{ ($level * 16) + 16 }}px"
             >
                 <div class="flex items-center gap-2.5 flex-1 min-w-0 pr-0 {{ $staged ? 'group-hover:pr-10' : 'group-hover:pr-16' }} transition-all duration-150">
@@ -52,7 +52,7 @@
                             default => ['label' => '?', 'color' => 'zinc', 'icon' => '?'],
                         };
                     @endphp
-                    <div class="w-2 h-2 rounded-full shrink-0 {{ match($statusConfig['color']) { 'yellow' => 'bg-[var(--color-yellow)]', 'green' => 'bg-[var(--color-green)]', 'red' => 'bg-[var(--color-red)]', 'blue' => 'bg-[#084CCF]', 'orange' => 'bg-[var(--color-peach)]', default => 'bg-[#9ca0b0]' } }}"></div>
+                    <div class="w-2 h-2 rounded-full shrink-0 {{ match($statusConfig['color']) { 'yellow' => 'bg-[var(--color-yellow)]', 'green' => 'bg-[var(--color-green)]', 'red' => 'bg-[var(--color-red)]', 'blue' => 'bg-[#18206F]', 'orange' => 'bg-[var(--color-peach)]', default => 'bg-[#686C7C]' } }}"></div>
                     <flux:tooltip :content="$node['path']" delay="1000" class="min-w-0 flex-1">
                         <div class="text-sm truncate text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors duration-150">
                             {{ $node['name'] }}

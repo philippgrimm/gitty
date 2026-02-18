@@ -18,10 +18,10 @@
         x-transition:leave-end="opacity-0 translate-x-4 scale-95"
         class="pointer-events-auto max-w-md w-full bg-white dark:bg-[var(--surface-0)] border rounded-lg shadow-lg overflow-hidden border-l-4"
         :class="{
-            'border-[#d20f39]/30 border-l-[#d20f39]': '{{ $type }}' === 'error',
-            'border-[#fe640b]/30 border-l-[#fe640b]': '{{ $type }}' === 'warning',
-            'border-[#084CCF]/30 border-l-[#084CCF]': '{{ $type }}' === 'info',
-            'border-[#40a02b]/30 border-l-[#40a02b]': '{{ $type }}' === 'success'
+            'border-[#C41030]/30 border-l-[#C41030]': '{{ $type }}' === 'error',
+            'border-[#B04800]/30 border-l-[#B04800]': '{{ $type }}' === 'warning',
+            'border-[#18206F]/30 border-l-[#18206F]': '{{ $type }}' === 'info',
+            'border-[#267018]/30 border-l-[#267018]': '{{ $type }}' === 'success'
         }"
         style="display: none;"
     >
@@ -46,8 +46,8 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
                         </svg>
                     </div>
-                @else
-                    <div class="w-5 h-5 rounded-full bg-[#084CCF] flex items-center justify-center">
+                 @else
+                    <div class="w-5 h-5 rounded-full bg-[#18206F] flex items-center justify-center">
                         <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
@@ -61,7 +61,7 @@
                      :class="{
                          'text-[var(--color-red)]': '{{ $type }}' === 'error',
                          'text-[var(--color-peach)]': '{{ $type }}' === 'warning',
-                         'text-[#084CCF]': '{{ $type }}' === 'info',
+                         'text-[#18206F]': '{{ $type }}' === 'info',
                          'text-[var(--color-green)]': '{{ $type }}' === 'success'
                      }"
                 >

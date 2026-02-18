@@ -92,7 +92,7 @@
                 variant="ghost" 
                 size="xs"
                 square
-                class="text-[#9ca0b0] hover:text-[#6c6f85]"
+                class="text-[#686C7C] hover:text-[#4A4E5E]"
             >
                 @if($treeView)
                     <x-phosphor-list class="w-4 h-4" />
@@ -167,7 +167,7 @@
                         <x-file-tree :tree="$stagedTree" :staged="true" />
                     @else
                         <div>
-                            @foreach($stagedFiles as $file)
+                                @foreach($stagedFiles as $file)
                                 <div 
                                     wire:key="staged-{{ $file['path'] }}"
                                     data-file-path="{{ $file['path'] }}"
@@ -188,7 +188,7 @@
                                                 default => ['label' => '?', 'color' => 'zinc', 'icon' => '?'],
                                             };
                                         @endphp
-                                        <div class="w-2 h-2 rounded-full shrink-0 {{ match($statusConfig['color']) { 'yellow' => 'bg-[var(--color-yellow)]', 'green' => 'bg-[var(--color-green)]', 'red' => 'bg-[var(--color-red)]', 'blue' => 'bg-[#084CCF]', 'orange' => 'bg-[var(--color-peach)]', default => 'bg-[var(--text-tertiary)]' } }}"></div>
+                                        <div class="w-2 h-2 rounded-full shrink-0 {{ match($statusConfig['color']) { 'yellow' => 'bg-[var(--color-yellow)]', 'green' => 'bg-[var(--color-green)]', 'red' => 'bg-[var(--color-red)]', 'blue' => 'bg-[#18206F]', 'orange' => 'bg-[var(--color-peach)]', default => 'bg-[var(--text-tertiary)]' } }}"></div>
                                         <flux:tooltip :content="$file['path']" delay="1000" class="min-w-0 flex-1">
                                             <div class="text-sm truncate text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors duration-150">
                                                 {{ basename($file['path']) }}
@@ -251,7 +251,7 @@
                                                 default => ['label' => '?', 'color' => 'zinc', 'icon' => '?'],
                                             };
                                         @endphp
-                                        <div class="w-2 h-2 rounded-full shrink-0 {{ match($statusConfig['color']) { 'yellow' => 'bg-[var(--color-yellow)]', 'green' => 'bg-[var(--color-green)]', 'red' => 'bg-[var(--color-red)]', 'blue' => 'bg-[#084CCF]', 'orange' => 'bg-[var(--color-peach)]', default => 'bg-[var(--text-tertiary)]' } }}"></div>
+                                        <div class="w-2 h-2 rounded-full shrink-0 {{ match($statusConfig['color']) { 'yellow' => 'bg-[var(--color-yellow)]', 'green' => 'bg-[var(--color-green)]', 'red' => 'bg-[var(--color-red)]', 'blue' => 'bg-[#18206F]', 'orange' => 'bg-[var(--color-peach)]', default => 'bg-[var(--text-tertiary)]' } }}"></div>
                                         <flux:tooltip :content="$file['path']" delay="1000" class="min-w-0 flex-1">
                                             <div class="text-sm truncate text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors duration-150">
                                                 {{ basename($file['path']) }}

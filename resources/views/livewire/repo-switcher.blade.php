@@ -1,6 +1,6 @@
 <div class="flex items-center gap-3 font-mono">
     @if($error)
-        <div class="absolute top-16 left-1/2 transform -translate-x-1/2 z-50 bg-[var(--color-red)]/10 border border-[#d20f39]/30 text-[var(--color-red)] px-6 py-3 text-xs uppercase tracking-wider font-semibold shadow-xl">
+        <div class="absolute top-16 left-1/2 transform -translate-x-1/2 z-50 bg-[var(--color-red)]/10 border border-[#C41030]/30 text-[var(--color-red)] px-6 py-3 text-xs uppercase tracking-wider font-semibold shadow-xl">
             {{ $error }}
         </div>
     @endif

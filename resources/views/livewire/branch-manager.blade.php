@@ -3,7 +3,7 @@
     class="flex items-center gap-2 font-mono"
 >
     @if($isDetachedHead)
-        <div class="flex items-center gap-2 px-3 py-1.5 bg-[var(--color-peach)]/10 border border-[#fe640b]/30 rounded text-[var(--color-peach)]">
+        <div class="flex items-center gap-2 px-3 py-1.5 bg-[var(--color-peach)]/10 border border-[#B04800]/30 rounded text-[var(--color-peach)]">
             <span class="text-xs uppercase tracking-wider font-semibold">HEAD detached at {{ substr($currentBranch, 0, 7) }}</span>
             <flux:button 
                 @click="$dispatch('open-command-palette-create-branch')"
