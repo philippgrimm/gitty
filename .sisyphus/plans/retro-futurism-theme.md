@@ -1609,19 +1609,19 @@ Max Concurrent: 8 (Wave 2)
 
 > 4 review agents run in PARALLEL. ALL must APPROVE. Rejection → fix → re-run.
 
-- [ ] F1. **Plan Compliance Audit** — `oracle`
+- [x] F1. **Plan Compliance Audit** — `oracle`
   Read the plan end-to-end. For each "Must Have": verify implementation exists (read file, grep for colors, run command). For each "Must NOT Have": search codebase for forbidden patterns — reject with file:line if found. Check evidence files exist in .sisyphus/evidence/. Compare deliverables against plan.
   Output: `Must Have [N/N] | Must NOT Have [N/N] | Tasks [N/N] | VERDICT: APPROVE/REJECT`
 
-- [ ] F2. **Code Quality Review** — `unspecified-high`
+- [x] F2. **Code Quality Review** — `unspecified-high`
   Run `php artisan test --compact` + `vendor/bin/pint --dirty --format agent`. Review all changed files for: hardcoded old Catppuccin colors, broken CSS variables, missing dark mode overrides, orphaned animation classes, console.log in prod, commented-out code. Check that no `backdrop-filter` or complex SVG filters were introduced.
   Output: `Tests [PASS/FAIL] | Pint [PASS/FAIL] | Old Colors [CLEAN/N found] | Dark Mode [COMPLETE/N missing] | VERDICT`
 
-- [ ] F3. **Real Manual QA** — `unspecified-high` (+ `playwright` skill)
+- [x] F3. **Real Manual QA** — `unspecified-high` (+ `playwright` skill)
   Start from clean state. Open gitty in both light and dark modes. Navigate every screen (staging, diff viewer, history, search, blame, settings, command palette, branch manager). Verify: no old colors visible, neumorphic buttons depress correctly, scanlines visible in dark mode, glow on active elements, boot sequence plays, Space Mono on headings. Capture screenshots for every screen in both modes. Save to `.sisyphus/evidence/final-qa/`.
   Output: `Screens [N/N pass] | Light Mode [PASS/FAIL] | Dark Mode [PASS/FAIL] | Effects [N/N working] | VERDICT`
 
-- [ ] F4. **Scope Fidelity Check** — `deep`
+- [x] F4. **Scope Fidelity Check** — `deep`
   For each task: read "What to do", read actual diff (git log/diff). Verify 1:1 — everything in spec was built (no missing), nothing beyond spec was built (no creep). Check "Must NOT do" compliance: no chromatic aberration, no vignette, no haptics, no multi-theme UI, no component logic changes. Detect cross-task contamination. Flag unaccounted changes.
   Output: `Tasks [N/N compliant] | Contamination [CLEAN/N issues] | Unaccounted [CLEAN/N files] | VERDICT`
 
