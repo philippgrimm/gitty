@@ -158,7 +158,7 @@
                 <div class="border-b border-[var(--border-default)]">
                     <div class="sticky top-0 z-10 bg-[var(--surface-1)] border-b border-[var(--border-default)] px-4 py-2 flex items-center justify-between">
                         <div class="flex items-center gap-3">
-                            <div class="text-xs uppercase tracking-wider font-medium text-[var(--text-tertiary)]">Staged</div>
+                            <div class="text-xs uppercase tracking-wider font-medium text-[var(--text-tertiary)] font-display phosphor-text-glow">Staged</div>
                             <span class="text-xs text-[var(--text-tertiary)] font-mono">{{ $stagedFiles->count() }}</span>
                         </div>
                     </div>
@@ -220,7 +220,7 @@
                 <div>
                     <div class="sticky top-0 z-10 bg-[var(--surface-1)] border-b border-[var(--border-default)] px-4 py-2 flex items-center justify-between">
                         <div class="flex items-center gap-3">
-                            <div class="text-xs uppercase tracking-wider font-medium text-[var(--text-tertiary)]">Changes</div>
+                            <div class="text-xs uppercase tracking-wider font-medium text-[var(--text-tertiary)] font-display phosphor-text-glow">Changes</div>
                             <span class="text-xs text-[var(--text-tertiary)] font-mono">{{ $unstagedFiles->count() + $untrackedFiles->count() }}</span>
                         </div>
                     </div>

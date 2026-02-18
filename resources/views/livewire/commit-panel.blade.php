@@ -4,7 +4,7 @@
     x-on:committed.window="commitFlash = true; setTimeout(() => commitFlash = false, 200);"
     x-on:prefill-updated.window="$nextTick(() => { const ta = $el.querySelector('textarea'); if (ta) { ta.setSelectionRange(ta.value.length, ta.value.length); ta.focus(); } });"
     x-on:focus-commit-message.window="$nextTick(() => { const ta = $el.querySelector('textarea'); if (ta) { ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length); } });"
-    class="flex flex-col bg-[var(--surface-0)] text-[var(--text-primary)] font-mono border-t border-[var(--border-default)] p-3 gap-2"
+    class="flex flex-col bg-[var(--surface-0)] text-[var(--text-primary)] tracking-wide border-t border-[var(--border-default)] p-3 gap-2"
 >
     @if($error)
         <div class="bg-[var(--color-red)]/10 border border-[#C41030]/30 text-[var(--color-red)] px-3 py-2 text-xs font-mono uppercase tracking-wider font-semibold">
@@ -61,7 +61,7 @@
             placeholder="Commit message"
             rows="auto"
             resize="vertical"
-            class="bg-[var(--surface-1)] border-[var(--border-default)] text-[var(--text-primary)] placeholder-[#686C7C] font-mono text-sm focus:outline-none focus:ring-2 focus:ring-[#18206F]/30 focus:border-[#18206F]"
+            class="bg-[var(--surface-1)] border-[var(--border-default)] text-[var(--text-primary)] placeholder-[#686C7C] font-mono text-sm focus:outline-none focus:ring-2 focus:ring-[#18206F]/30 focus:border-[#18206F] input-recessed phosphor-glow"
         />
         <div class="absolute bottom-2 right-2 text-[10px] text-[var(--text-tertiary)] font-mono pointer-events-none select-none" x-text="charCount"></div>
     </div>
@@ -78,7 +78,7 @@
             variant="primary"
             size="sm"
             :disabled="$stagedCount === 0 || empty(trim($message))"
-            class="flex-1 font-semibold disabled:!bg-[var(--surface-3)] disabled:!text-[var(--text-tertiary)] disabled:!border-[var(--border-default)] disabled:!shadow-none"
+            class="flex-1 font-semibold disabled:!bg-[var(--surface-3)] disabled:!text-[var(--text-tertiary)] disabled:!border-[var(--border-default)] disabled:!shadow-none btn-neu"
             x-bind:class="{ 
                 'animate-commit-flash': commitFlash
             }"

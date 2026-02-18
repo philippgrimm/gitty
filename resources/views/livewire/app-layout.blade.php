@@ -169,7 +169,7 @@
                  @livewire('conflict-resolver', ['repoPath' => $repoPath], key('conflict-resolver-' . $repoPath))
                  @livewire('rebase-panel', ['repoPath' => $repoPath], key('rebase-panel-' . $repoPath))
                  {{-- Staging + Commit Panel --}}
-                <div class="flex flex-col overflow-hidden"
+                <div class="flex flex-col overflow-hidden rounded-3xl neu-container"
                      :style="'width: ' + effectiveWidth + 'px'"
                 >
                     <div class="flex-1 overflow-hidden">
@@ -190,7 +190,7 @@
                 </div>
 
                 {{-- Right Panel: Diff Viewer or History Panel --}}
-                <div class="flex-1 overflow-hidden relative">
+                <div class="flex-1 overflow-hidden relative rounded-3xl neu-container">
                     <div x-show="activeRightPanel === 'diff'" class="h-full">
                         @livewire('diff-viewer', ['repoPath' => $repoPath], key('diff-viewer-' . $repoPath))
                     </div>

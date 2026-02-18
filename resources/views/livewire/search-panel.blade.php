@@ -69,7 +69,7 @@
                         type="text"
                         wire:model.live.debounce.300ms="query"
                         placeholder="Search commits, content, or files..."
-                        class="w-full bg-transparent border-none outline-none text-sm text-[#2C3040] placeholder-[#686C7C] font-mono p-0 focus:ring-0"
+                        class="w-full bg-transparent border-none outline-none text-sm text-[#2C3040] placeholder-[#686C7C] font-display tracking-wide p-0 focus:ring-0 phosphor-glow"
                         x-ref="searchInput"
                         x-effect="if($wire.isOpen) $nextTick(() => $refs.searchInput?.focus())"
                     />
@@ -80,19 +80,19 @@
             <div class="px-4 py-2 border-b border-[#D4CFC6] flex gap-2">
                 <button
                     wire:click="setScope('commits')"
-                    class="px-3 py-1 text-xs font-medium rounded transition-colors {{ $scope === 'commits' ? 'bg-[#18206F] text-white' : 'text-[#4A4E5E] hover:bg-[#E8E5DF]' }}"
+                    class="px-3 py-1 text-xs font-medium font-display uppercase tracking-wider rounded transition-colors {{ $scope === 'commits' ? 'bg-[#18206F] text-white' : 'text-[#4A4E5E] hover:bg-[#E8E5DF]' }}"
                 >
                     Commits
                 </button>
                 <button
                     wire:click="setScope('content')"
-                    class="px-3 py-1 text-xs font-medium rounded transition-colors {{ $scope === 'content' ? 'bg-[#18206F] text-white' : 'text-[#4A4E5E] hover:bg-[#E8E5DF]' }}"
+                    class="px-3 py-1 text-xs font-medium font-display uppercase tracking-wider rounded transition-colors {{ $scope === 'content' ? 'bg-[#18206F] text-white' : 'text-[#4A4E5E] hover:bg-[#E8E5DF]' }}"
                 >
                     Content
                 </button>
                 <button
                     wire:click="setScope('files')"
-                    class="px-3 py-1 text-xs font-medium rounded transition-colors {{ $scope === 'files' ? 'bg-[#18206F] text-white' : 'text-[#4A4E5E] hover:bg-[#E8E5DF]' }}"
+                    class="px-3 py-1 text-xs font-medium font-display uppercase tracking-wider rounded transition-colors {{ $scope === 'files' ? 'bg-[#18206F] text-white' : 'text-[#4A4E5E] hover:bg-[#E8E5DF]' }}"
                 >
                     Files
                 </button>

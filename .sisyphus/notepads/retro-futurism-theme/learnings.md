@@ -382,3 +382,166 @@ Lines 313-433: Highlight.js syntax theme
 - Reduced motion media query wraps animated effects (WCAG compliance)
 - Neumorphic inset shadows use opposite light/dark directions for 3D effect
 
+
+## Task 15: Typography Hierarchy & Border-Radius Bezel (Completed)
+
+**Date**: 2026-02-18
+
+### Typography Changes Applied
+
+1. **Section Headers with Space Mono** (`font-display`)
+   - `staging-panel.blade.php`: "Staged" and "Changes" section headers (lines 161, 223)
+   - `history-panel.blade.php`: "History" panel header (line 38)
+   - `diff-viewer.blade.php`: File path headers in all views (lines 29, 48, 199, 217)
+   - `search-panel.blade.php`: Search input placeholder + scope tabs (lines 72, 83-95)
+   - `command-palette.blade.php`: "Create Branch" header + search input (lines 71, 104)
+
+2. **Tracking Adjustments**
+   - Section headers: Already had `uppercase tracking-wider` (preserved)
+   - Diff viewer headers: Added `tracking-wide` for terminal-like spacing
+   - Commit panel: Added `tracking-wide` to container for body text spacing (line 7)
+   - Search/command inputs: Added `tracking-wide` for terminal aesthetic
+
+3. **Font Preservation**
+   - Code/diff content still uses `font-mono` (JetBrains Mono) ✓
+   - File list items still use default font stack ✓
+   - Only headers/inputs use `font-display` (Space Mono)
+
+### Border-Radius Bezel Applied
+
+1. **Main Panel Containers** (`rounded-3xl` = 24px)
+   - `app-layout.blade.php` line 172: Staging + Commit panel wrapper
+   - `app-layout.blade.php` line 193: Right panel wrapper (Diff/History/Blame)
+   - Both containers also have `overflow-hidden` to prevent content overflow
+
+2. **NOT Rounded** (as per spec)
+   - Outer app container (`h-screen w-screen`) — it's the window itself
+   - Header bar — stays rectangular
+   - Individual file list items — kept edge-to-edge per AGENTS.md tree view rules
+   - Buttons/inputs — kept existing radius (already have appropriate sizing)
+
+### Key Patterns
+
+- **Typography Hierarchy**: Space Mono (`font-display`) for section headers/inputs, JetBrains Mono (`font-mono`) for code/diffs
+- **Terminal Aesthetic**: `tracking-wide` on body content, `uppercase tracking-wider` on headers
+- **Bezel Style**: 24px border-radius on main content panels for retro-futurism aesthetic
+- **Overflow Safety**: `overflow-hidden` paired with `rounded-3xl` to prevent content clipping artifacts
+
+### Verification
+
+```bash
+✅ grep "font-display" → 12 matches (section headers, search inputs, scope tabs)
+✅ grep "rounded-3xl" → 2 matches (staging panel, right panel wrappers)
+✅ grep "tracking-wide" → 6 matches (diff headers, commit panel, search/command inputs)
+✅ npm run build → succeeded (144.72 kB CSS bundle)
+✅ Code/diff content still uses font-mono (JetBrains Mono)
+✅ File list items remain edge-to-edge (no border-radius added)
+```
+
+### LSP Warnings (Expected)
+
+- LSP CSS parser errors on Blade files (lines with `:class`, Alpine.js directives, PHP syntax)
+- These are false positives — CSS language server doesn't understand Blade syntax
+- All errors are cosmetic and don't affect functionality
+- Build succeeds with no actual errors
+
+### Build Output
+
+```
+vite v7.3.1 building client environment for production...
+✓ 76 modules transformed.
+public/build/assets/app-BEc69_7C.css  144.72 kB │ gzip: 23.40 kB
+public/build/assets/app-8tgE_v2U.js   151.42 kB │ gzip: 49.59 kB
+✓ built in 1.34s
+```
+
+
+## Task 16: Apply CRT Effect CSS Classes to Templates (Completed)
+
+**Date**: 2026-02-18
+
+### Changes Applied
+
+Applied CSS classes created in Tasks 10-11 to Blade component templates. All classes are definition-only effects that activate based on context (dark mode, focus state, etc.).
+
+#### 1. CRT Scanlines (`crt-scanlines relative`)
+- `diff-viewer.blade.php` line 1: Root container (diff viewer main area)
+- `history-panel.blade.php` line 20: Root container (history list main area)
+- Both use `relative` positioning for `::after` pseudo-element overlay
+- Dark mode only (`.dark .crt-scanlines::after` in CSS)
+
+#### 2. Phosphor Text Glow (`phosphor-text-glow`)
+- `staging-panel.blade.php` line 161: "Staged" section header
+- `staging-panel.blade.php` line 223: "Changes" section header
+- `history-panel.blade.php` line 38: "History" panel header
+- Dark mode only (`.dark .phosphor-text-glow` in CSS)
+- Creates cyan text-shadow glow on section headers
+
+#### 3. Phosphor Glow (`phosphor-glow` — box-shadow on focus)
+- `commit-panel.blade.php` line 64: Commit message textarea
+- `search-panel.blade.php` line 72: Search input field
+- `command-palette.blade.php` line 82: Branch name input (create branch mode)
+- `command-palette.blade.php` line 104: Command search input
+- Dark mode only (`.dark .phosphor-glow` in CSS)
+- Creates cyan box-shadow glow on focused inputs
+
+#### 4. Input Recessed (`input-recessed`)
+- `commit-panel.blade.php` line 64: Commit message textarea (combined with `phosphor-glow`)
+- `command-palette.blade.php` line 82: Branch name input (combined with `phosphor-glow`)
+- Works in both light and dark modes (neumorphic inset shadow)
+- Creates pressed/recessed button effect
+
+#### 5. Neumorphic Container (`neu-container`)
+- `app-layout.blade.php` line 172: Staging + Commit panel wrapper
+- `app-layout.blade.php` line 193: Right panel wrapper (Diff/History/Blame)
+- Both modes (light: soft shadows, dark: stronger shadows)
+- 24px border-radius (matches bezel aesthetic from Task 15)
+
+#### 6. Neumorphic Button (`btn-neu`)
+- `commit-panel.blade.php` line 81: Primary commit button
+- Both modes (light: raised effect, dark: glowing effect)
+- `:active` state creates pressed/depress effect
+
+### Verification
+
+```bash
+✅ crt-scanlines → 2 matches (diff-viewer, history-panel)
+✅ phosphor-text-glow → 3 matches (Staged, Changes, History headers)
+✅ phosphor-glow → 4 matches (commit textarea, search inputs, command inputs)
+✅ input-recessed → 2 matches (commit textarea, branch name input)
+✅ neu-container → 2 matches (staging panel wrapper, right panel wrapper)
+✅ btn-neu → 1 match (commit button)
+✅ npm run build → succeeded (144.72 kB CSS bundle)
+```
+
+### Key Patterns
+
+- **Dark Mode Scoping**: `phosphor-glow`, `phosphor-text-glow`, `crt-scanlines` are defined with `.dark` prefix in CSS, so they only activate in dark mode
+- **Class Combination**: Input fields use BOTH `input-recessed` (neumorphic inset) AND `phosphor-glow` (focus glow)
+- **Relative Positioning**: `crt-scanlines` requires `relative` class for `::after` pseudo-element to work (inset positioning)
+- **Neumorphic Hierarchy**: Containers use `neu-container` (raised), buttons use `btn-neu` (raised with active state)
+
+### LSP Warnings (Expected)
+
+- LSP CSS parser errors on Blade files (lines with `:class`, Alpine.js directives, PHP syntax)
+- These are false positives — CSS language server doesn't understand Blade syntax
+- All errors are cosmetic and don't affect functionality
+- Build succeeds with no actual errors
+
+### Build Output
+
+```
+vite v7.3.1 building client environment for production...
+✓ 76 modules transformed.
+public/build/assets/app-BEc69_7C.css  144.72 kB │ gzip: 23.40 kB
+public/build/assets/app-8tgE_v2U.js   151.42 kB │ gzip: 49.59 kB
+✓ built in 1.23s
+```
+
+### Integration with Previous Tasks
+
+- **Task 10-11**: Defined CSS classes (scanlines, glows, neumorphic effects)
+- **Task 15**: Applied Space Mono font (`font-display`) and 24px border-radius (`rounded-3xl`)
+- **Task 16**: Applied visual effects to actual components (this task)
+
+All three tasks together create the complete retro-futurism aesthetic: typography hierarchy, bezel-style containers, CRT scanlines, and phosphor glow effects.

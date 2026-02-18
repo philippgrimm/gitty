@@ -1,4 +1,4 @@
-<div class="h-full flex flex-col bg-white dark:bg-[var(--surface-0)] font-mono"
+<div class="h-full flex flex-col bg-white dark:bg-[var(--surface-0)] font-mono crt-scanlines relative"
      x-data="{
          init() {
              const saved = localStorage.getItem('gitty-diff-view-mode');
@@ -26,7 +26,7 @@
         <div class="border-b border-[var(--border-default)] px-4 h-10 flex items-center bg-white dark:bg-[var(--surface-0)]">
             <div class="flex items-center gap-3 flex-1 overflow-hidden">
                 <flux:tooltip :content="$file" class="min-w-0 flex-1">
-                    <span class="text-[var(--text-primary)] text-sm truncate block">{{ $file }}</span>
+                    <span class="text-[var(--text-primary)] text-sm truncate block font-display tracking-wide">{{ $file }}</span>
                 </flux:tooltip>
                 <div class="flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-medium uppercase tracking-wider shrink-0 whitespace-nowrap" style="background-color: #B0480015; color: #B04800">
                     LARGE FILE
@@ -45,7 +45,7 @@
             <div class="flex items-center justify-between gap-3 flex-1 overflow-hidden">
                 <div class="flex items-center gap-3 min-w-0 flex-1">
                     <flux:tooltip :content="$file" class="min-w-0 flex-1">
-                        <span class="text-[var(--text-primary)] text-sm truncate block">{{ $file }}</span>
+                        <span class="text-[var(--text-primary)] text-sm truncate block font-display tracking-wide">{{ $file }}</span>
                     </flux:tooltip>
                     @php
                         $isNew = $imageData['oldImage'] === null;
@@ -196,7 +196,7 @@
         <div class="border-b border-[var(--border-default)] px-4 h-10 flex items-center bg-white dark:bg-[var(--surface-0)]">
             <div class="flex items-center gap-3 flex-1 overflow-hidden">
                 <flux:tooltip :content="$file" class="min-w-0 flex-1">
-                    <span class="text-[var(--text-primary)] text-sm truncate block">{{ $file }}</span>
+                    <span class="text-[var(--text-primary)] text-sm truncate block font-display tracking-wide">{{ $file }}</span>
                 </flux:tooltip>
                 <div class="flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-medium uppercase tracking-wider shrink-0 whitespace-nowrap" style="background-color: #686C7C15; color: #686C7C">
                     BINARY

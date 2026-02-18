@@ -17,7 +17,7 @@
             this.hideContextMenu();
         }
     }"
-    class="h-full flex flex-col bg-white dark:bg-[var(--surface-0)] text-[var(--text-primary)] font-mono"
+    class="h-full flex flex-col bg-white dark:bg-[var(--surface-0)] text-[var(--text-primary)] font-mono crt-scanlines relative"
 >
     @if($commits->isEmpty())
         <div class="flex-1 flex items-center justify-center animate-fade-in">
@@ -35,7 +35,7 @@
         <div class="sticky top-0 z-10 bg-[var(--surface-1)] border-b border-[var(--border-default)] px-4 py-2 flex items-center justify-between">
             <div class="flex items-center gap-3">
                 <x-phosphor-clock-counter-clockwise-light class="w-4 h-4 text-[var(--text-tertiary)]" />
-                <div class="text-xs uppercase tracking-wider font-medium text-[var(--text-tertiary)]">History</div>
+                            <div class="text-xs uppercase tracking-wider font-medium text-[var(--text-tertiary)] font-display phosphor-text-glow">History</div>
                 <span class="text-xs text-[var(--text-tertiary)] font-mono">{{ $commits->count() }}</span>
             </div>
             <flux:tooltip content="Close History (⌘H)">

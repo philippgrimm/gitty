@@ -68,7 +68,7 @@
                         <button wire:click="cancelInput" class="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors">
                             <x-phosphor-arrow-left class="w-4 h-4" />
                         </button>
-                        <span class="text-sm text-[var(--text-primary)] font-medium">Create Branch</span>
+                        <span class="text-sm text-[var(--text-primary)] font-medium font-display uppercase tracking-wider">Create Branch</span>
                     </div>
                 </div>
 
@@ -79,7 +79,7 @@
                         wire:model="inputValue"
                         wire:keydown.enter.prevent="submitInput"
                         placeholder="Branch name (e.g., feature/my-feature)"
-                        class="w-full bg-transparent border border-[var(--border-default)] rounded-lg outline-none text-sm text-[var(--text-primary)] placeholder-[#686C7C] font-mono px-3 py-2 focus:ring-1 focus:ring-[#18206F] focus:border-[#18206F]"
+                        class="w-full bg-transparent border border-[var(--border-default)] rounded-lg outline-none text-sm text-[var(--text-primary)] placeholder-[#686C7C] font-mono px-3 py-2 focus:ring-1 focus:ring-[#18206F] focus:border-[#18206F] input-recessed phosphor-glow"
                         x-ref="inputField"
                         x-effect="if($wire.mode === 'input') $nextTick(() => { $refs.inputField?.focus(); const len = $refs.inputField?.value?.length || 0; $refs.inputField?.setSelectionRange(len, len); })"
                     />
@@ -101,7 +101,7 @@
                             type="text"
                             wire:model.live.debounce.150ms="query"
                             placeholder="Type a command..."
-                            class="w-full bg-transparent border-none outline-none text-sm text-[var(--text-primary)] placeholder-[#686C7C] font-mono p-0 focus:ring-0"
+                            class="w-full bg-transparent border-none outline-none text-sm text-[var(--text-primary)] placeholder-[#686C7C] font-display tracking-wide p-0 focus:ring-0 phosphor-glow"
                             x-ref="searchInput"
                             x-effect="if($wire.isOpen) $nextTick(() => $refs.searchInput?.focus())"
                         />

@@ -1275,7 +1275,7 @@ Max Concurrent: 8 (Wave 2)
   - Files: `resources/css/app.css`
   - Pre-commit: `npm run build`
 
-- [ ] 15. Apply Typography Hierarchy + Border-Radius Bezel
+- [x] 15. Apply Typography Hierarchy + Border-Radius Bezel
 
   **What to do**:
   - **Typography changes across templates**:
@@ -1360,7 +1360,7 @@ Max Concurrent: 8 (Wave 2)
   - Files: Multiple blade templates
   - Pre-commit: `vendor/bin/pint --dirty --format agent`
 
-- [ ] 16. Apply CRT Effects to Components (Glow, Scanlines, Recessed Inputs)
+- [x] 16. Apply CRT Effects to Components (Glow, Scanlines, Recessed Inputs)
 
   **What to do**:
   - Apply the CSS classes created in Tasks 10 and 11 to actual components:
