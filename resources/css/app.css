@@ -11,50 +11,51 @@
     /* Typography */
     --font-sans: 'Instrument Sans', 'Inter', system-ui, ui-sans-serif, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
     --font-mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', ui-monospace, monospace;
+    --font-display: 'Space Mono', 'JetBrains Mono', ui-monospace, monospace;
     
-    /* Flux Accent Colors - Zed Blue */
-    --color-accent: #084CCF;
-    --color-accent-content: #084CCF;
+    /* Flux Accent Colors - Retro Deep Cobalt */
+    --color-accent: #18206F;
+    --color-accent-content: #18206F;
     --color-accent-foreground: #ffffff;
 }
 
 /* Design Tokens - CSS Custom Properties */
 :root {
-    /* Catppuccin Latte - Background Colors */
-    --surface-0: #eff1f5;        /* Base - main background */
-    --surface-1: #e6e9ef;        /* Mantle - elevated panels, headers */
-    --surface-2: #dce0e8;        /* Crust - hover states, subtle elevation */
-    --surface-3: #ccd0da;        /* Surface 0 - highest elevation, active states */
+    /* Retro Light Mode - Background Colors */
+    --surface-0: #E8E5DF;        /* Base - main background */
+    --surface-1: #DED9D0;        /* Mantle - elevated panels, headers */
+    --surface-2: #D4CFC6;        /* Crust - subtle elevation */
+    --surface-3: #C8C3B8;        /* Highest elevation, active states */
     
-    /* Catppuccin Latte - Border Colors */
-    --border-default: #ccd0da;   /* Surface 0 */
-    --border-subtle: #dce0e8;    /* Crust */
-    --border-strong: #bcc0cc;    /* Surface 1 */
+    /* Retro Light Mode - Border Colors */
+    --border-default: #C8C3B8;   /* Warm brown-grey */
+    --border-subtle: #D8D3C8;    /* Warm brown-grey */
+    --border-strong: #B8B3A8;    /* Warm brown-grey */
     
-    /* Catppuccin Latte - Text Colors */
-    --text-primary: #4c4f69;     /* Text */
-    --text-secondary: #6c6f85;   /* Subtext 0 */
-    --text-tertiary: #8c8fa1;    /* Overlay 1 */
+    /* Retro Light Mode - Text Colors */
+    --text-primary: #2C3040;     /* Dark grey-blue */
+    --text-secondary: #4A4E5E;   /* Secondary */
+    --text-tertiary: #686C7C;    /* Tertiary, placeholders */
     
-    /* Accent Colors - Zed's Brand Blue */
-    --accent: #084CCF;           /* Zed blue - primary accent */
-    --accent-muted: rgba(8, 76, 207, 0.15);  /* Zed blue/15 */
-    --accent-text: #084CCF;      /* Zed blue */
+    /* Accent Colors - Deep Cobalt */
+    --accent: #18206F;           /* Deep cobalt */
+    --accent-muted: rgba(24, 32, 111, 0.15);
+    --accent-text: #18206F;
     
-    /* Catppuccin Latte - Semantic Colors */
-    --color-green: #40a02b;      /* Green - added/staged */
-    --color-red: #d20f39;        /* Red - deleted/errors */
-    --color-yellow: #df8e1d;     /* Yellow - modified/warnings */
-    --color-peach: #fe640b;      /* Peach - untracked */
-    --color-blue: #084CCF;       /* Zed blue - primary */
-    --color-mauve: #8839ef;      /* Mauve - special */
-    --color-teal: #179299;       /* Teal */
-    --color-sky: #04a5e5;        /* Sky */
-    --color-lavender: #7287fd;   /* Lavender */
+    /* Retro Semantic Colors */
+    --color-green: #267018;
+    --color-red: #C41030;
+    --color-yellow: #8A6410;
+    --color-peach: #B04800;
+    --color-blue: #18206F;
+    --color-mauve: #6B4BA0;
+    --color-teal: #1A7A7A;
+    --color-sky: #2080B0;
+    --color-lavender: #5060C0;
     
-    /* Shadows - softer for light theme */
-    --shadow-sm: 0 1px 2px rgba(76, 79, 105, 0.06);
-    --shadow-md: 0 4px 12px rgba(76, 79, 105, 0.08);
+    /* Shadows - warm tones */
+    --shadow-sm: 0 1px 2px rgba(44, 48, 64, 0.08);
+    --shadow-md: 0 4px 12px rgba(44, 48, 64, 0.10);
     --shadow-glow: none;
     
     /* Transitions */
@@ -62,50 +63,50 @@
     --transition-normal: 150ms ease;
     --transition-slow: 250ms ease;
     
-    /* Border Radius */
-    --radius-sm: 4px;
-    --radius-md: 6px;
-    --radius-lg: 8px;
+    /* Border Radius - bezel-style */
+    --radius-sm: 6px;
+    --radius-md: 12px;
+    --radius-lg: 24px;
 }
 
-/* Catppuccin Mocha - Dark Theme */
+/* Retro Dark Mode - Power On */
 .dark {
-    /* Background Colors */
-    --surface-0: #1e1e2e;        /* Base - main background */
-    --surface-1: #181825;        /* Mantle - elevated panels, headers */
-    --surface-2: #11111b;        /* Crust - darker elevation */
-    --surface-3: #313244;        /* Surface 0 - highest elevation, active states */
+    /* Retro Dark Mode - Background Colors */
+    --surface-0: #12161F;
+    --surface-1: #1A1E27;
+    --surface-2: #22262F;
+    --surface-3: #2A3060;
     
     /* Border Colors */
-    --border-default: #313244;   /* Surface 0 */
-    --border-subtle: #181825;    /* Mantle */
-    --border-strong: #45475a;    /* Surface 1 */
+    --border-default: #2A3060;
+    --border-subtle: #1A1E27;
+    --border-strong: #3A4070;
     
     /* Text Colors */
-    --text-primary: #cdd6f4;     /* Text */
-    --text-secondary: #a6adc8;   /* Subtext 0 */
-    --text-tertiary: #7f849c;    /* Overlay 1 */
+    --text-primary: #D0E0FF;
+    --text-secondary: #A0B0D0;
+    --text-tertiary: #7080A0;
     
-    /* Accent Colors - Zed's Brand Blue */
-    --accent: #084CCF;           /* Zed blue - primary accent */
-    --accent-muted: rgba(8, 76, 207, 0.25);  /* Zed blue/25 - higher opacity for dark bg */
-    --accent-text: #89b4fa;      /* Mocha blue - for accent text */
+    /* Accent Colors - Bright Cyan */
+    --accent: #00C3FF;
+    --accent-muted: rgba(0, 195, 255, 0.20);
+    --accent-text: #00C3FF;
     
-    /* Semantic Colors */
-    --color-green: #a6e3a1;      /* Green - added/staged */
-    --color-red: #f38ba8;        /* Red - deleted/errors */
-    --color-yellow: #f9e2af;     /* Yellow - modified/warnings */
-    --color-peach: #fab387;      /* Peach - untracked */
-    --color-blue: #89b4fa;       /* Mocha blue */
-    --color-mauve: #cba6f7;      /* Mauve - special */
-    --color-teal: #94e2d5;       /* Teal */
-    --color-sky: #89dceb;        /* Sky */
-    --color-lavender: #b4befe;   /* Lavender */
+    /* Semantic Colors - Phosphor glow */
+    --color-green: #50FF50;
+    --color-red: #FF4060;
+    --color-yellow: #FFB020;
+    --color-peach: #FF8040;
+    --color-blue: #00C3FF;
+    --color-mauve: #B080FF;
+    --color-teal: #40E0D0;
+    --color-sky: #60D0FF;
+    --color-lavender: #8090FF;
     
-    /* Shadows - stronger for dark theme */
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
-    --shadow-glow: 0 0 20px rgba(8, 76, 207, 0.15);
+    /* Shadows */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+    --shadow-glow: 0 0 20px rgba(0, 195, 255, 0.20);
 }
 
 /* Diff Viewer Styles - Refactored with Design Tokens */
@@ -143,40 +144,40 @@
     font-family: var(--font-mono);
     font-size: 0.75rem;
     line-height: 1.625;
-    border-bottom: 1px solid rgba(228, 228, 231, 0.5);
+    border-bottom: 1px solid rgba(200, 195, 184, 0.5);
     transition: background-color var(--transition-fast);
 }
 
 .diff-line-addition {
-    background-color: rgba(64, 160, 43, 0.1);
+    background-color: rgba(38, 112, 24, 0.1);
 }
 
 .diff-line-addition:hover {
-    background-color: rgba(64, 160, 43, 0.15);
+    background-color: rgba(38, 112, 24, 0.15);
 }
 
 .diff-line-deletion {
-    background-color: rgba(210, 15, 57, 0.1);
+    background-color: rgba(196, 16, 48, 0.1);
 }
 
 .diff-line-deletion:hover {
-    background-color: rgba(210, 15, 57, 0.15);
+    background-color: rgba(196, 16, 48, 0.15);
 }
 
 .diff-line-context {
-    background-color: #ffffff;
+    background-color: #F2EFE9;
 }
 
 .diff-line-context:hover {
-    background-color: #f5f5f5;
+    background-color: #E8E5DF;
 }
 
 .diff-line-addition .line-number {
-    color: rgba(64, 160, 43, 0.6);
+    color: rgba(38, 112, 24, 0.6);
 }
 
 .diff-line-deletion .line-number {
-    color: rgba(210, 15, 57, 0.6);
+    color: rgba(196, 16, 48, 0.6);
 }
 
 .diff-line-context .line-number {
@@ -194,15 +195,15 @@
 }
 
 .diff-line-addition .line-content {
-    color: #40a02b;
+    color: #267018;
 }
 
 .diff-line-deletion .line-content {
-    color: #d20f39;
+    color: #C41030;
 }
 
 .diff-line-context .line-content {
-    color: #5c5f77;
+    color: #4A4E5E;
 }
 
 .line-content pre {
@@ -314,39 +315,39 @@
 
 /* Dark Mode - Diff Viewer Styles */
 .dark .diff-line-addition {
-    background-color: rgba(166, 227, 161, 0.08);
+    background-color: rgba(80, 255, 80, 0.08);
 }
 
 .dark .diff-line-addition:hover {
-    background-color: rgba(166, 227, 161, 0.12);
+    background-color: rgba(80, 255, 80, 0.12);
 }
 
 .dark .diff-line-deletion {
-    background-color: rgba(243, 139, 168, 0.08);
+    background-color: rgba(255, 64, 96, 0.08);
 }
 
 .dark .diff-line-deletion:hover {
-    background-color: rgba(243, 139, 168, 0.12);
+    background-color: rgba(255, 64, 96, 0.12);
 }
 
 .dark .diff-line-context {
-    background-color: #1e1e2e;
+    background-color: #12161F;
 }
 
 .dark .diff-line-context:hover {
-    background-color: #313244;
+    background-color: #2A3060;
 }
 
 .dark .diff-line-addition .line-content {
-    color: #a6e3a1;
+    color: #50FF50;
 }
 
 .dark .diff-line-deletion .line-content {
-    color: #f38ba8;
+    color: #FF4060;
 }
 
 .dark .diff-line-context .line-content {
-    color: #bac2de;
+    color: #A0B0D0;
 }
 
 /* Dark Mode - Highlight.js Catppuccin Mocha */

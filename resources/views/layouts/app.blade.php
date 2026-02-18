@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#eff1f5">
+    <meta name="theme-color" content="#F2EFE9">
     <title>{{ config('app.name', 'Gitty') }}</title>
     <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600|jetbrains-mono:400,500,600" rel="stylesheet">
+    <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600|jetbrains-mono:400,500,600|space-mono:400,700" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @fluxAppearance
     @livewireStyles
