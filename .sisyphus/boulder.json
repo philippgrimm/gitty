@@ -1,9 +1,10 @@
 {
-  "active_plan": "/Users/philipp.grimm/workspace/gitty/.sisyphus/plans/feature-roadmap.md",
-  "started_at": "2026-02-16T20:44:40.052Z",
+  "active_plan": "/Users/philipp.grimm/workspace/gitty/.sisyphus/plans/developer-docs.md",
+  "started_at": "2026-02-17T20:36:28.676Z",
   "session_ids": [
-    "ses_398b74092ffeHDGmrA7UTLBFDT"
+    "ses_3931870ffffeXnfdESpZ3o2YTi",
+    "ses_392ab3c76ffeScnELJ1uwegsS1"
   ],
-  "plan_name": "feature-roadmap",
+  "plan_name": "developer-docs",
   "agent": "atlas"
 }
