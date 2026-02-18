@@ -90,8 +90,18 @@
     </div>
 
     @if(empty($repoPath))
-        <div class="flex-1 flex items-center justify-center animate-fade-in">
-            <div class="text-center space-y-6">
+        <div class="flex-1 flex items-center justify-center animate-fade-in" x-data="{ booted: false }" x-init="setTimeout(() => booted = true, 1500)">
+            {{-- Boot sequence --}}
+            <div x-show="!booted" x-transition:leave class="font-display text-sm space-y-1" style="color: var(--accent);">
+                <div class="animate-boot-line" style="animation-delay: 0ms;">&gt; INITIALIZING SYSTEM...</div>
+                <div class="animate-boot-line" style="animation-delay: 300ms;">&gt; LOADING MODULES...</div>
+                <div class="animate-boot-line" style="animation-delay: 600ms;">&gt; SCANNING REPOSITORIES...</div>
+                <div class="animate-boot-line" style="animation-delay: 900ms;">&gt; READY.</div>
+                <div class="animate-boot-line inline-block" style="animation-delay: 1200ms;"><span class="animate-cursor-blink">█</span></div>
+            </div>
+            
+            {{-- Normal content (shown after boot) --}}
+            <div x-show="booted" x-transition:enter class="text-center space-y-6">
                 <div class="w-24 h-24 mx-auto opacity-60">
                     {!! file_get_contents(resource_path('svg/empty-states/no-repo.svg')) !!}
                 </div>

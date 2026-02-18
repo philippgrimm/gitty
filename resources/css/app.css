@@ -229,10 +229,10 @@
 
 @keyframes commitFlash {
     0% {
-        box-shadow: 0 0 0 0 rgba(8, 76, 207, 0.4);
+        box-shadow: 0 0 0 0 rgba(24, 32, 111, 0.4);
     }
     100% {
-        box-shadow: 0 0 0 8px rgba(8, 76, 207, 0);
+        box-shadow: 0 0 0 8px rgba(24, 32, 111, 0);
     }
 }
 
@@ -270,12 +270,126 @@
     animation: fadeIn 150ms ease-out;
 }
 
-/* Highlight.js — Catppuccin Latte theme for diff viewer */
+@keyframes glowPulse {
+    0%, 100% {
+        box-shadow: 0 0 10px rgba(0, 195, 255, 0.3), 0 0 20px rgba(0, 195, 255, 0.15);
+    }
+    50% {
+        box-shadow: 0 0 15px rgba(0, 195, 255, 0.5), 0 0 30px rgba(0, 195, 255, 0.25);
+    }
+}
+
+@keyframes cursorBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+@keyframes bootLine {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.animate-glow-pulse {
+    animation: glowPulse 2s ease-in-out infinite;
+}
+
+.animate-cursor-blink {
+    animation: cursorBlink 1s step-end infinite;
+}
+
+.animate-boot-line {
+    animation: bootLine 200ms ease-out forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .animate-glow-pulse,
+    .animate-cursor-blink,
+    .animate-boot-line {
+        animation: none;
+        opacity: 1;
+    }
+}
+
+/* CRT Effects - Retro Futurism */
+.crt-scanlines {
+    position: relative;
+}
+
+.dark .crt-scanlines::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+        0deg,
+        rgba(255, 255, 255, 0.03) 0px,
+        transparent 1px,
+        transparent 2px,
+        rgba(255, 255, 255, 0.03) 3px
+    );
+    pointer-events: none;
+    z-index: 1;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .dark .phosphor-glow {
+        box-shadow: 0 0 10px rgba(0, 195, 255, 0.3), 0 0 20px rgba(0, 195, 255, 0.15);
+    }
+
+    .dark .phosphor-text-glow {
+        text-shadow: 0 0 8px rgba(0, 195, 255, 0.6), 0 0 15px rgba(0, 195, 255, 0.3);
+    }
+}
+
+.input-recessed {
+    box-shadow: inset 2px 2px 4px rgba(0, 0, 0, 0.08), inset -1px -1px 2px rgba(255, 255, 255, 0.5);
+}
+
+.dark .input-recessed {
+    box-shadow: inset 2px 2px 4px rgba(0, 0, 0, 0.3), inset -1px -1px 2px rgba(255, 255, 255, 0.05);
+}
+
+/* Neumorphic Styling - Retro Futurism */
+.neu-container {
+    border-radius: 24px;
+    box-shadow: 6px 6px 12px rgba(180, 170, 155, 0.4), -6px -6px 12px rgba(255, 255, 255, 0.7);
+}
+
+.dark .neu-container {
+    box-shadow: 6px 6px 12px rgba(0, 0, 0, 0.5), -6px -6px 12px rgba(30, 40, 80, 0.3);
+}
+
+.btn-neu {
+    border-radius: 999px;
+    box-shadow: 4px 4px 8px rgba(180, 170, 155, 0.4), -4px -4px 8px rgba(255, 255, 255, 0.6);
+    transition: all 0.15s ease;
+}
+
+.btn-neu:active {
+    box-shadow: inset 3px 3px 6px rgba(180, 170, 155, 0.4), inset -3px -3px 6px rgba(255, 255, 255, 0.5);
+    transform: scale(0.98);
+}
+
+.dark .btn-neu {
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5), -4px -4px 8px rgba(30, 40, 80, 0.3);
+}
+
+.dark .btn-neu:active {
+    box-shadow: inset 3px 3px 6px rgba(0, 0, 0, 0.5), inset -3px -3px 6px rgba(30, 40, 80, 0.2);
+    transform: scale(0.98);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .btn-neu:active {
+        transform: none;
+    }
+}
+
+/* Highlight.js — Retro Futurism Light theme for diff viewer */
 .hljs-keyword,
 .hljs-selector-tag,
 .hljs-built_in,
 .hljs-name,
-.hljs-tag { color: #8839ef; }
+.hljs-tag { color: #6B4BA0; }
 
 .hljs-string,
 .hljs-title,
@@ -284,30 +398,30 @@
 .hljs-literal,
 .hljs-template-tag,
 .hljs-template-variable,
-.hljs-type { color: #40a02b; }
+.hljs-type { color: #267018; }
 
 .hljs-comment,
 .hljs-quote,
-.hljs-deletion { color: #9ca0b0; }
+.hljs-deletion { color: #686C7C; }
 
 .hljs-meta,
-.hljs-meta .hljs-keyword { color: #fe640b; }
+.hljs-meta .hljs-keyword { color: #B04800; }
 
 .hljs-number,
 .hljs-symbol,
 .hljs-bullet,
-.hljs-link { color: #df8e1d; }
+.hljs-link { color: #8A6410; }
 
 .hljs-variable,
-.hljs-params { color: #4c4f69; }
+.hljs-params { color: #2C3040; }
 
-.hljs-function { color: #1e66f5; }
+.hljs-function { color: #18206F; }
 
-.hljs-title.function_ { color: #1e66f5; }
+.hljs-title.function_ { color: #18206F; }
 
-.hljs-regexp { color: #179299; }
+.hljs-regexp { color: #1A7A7A; }
 
-.hljs-addition { color: #40a02b; }
+.hljs-addition { color: #267018; }
 
 .hljs-emphasis { font-style: italic; }
 
@@ -350,12 +464,12 @@
     color: #A0B0D0;
 }
 
-/* Dark Mode - Highlight.js Catppuccin Mocha */
+/* Dark Mode - Highlight.js Retro Futurism Dark */
 .dark .hljs-keyword,
 .dark .hljs-selector-tag,
 .dark .hljs-built_in,
 .dark .hljs-name,
-.dark .hljs-tag { color: #cba6f7; }
+.dark .hljs-tag { color: #B080FF; }
 
 .dark .hljs-string,
 .dark .hljs-title,
@@ -364,27 +478,27 @@
 .dark .hljs-literal,
 .dark .hljs-template-tag,
 .dark .hljs-template-variable,
-.dark .hljs-type { color: #a6e3a1; }
+.dark .hljs-type { color: #50FF50; }
 
 .dark .hljs-comment,
 .dark .hljs-quote,
-.dark .hljs-deletion { color: #6c7086; }
+.dark .hljs-deletion { color: #7080A0; }
 
 .dark .hljs-meta,
-.dark .hljs-meta .hljs-keyword { color: #fab387; }
+.dark .hljs-meta .hljs-keyword { color: #FF8040; }
 
 .dark .hljs-number,
 .dark .hljs-symbol,
 .dark .hljs-bullet,
-.dark .hljs-link { color: #f9e2af; }
+.dark .hljs-link { color: #FFB020; }
 
 .dark .hljs-variable,
-.dark .hljs-params { color: #cdd6f4; }
+.dark .hljs-params { color: #D0E0FF; }
 
-.dark .hljs-function { color: #89b4fa; }
+.dark .hljs-function { color: #00C3FF; }
 
-.dark .hljs-title.function_ { color: #89b4fa; }
+.dark .hljs-title.function_ { color: #00C3FF; }
 
-.dark .hljs-regexp { color: #94e2d5; }
+.dark .hljs-regexp { color: #40E0D0; }
 
-.dark .hljs-addition { color: #a6e3a1; }
+.dark .hljs-addition { color: #50FF50; }
