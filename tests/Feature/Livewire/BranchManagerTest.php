@@ -312,3 +312,86 @@ test('cancelAutoStash resets state without action', function () {
         ->assertSet('showAutoStashModal', false)
         ->assertSet('autoStashTargetBranch', '');
 });
+
+test('deleteBranch shows force-delete modal when branch is not fully merged', function () {
+    Process::fake([
+        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
+        "git branch -d 'feature/new-ui'" => function () {
+            return Process::result(
+                output: '',
+                errorOutput: "error: The branch 'feature/new-ui' is not fully merged.",
+                exitCode: 1
+            );
+        },
+    ]);
+
+    Livewire::test(BranchManager::class, ['repoPath' => $this->testRepoPath])
+        ->call('deleteBranch', 'feature/new-ui')
+        ->assertSet('showForceDeleteModal', true)
+        ->assertSet('branchToForceDelete', 'feature/new-ui')
+        ->assertNotDispatched('show-error');
+});
+
+test('deleteBranch shows error toast for non-merge-related delete errors', function () {
+    Process::fake([
+        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
+        "git branch -d 'feature/new-ui'" => function () {
+            return Process::result(
+                output: '',
+                errorOutput: "error: branch 'feature/new-ui' not found.",
+                exitCode: 1
+            );
+        },
+    ]);
+
+    Livewire::test(BranchManager::class, ['repoPath' => $this->testRepoPath])
+        ->call('deleteBranch', 'feature/new-ui')
+        ->assertSet('showForceDeleteModal', false)
+        ->assertDispatched('show-error');
+});
+
+test('forceDeleteBranch calls git branch -D and resets state', function () {
+    Process::fake([
+        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
+        "git branch -D 'feature/new-ui'" => Process::result(''),
+    ]);
+
+    Livewire::test(BranchManager::class, ['repoPath' => $this->testRepoPath])
+        ->set('branchToForceDelete', 'feature/new-ui')
+        ->set('showForceDeleteModal', true)
+        ->call('forceDeleteBranch')
+        ->assertSet('showForceDeleteModal', false)
+        ->assertSet('branchToForceDelete', '')
+        ->assertDispatched('status-updated');
+
+    Process::assertRan("git branch -D 'feature/new-ui'");
+});
+
+test('cancelForceDelete resets state without action', function () {
+    Process::fake([
+        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
+    ]);
+
+    Livewire::test(BranchManager::class, ['repoPath' => $this->testRepoPath])
+        ->set('showForceDeleteModal', true)
+        ->set('branchToForceDelete', 'feature/new-ui')
+        ->call('cancelForceDelete')
+        ->assertSet('showForceDeleteModal', false)
+        ->assertSet('branchToForceDelete', '');
+});
+
+test('deleteBranch on current branch does not show force-delete modal', function () {
+    Process::fake([
+        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
+    ]);
+
+    Livewire::test(BranchManager::class, ['repoPath' => $this->testRepoPath])
+        ->call('deleteBranch', 'main')
+        ->assertSet('showForceDeleteModal', false)
+        ->assertSet('error', 'Cannot delete the current branch');
+});

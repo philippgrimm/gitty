@@ -33,6 +33,10 @@ class BranchManager extends Component
 
     public string $autoStashTargetBranch = '';
 
+    public bool $showForceDeleteModal = false;
+
+    public string $branchToForceDelete = '';
+
     public function mount(): void
     {
         $this->aheadBehind = ['ahead' => 0, 'behind' => 0];
@@ -120,8 +124,13 @@ class BranchManager extends Component
             $this->refreshBranches();
             $this->dispatch('status-updated');
         } catch (\Exception $e) {
-            $this->error = GitErrorHandler::translate($e->getMessage());
-            $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
+            if (GitErrorHandler::isNotFullyMergedError($e->getMessage())) {
+                $this->branchToForceDelete = $name;
+                $this->showForceDeleteModal = true;
+            } else {
+                $this->error = GitErrorHandler::translate($e->getMessage());
+                $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
+            }
         }
     }
 
@@ -193,6 +202,30 @@ class BranchManager extends Component
     {
         $this->showAutoStashModal = false;
         $this->autoStashTargetBranch = '';
+    }
+
+    public function forceDeleteBranch(): void
+    {
+        $this->showForceDeleteModal = false;
+
+        try {
+            $branchService = new BranchService($this->repoPath);
+            $branchService->deleteBranch($this->branchToForceDelete, true);
+
+            $this->refreshBranches();
+            $this->dispatch('status-updated');
+        } catch (\Exception $e) {
+            $this->error = GitErrorHandler::translate($e->getMessage());
+            $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
+        } finally {
+            $this->branchToForceDelete = '';
+        }
+    }
+
+    public function cancelForceDelete(): void
+    {
+        $this->showForceDeleteModal = false;
+        $this->branchToForceDelete = '';
     }
 
     /**

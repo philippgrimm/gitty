@@ -220,4 +220,24 @@
             </flux:button>
         </div>
     </flux:modal>
+
+    <flux:modal wire:model="showForceDeleteModal" class="space-y-6">
+        <div>
+            <flux:heading size="lg" class="font-mono uppercase tracking-wider">Force Delete?</flux:heading>
+            <flux:subheading class="font-mono">
+                The branch <span class="text-[var(--text-primary)] font-bold">{{ $branchToForceDelete }}</span> is not fully merged. Force-deleting it may cause you to lose commits. Continue?
+            </flux:subheading>
+        </div>
+
+        <div class="flex gap-2 justify-end">
+            <flux:button variant="ghost" wire:click="cancelForceDelete">Cancel</flux:button>
+            <flux:button
+                variant="danger"
+                wire:click="forceDeleteBranch"
+                class="uppercase tracking-wider"
+            >
+                Force Delete
+            </flux:button>
+        </div>
+    </flux:modal>
 </div>
