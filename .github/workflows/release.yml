@@ -77,17 +77,6 @@ jobs:
           sed -i.bak "s/'version' => env('NATIVEPHP_APP_VERSION', '[^']*')/'version' => env('NATIVEPHP_APP_VERSION', '${{ steps.version.outputs.VERSION }}')/g" config/nativephp.php
           rm config/nativephp.php.bak
       
-      - name: Debug - Verify .env exists
-        run: |
-          echo "=== Checking .env file ==="
-          ls -la .env || echo ".env does NOT exist!"
-          echo ""
-          echo "=== .env contents (first 10 lines) ==="
-          head -10 .env || echo "Cannot read .env"
-          echo ""
-          echo "=== Working directory ==="
-          pwd
-      
       - name: Build macOS app (x64)
         run: php artisan native:build mac x64 --no-interaction
         env:
@@ -98,73 +87,25 @@ jobs:
         env:
           NATIVEPHP_APP_VERSION: ${{ steps.version.outputs.VERSION }}
       
-      - name: Find DMG files
-        id: find-dmg
+      - name: Create GitHub Release with Assets
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          DMG_X64=$(find nativephp/electron/dist -name "*-x64.dmg" | head -n 1)
-          DMG_ARM64=$(find nativephp/electron/dist -name "*-arm64.dmg" | head -n 1)
-          echo "DMG_X64=$DMG_X64" >> $GITHUB_OUTPUT
-          echo "DMG_ARM64=$DMG_ARM64" >> $GITHUB_OUTPUT
-          echo "Found x64 DMG: $DMG_X64"
-          echo "Found arm64 DMG: $DMG_ARM64"
-      
-      - name: Create GitHub Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref_name }}
-          release_name: Gitty ${{ steps.version.outputs.VERSION }}
-          body: |
-            ## Gitty v${{ steps.version.outputs.VERSION }}
-            
-            ### Downloads
-            - **macOS (Apple Silicon)**: Gitty-${{ steps.version.outputs.VERSION }}-arm64.dmg
-            - **macOS (Intel)**: Gitty-${{ steps.version.outputs.VERSION }}-x64.dmg
-            
-            ### Installation
-            1. Download the appropriate DMG file for your Mac
-            2. Open the DMG and drag Gitty to your Applications folder
-            3. Launch Gitty from Applications
-            
-            ---
-            *Built automatically from commit ${{ github.sha }}*
-          draft: false
-          prerelease: false
-      
-      - name: Upload x64 DMG to Release
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ steps.find-dmg.outputs.DMG_X64 }}
-          asset_name: Gitty-${{ steps.version.outputs.VERSION }}-x64.dmg
-          asset_content_type: application/octet-stream
-      
-      - name: Upload arm64 DMG to Release
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ steps.find-dmg.outputs.DMG_ARM64 }}
-          asset_name: Gitty-${{ steps.version.outputs.VERSION }}-arm64.dmg
-          asset_content_type: application/octet-stream
-      
-      - name: Upload blockmap files
-        run: |
-          # Upload blockmap files for auto-updater
-          for blockmap in nativephp/electron/dist/*.blockmap; do
-            if [ -f "$blockmap" ]; then
-              filename=$(basename "$blockmap")
-              curl -L \
-                -X POST \
-                -H "Accept: application/vnd.github+json" \
-                -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-                -H "Content-Type: application/octet-stream" \
-                "${{ steps.create_release.outputs.upload_url }}?name=$filename" \
-                --data-binary "@$blockmap"
-            fi
-          done
+          gh release create v${{ steps.version.outputs.VERSION }} \
+            --title "Gitty v${{ steps.version.outputs.VERSION }}" \
+            --notes "## Gitty v${{ steps.version.outputs.VERSION }}
+          
+          ### Downloads
+          - **macOS (Apple Silicon)**: Gitty-${{ steps.version.outputs.VERSION }}-arm64.dmg
+          - **macOS (Intel)**: Gitty-${{ steps.version.outputs.VERSION }}-x64.dmg
+          
+          ### Installation
+          1. Download the appropriate DMG file for your Mac
+          2. Open the DMG and drag Gitty to your Applications folder
+          3. Launch Gitty from Applications
+          
+          ---
+          *Built automatically from commit ${{ github.sha }}*" \
+            nativephp/electron/dist/*-x64.dmg \
+            nativephp/electron/dist/*-arm64.dmg \
+            nativephp/electron/dist/*.blockmap
