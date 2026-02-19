@@ -59,6 +59,7 @@ jobs:
           cp .env.example .env
           php artisan key:generate --ansi
           echo "" >> .env
+          echo "APP_NAME=Gitty" >> .env
           echo "NATIVEPHP_APP_VERSION=${{ steps.version.outputs.VERSION }}" >> .env
           echo "NATIVEPHP_APP_ID=com.gitty.app" >> .env
           echo "NATIVEPHP_UPDATER_ENABLED=true" >> .env
