@@ -74,15 +74,32 @@ We follow [Semantic Versioning](https://semver.org/):
 The release workflow (`.github/workflows/release.yml`) performs these steps:
 
 1. **Checkout code** from the tagged commit
-2. **Setup PHP 8.4** and install Composer dependencies
+2. **Setup PHP 8.4** and install Composer dependencies (production only, no dev deps)
 3. **Setup Node.js** and install NPM dependencies
 4. **Build frontend assets** with Vite
-5. **Update version** in config from the tag
-6. **Build macOS app** for both x64 and arm64 architectures
-7. **Create GitHub Release** with release notes
-8. **Upload DMG files** and blockmap files (for auto-updates)
+5. **Create .env file** with version and GitHub updater settings
+6. **Setup database** (SQLite) and run migrations
+7. **Update version** in config from the tag
+8. **Build macOS app** for both x64 and arm64 architectures
+9. **Create GitHub Release** with release notes
+10. **Upload DMG files** and blockmap files (for auto-updates)
 
-The workflow runs on `macos-latest` runners to ensure proper macOS code signing.
+The workflow runs on `macos-latest` runners to ensure proper macOS builds.
+
+### Environment Variables Set During Build
+
+The workflow automatically configures these environment variables:
+
+- `NATIVEPHP_APP_VERSION`: Extracted from the git tag
+- `NATIVEPHP_APP_ID`: `com.gitty.app`
+- `NATIVEPHP_UPDATER_ENABLED`: `true`
+- `NATIVEPHP_UPDATER_PROVIDER`: `github`
+- `GITHUB_REPO`: Auto-detected from repository
+- `GITHUB_OWNER`: Auto-detected from repository owner
+- `GITHUB_V_PREFIXED_TAG_NAME`: `true`
+- `GITHUB_RELEASE_TYPE`: `release`
+
+No manual configuration needed!
 
 ## Auto-Updates
 

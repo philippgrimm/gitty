@@ -24,7 +24,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
       
       - name: Get Composer cache directory
@@ -51,10 +51,42 @@ jobs:
         id: version
         run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
       
+      - name: Create .env file for build
+        run: |
+          cp .env.example .env
+          php artisan key:generate --ansi
+          echo "" >> .env
+          echo "NATIVEPHP_APP_VERSION=${{ steps.version.outputs.VERSION }}" >> .env
+          echo "NATIVEPHP_APP_ID=com.gitty.app" >> .env
+          echo "NATIVEPHP_UPDATER_ENABLED=true" >> .env
+          echo "NATIVEPHP_UPDATER_PROVIDER=github" >> .env
+          echo "GITHUB_REPO=${{ github.event.repository.name }}" >> .env
+          echo "GITHUB_OWNER=${{ github.repository_owner }}" >> .env
+          echo "GITHUB_V_PREFIXED_TAG_NAME=true" >> .env
+          echo "GITHUB_PRIVATE=false" >> .env
+          echo "GITHUB_CHANNEL=latest" >> .env
+          echo "GITHUB_RELEASE_TYPE=release" >> .env
+      
+      - name: Setup database
+        run: |
+          touch database/database.sqlite
+          php artisan migrate --force --no-interaction
+      
       - name: Update NativePHP version in config
         run: |
           sed -i.bak "s/'version' => env('NATIVEPHP_APP_VERSION', '[^']*')/'version' => env('NATIVEPHP_APP_VERSION', '${{ steps.version.outputs.VERSION }}')/g" config/nativephp.php
           rm config/nativephp.php.bak
+      
+      - name: Debug - Verify .env exists
+        run: |
+          echo "=== Checking .env file ==="
+          ls -la .env || echo ".env does NOT exist!"
+          echo ""
+          echo "=== .env contents (first 10 lines) ==="
+          head -10 .env || echo "Cannot read .env"
+          echo ""
+          echo "=== Working directory ==="
+          pwd
       
       - name: Build macOS app (x64)
         run: php artisan native:build mac x64 --no-interaction
