@@ -177,6 +177,16 @@ class CommitPanel extends Component
             $this->loadStoredHistory();
             $this->dispatch('committed');
             $this->dispatch('prefill-updated');
+
+            try {
+                $gitService = new GitService($this->repoPath);
+                $status = $gitService->status();
+                $aheadBehind = ['ahead' => $status->aheadBehind->ahead, 'behind' => $status->aheadBehind->behind];
+            } catch (\Exception) {
+                $aheadBehind = ['ahead' => 0, 'behind' => 0];
+            }
+
+            $this->dispatch('status-updated', stagedCount: 0, aheadBehind: $aheadBehind);
         } catch (\Exception $e) {
             $this->error = GitErrorHandler::translate($e->getMessage());
             $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
@@ -212,6 +222,16 @@ class CommitPanel extends Component
             $this->loadStoredHistory();
             $this->dispatch('committed');
             $this->dispatch('prefill-updated');
+
+            try {
+                $gitService = new GitService($this->repoPath);
+                $status = $gitService->status();
+                $aheadBehind = ['ahead' => $status->aheadBehind->ahead, 'behind' => $status->aheadBehind->behind];
+            } catch (\Exception) {
+                $aheadBehind = ['ahead' => 0, 'behind' => 0];
+            }
+
+            $this->dispatch('status-updated', stagedCount: 0, aheadBehind: $aheadBehind);
         } catch (\Exception $e) {
             $this->error = GitErrorHandler::translate($e->getMessage());
             $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);

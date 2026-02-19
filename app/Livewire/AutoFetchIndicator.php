@@ -7,6 +7,7 @@ namespace App\Livewire;
 use App\Services\AutoFetchService;
 use App\Services\Git\GitOperationQueue;
 use App\Services\NotificationService;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class AutoFetchIndicator extends Component
@@ -26,6 +27,12 @@ class AutoFetchIndicator extends Component
     public function mount(): void
     {
         $this->checkAndFetch();
+    }
+
+    #[On('settings-updated')]
+    public function handleSettingsUpdated(): void
+    {
+        $this->refreshStatus();
     }
 
     public function refreshStatus(): void

@@ -1,6 +1,6 @@
 <div 
     x-data="{ showDropdown: false, commitFlash: false, charCount: 0 }" 
-    x-init="charCount = $wire.message?.length || 0"
+    x-effect="charCount = $wire.message?.length || 0"
     x-on:committed.window="commitFlash = true; setTimeout(() => commitFlash = false, 200);"
     x-on:prefill-updated.window="$nextTick(() => { const ta = $el.querySelector('textarea'); if (ta) { ta.setSelectionRange(ta.value.length, ta.value.length); ta.focus(); } });"
     x-on:focus-commit-message.window="$nextTick(() => { const ta = $el.querySelector('textarea'); if (ta) { ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length); } });"
@@ -56,8 +56,8 @@
         <flux:textarea 
             wire:model.live.debounce.300ms="message" 
             x-on:input="charCount = $event.target.value.length;"
-            x-on:keydown.arrow-up.prevent="$wire.cycleHistory('up'); charCount = $wire.message?.length || 0;"
-            x-on:keydown.arrow-down.prevent="$wire.cycleHistory('down'); charCount = $wire.message?.length || 0;"
+            x-on:keydown.arrow-up.prevent="$wire.cycleHistory('up');"
+            x-on:keydown.arrow-down.prevent="$wire.cycleHistory('down');"
             placeholder="Commit message"
             rows="auto"
             resize="vertical"

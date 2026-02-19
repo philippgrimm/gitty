@@ -106,6 +106,12 @@ class BranchManager extends Component
         }
     }
 
+    #[On('status-updated')]
+    public function handleStatusUpdated(): void
+    {
+        $this->refreshBranches();
+    }
+
     public function deleteBranch(string $name): void
     {
         $this->error = '';

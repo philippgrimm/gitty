@@ -73,6 +73,7 @@
             this.selectedFiles = items.map(el => el.dataset.filePath);
         }
     }"
+    x-effect="$nextTick(() => { const paths = [...$el.querySelectorAll('[data-file-path]')].map(el => el.dataset.filePath); selectedFiles = selectedFiles.filter(f => paths.includes(f)); })"
     class="h-full flex flex-col bg-white dark:bg-[var(--surface-0)] text-[var(--text-primary)] font-display"
     @keyboard-stash.window="selectedFiles.length > 0 ? $wire.stashSelected(selectedFiles).then(() => clearSelection()) : $wire.stashAll()"
     @keyboard-select-all.window="selectAllFiles()"

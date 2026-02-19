@@ -39,6 +39,15 @@ class SearchPanel extends Component
         $this->selectedIndex = 0;
     }
 
+    #[On('repo-switched')]
+    public function handleRepoSwitched(string $path): void
+    {
+        $this->repoPath = $path;
+        $this->query = '';
+        $this->results = [];
+        $this->selectedIndex = 0;
+    }
+
     public function setScope(string $scope): void
     {
         $this->scope = $scope;

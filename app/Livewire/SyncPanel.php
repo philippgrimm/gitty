@@ -48,7 +48,15 @@ class SyncPanel extends Component
     {
         if (! empty($aheadBehind) && array_key_exists('ahead', $aheadBehind) && array_key_exists('behind', $aheadBehind)) {
             $this->aheadBehind = $aheadBehind;
+        } else {
+            $this->refreshAheadBehindData();
         }
+    }
+
+    #[On('committed')]
+    public function handleCommitted(): void
+    {
+        $this->refreshAheadBehindData();
     }
 
     private function refreshAheadBehindData(): void

@@ -100,7 +100,7 @@ class DiffViewer extends Component
 
     #[On('committed')]
     #[On('status-updated')]
-    public function clearIfFileNoLongerChanged(int $stagedCount = 0, array $aheadBehind = []): void
+    public function refreshOrClearDiff(int $stagedCount = 0, array $aheadBehind = []): void
     {
         if ($this->file === null) {
             return;
@@ -113,6 +113,8 @@ class DiffViewer extends Component
 
             if ($diffResult->files->isEmpty()) {
                 $this->clearDiff();
+            } else {
+                $this->loadDiff($this->file, $this->isStaged);
             }
         } catch (\Exception) {
             $this->clearDiff();
