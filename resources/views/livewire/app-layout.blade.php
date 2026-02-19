@@ -88,7 +88,7 @@
     @livewire('settings-modal')
 
     @if(empty($repoPath))
-        <div class="flex-1 flex items-center justify-center animate-fade-in" x-data="{ booted: false }" x-init="setTimeout(() => booted = true, 1500)">
+        <div wire:key="empty-state" class="flex-1 flex items-center justify-center animate-fade-in" x-data="{ booted: false }" x-init="setTimeout(() => booted = true, 1500)">
             {{-- Boot sequence --}}
             <div x-show="!booted" x-transition:leave class="font-display text-sm space-y-1" style="color: var(--accent);">
                 <div class="animate-boot-line" style="animation-delay: 0ms;">&gt; INITIALIZING SYSTEM...</div>
@@ -108,7 +108,7 @@
             </div>
         </div>
     @else
-        <div class="flex-1 flex overflow-hidden">
+        <div wire:key="repo-{{ $repoPath }}" class="flex-1 flex overflow-hidden">
             <div 
                 class="border-r border-[var(--border-default)] bg-[var(--surface-0)] transition-all duration-200 ease-out overflow-hidden"
                 style="width: {{ $sidebarCollapsed ? '0px' : '250px' }}; min-width: {{ $sidebarCollapsed ? '0px' : '250px' }};"

@@ -98,6 +98,41 @@ class DiffViewer extends Component
         $this->loadDiff($file, $staged);
     }
 
+    #[On('committed')]
+    #[On('status-updated')]
+    public function clearIfFileNoLongerChanged(int $stagedCount = 0, array $aheadBehind = []): void
+    {
+        if ($this->file === null) {
+            return;
+        }
+
+        // Re-check if the currently displayed file still has changes
+        try {
+            $gitService = new GitService($this->repoPath);
+            $diffResult = $gitService->diff($this->file, $this->isStaged);
+
+            if ($diffResult->files->isEmpty()) {
+                $this->clearDiff();
+            }
+        } catch (\Exception) {
+            $this->clearDiff();
+        }
+    }
+
+    public function clearDiff(): void
+    {
+        $this->file = null;
+        $this->isStaged = false;
+        $this->diffData = null;
+        $this->files = null;
+        $this->isEmpty = true;
+        $this->isBinary = false;
+        $this->isLargeFile = false;
+        $this->isImage = false;
+        $this->imageData = null;
+        $this->error = '';
+    }
+
     public function loadDiff(string $file, bool $staged): void
     {
         $this->file = $file;

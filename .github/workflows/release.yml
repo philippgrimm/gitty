@@ -110,5 +110,4 @@ jobs:
           ---
           *Built automatically from commit ${{ github.sha }}*" \
             nativephp/electron/dist/*-x64.dmg \
-            nativephp/electron/dist/*-arm64.dmg \
-            nativephp/electron/dist/*.blockmap
+            nativephp/electron/dist/*-arm64.dmg
