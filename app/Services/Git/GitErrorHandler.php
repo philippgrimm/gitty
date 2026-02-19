@@ -71,4 +71,15 @@ class GitErrorHandler
         return str_contains($errorMessage, 'error: Your local changes to the following files would be overwritten by checkout')
             || str_contains($errorMessage, 'Please commit your changes or stash them before you switch branches');
     }
+
+    /**
+     * Check if the error message indicates a branch is not fully merged.
+     *
+     * @param  string  $errorMessage  The git error message to check
+     * @return bool True if the error is due to branch not being fully merged, false otherwise
+     */
+    public static function isNotFullyMergedError(string $errorMessage): bool
+    {
+        return str_contains($errorMessage, 'is not fully merged');
+    }
 }

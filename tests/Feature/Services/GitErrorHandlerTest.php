@@ -90,3 +90,27 @@ test('it handles empty error strings', function () {
 
     expect($translated)->toBe('');
 });
+
+test('it detects not fully merged error', function () {
+    $error = "error: The branch 'feature/x' is not fully merged.";
+
+    expect(GitErrorHandler::isNotFullyMergedError($error))->toBeTrue();
+});
+
+test('it detects not fully merged error with different branch name', function () {
+    $error = "error: The branch 'develop' is not fully merged.";
+
+    expect(GitErrorHandler::isNotFullyMergedError($error))->toBeTrue();
+});
+
+test('it does not detect not fully merged error for other errors', function () {
+    $error = 'branch not found';
+
+    expect(GitErrorHandler::isNotFullyMergedError($error))->toBeFalse();
+});
+
+test('it does not detect not fully merged error for empty string', function () {
+    $error = '';
+
+    expect(GitErrorHandler::isNotFullyMergedError($error))->toBeFalse();
+});
