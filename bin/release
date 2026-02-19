@@ -1,0 +1,82 @@
+#!/bin/bash
+set -e
+
+CURRENT_VERSION=$(grep "version.*env.*NATIVEPHP_APP_VERSION" config/nativephp.php | sed "s/.*'\([0-9.]*\)'.*/\1/")
+
+echo "======================================"
+echo "  Gitty Release Helper"
+echo "======================================"
+echo ""
+echo "Current version: $CURRENT_VERSION"
+echo ""
+echo "What type of release is this?"
+echo "  1) Patch (bug fixes)          → ${CURRENT_VERSION%.*}.$((${CURRENT_VERSION##*.} + 1))"
+echo "  2) Minor (new features)       → ${CURRENT_VERSION%.*.*}.$((${CURRENT_VERSION#*.*.} + 1)).0"
+echo "  3) Major (breaking changes)   → $((${CURRENT_VERSION%%.*} + 1)).0.0"
+echo "  4) Custom version"
+echo ""
+read -p "Select [1-4]: " choice
+
+case $choice in
+  1)
+    NEW_VERSION="${CURRENT_VERSION%.*}.$((${CURRENT_VERSION##*.} + 1))"
+    ;;
+  2)
+    MINOR=${CURRENT_VERSION#*.}
+    MINOR=${MINOR%.*}
+    NEW_VERSION="${CURRENT_VERSION%%.*}.$((MINOR + 1)).0"
+    ;;
+  3)
+    NEW_VERSION="$((${CURRENT_VERSION%%.*} + 1)).0.0"
+    ;;
+  4)
+    read -p "Enter custom version (e.g., 1.2.3): " NEW_VERSION
+    ;;
+  *)
+    echo "Invalid choice. Exiting."
+    exit 1
+    ;;
+esac
+
+echo ""
+echo "New version will be: v$NEW_VERSION"
+echo ""
+
+read -p "Update config/nativephp.php and create git tag? [y/N]: " confirm
+
+if [[ ! $confirm =~ ^[Yy]$ ]]; then
+  echo "Cancelled."
+  exit 0
+fi
+
+sed -i.bak "s/'version' => env('NATIVEPHP_APP_VERSION', '[^']*')/'version' => env('NATIVEPHP_APP_VERSION', '$NEW_VERSION')/g" config/nativephp.php
+rm config/nativephp.php.bak
+
+echo ""
+echo "✓ Updated config/nativephp.php to version $NEW_VERSION"
+echo ""
+
+git add config/nativephp.php
+git commit -m "chore(release): bump version to $NEW_VERSION"
+
+echo "✓ Committed version bump"
+echo ""
+
+git tag -a "v$NEW_VERSION" -m "Release v$NEW_VERSION"
+
+echo "✓ Created tag v$NEW_VERSION"
+echo ""
+echo "======================================"
+echo "  Ready to release!"
+echo "======================================"
+echo ""
+echo "To push and trigger the release build:"
+echo ""
+echo "  git push origin main && git push origin v$NEW_VERSION"
+echo ""
+echo "This will:"
+echo "  1. Push your changes to main"
+echo "  2. Push the v$NEW_VERSION tag"
+echo "  3. Trigger GitHub Actions to build DMGs"
+echo "  4. Create a GitHub Release with the DMG files"
+echo ""

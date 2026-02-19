@@ -1,9 +1,7 @@
 {
-  "active_plan": "/Users/philipp.grimm/workspace/gitty/.sisyphus/plans/force-delete-branch.md",
-  "started_at": "2026-02-19T07:56:23.618Z",
-  "session_ids": [
-    "ses_38b6cef58ffej5G754X7bUj58l"
-  ],
-  "plan_name": "force-delete-branch",
-  "agent": "atlas"
+  "active_plan": null,
+  "started_at": null,
+  "session_ids": [],
+  "plan_name": null,
+  "agent": null
 }

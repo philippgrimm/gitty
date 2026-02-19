@@ -463,6 +463,22 @@ rm -rf ~/Library/Application\ Support/gitty-dev/storage/framework/views/*
 - Alpine.js: `x-data`, `x-show`, `x-bind`
 - Browser DevTools: Electron app runs Chromium
 
+## Releasing
+
+See [docs/RELEASING.md](docs/RELEASING.md) for the complete release process.
+
+**Quick release:**
+```bash
+./bin/release
+```
+
+This creates a version tag. Push with:
+```bash
+git push origin main && git push origin v1.2.3
+```
+
+GitHub Actions automatically builds DMGs for macOS (Intel + Apple Silicon) and creates a GitHub Release.
+
 ## References
 
 - Catppuccin Latte: https://catppuccin.com/palette/

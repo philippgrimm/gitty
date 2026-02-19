@@ -54,9 +54,9 @@ Replace the error toast for unmerged branch deletion with a confirmation modal t
 - Pest tests for: modal trigger, force delete, cancel, current branch protection
 
 ### Definition of Done
-- [ ] `php artisan test --compact --filter=BranchManager` → all pass
-- [ ] `php artisan test --compact --filter=GitErrorHandler` → all pass
-- [ ] `vendor/bin/pint --dirty --format agent` → no issues
+- [x] `php artisan test --compact --filter=BranchManager` → all pass
+- [x] `php artisan test --compact --filter=GitErrorHandler` → all pass
+- [x] `vendor/bin/pint --dirty --format agent` → no issues
 
 ### Must Have
 - Only "not fully merged" errors trigger the modal — other delete errors still show toast
@@ -392,10 +392,10 @@ vendor/bin/pint --dirty --format agent  # Expected: no issues
 ```
 
 ### Final Checklist
-- [ ] Deleting a fully-merged branch still works without modal
-- [ ] Deleting an unmerged branch shows force-delete confirmation modal
-- [ ] Confirming force-delete calls `git branch -D` and removes the branch
-- [ ] Cancelling the modal resets state without action
-- [ ] Deleting current branch shows error toast (not the modal)
-- [ ] Both hover trash icon and context menu trigger the same flow
-- [ ] All existing tests still pass
+- [x] Deleting a fully-merged branch still works without modal
+- [x] Deleting an unmerged branch shows force-delete confirmation modal
+- [x] Confirming force-delete calls `git branch -D` and removes the branch
+- [x] Cancelling the modal resets state without action
+- [x] Deleting current branch shows error toast (not the modal)
+- [x] Both hover trash icon and context menu trigger the same flow
+- [x] All existing tests still pass
