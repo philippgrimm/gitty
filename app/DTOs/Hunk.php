@@ -28,7 +28,16 @@ readonly class Hunk
             if (str_starts_with($line, '@@ ')) {
                 // Save previous hunk
                 if ($currentHunk !== null) {
-                    $hunks->push($currentHunk);
+                    $hunks->push(
+                        new self(
+                            $currentHunk['oldStart'],
+                            $currentHunk['oldCount'],
+                            $currentHunk['newStart'],
+                            $currentHunk['newCount'],
+                            $currentHunk['header'],
+                            $currentHunk['lines']
+                        )
+                    );
                 }
 
                 // Parse hunk header: @@ -old,count +new,count @@ context

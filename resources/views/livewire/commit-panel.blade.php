@@ -4,10 +4,10 @@
     x-on:committed.window="commitFlash = true; setTimeout(() => commitFlash = false, 200);"
     x-on:prefill-updated.window="$nextTick(() => { const ta = $el.querySelector('textarea'); if (ta) { ta.setSelectionRange(ta.value.length, ta.value.length); ta.focus(); } });"
     x-on:focus-commit-message.window="$nextTick(() => { const ta = $el.querySelector('textarea'); if (ta) { ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length); } });"
-    class="flex flex-col bg-[var(--surface-0)] text-[var(--text-primary)] tracking-wide border-t border-[var(--border-default)] p-3 gap-2"
+    class="flex flex-col bg-[var(--surface-0)] text-[var(--text-primary)] tracking-wide border-t border-[var(--border-default)] p-3 gap-2 panel-inset"
 >
     @if($error)
-        <div class="bg-[var(--color-red)]/10 border border-[#C41030]/30 text-[var(--color-red)] px-3 py-2 text-xs font-mono uppercase tracking-wider font-semibold">
+        <div class="bg-[var(--color-red)]/10 border border-[#D91440]/30 text-[var(--color-red)] px-3 py-2 text-xs font-mono uppercase tracking-wider font-semibold">
             {{ $error }}
         </div>
     @endif
@@ -19,7 +19,7 @@
                 <flux:dropdown position="bottom-end">
                     <flux:tooltip content="Recent messages">
                         <flux:button variant="ghost" size="xs" square class="text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] !h-5 !w-5">
-                            <x-phosphor-clock-counter-clockwise class="w-3 h-3" />
+                            <x-pixelarticons-clock class="w-3 h-3" />
                         </flux:button>
                     </flux:tooltip>
                     <flux:menu class="max-h-64 overflow-y-auto">
@@ -37,7 +37,7 @@
             <flux:dropdown position="bottom-end">
                 <flux:tooltip content="Commit templates">
                     <flux:button variant="ghost" size="xs" square class="text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] !h-5 !w-5">
-                        <x-phosphor-list-bullets class="w-3 h-3" />
+                        <x-pixelarticons-bulletlist class="w-3 h-3" />
                     </flux:button>
                 </flux:tooltip>
                 <flux:menu>
@@ -61,7 +61,7 @@
             placeholder="Commit message"
             rows="auto"
             resize="vertical"
-            class="bg-[var(--surface-1)] border-[var(--border-default)] text-[var(--text-primary)] placeholder-[#686C7C] font-mono text-sm focus:outline-none focus:ring-2 focus:ring-[#18206F]/30 focus:border-[#18206F] input-recessed phosphor-glow"
+            class="bg-[var(--surface-1)] border-[var(--border-default)] text-[var(--text-primary)] placeholder-[#686C7C] font-mono text-sm focus:outline-none focus:ring-0 retro-input phosphor-glow"
         />
         <div class="absolute bottom-2 right-2 text-[10px] text-[var(--text-tertiary)] font-mono pointer-events-none select-none" x-text="charCount"></div>
     </div>
@@ -78,7 +78,7 @@
             variant="primary"
             size="sm"
             :disabled="$stagedCount === 0 || empty(trim($message))"
-            class="flex-1 font-semibold disabled:!bg-[var(--surface-3)] disabled:!text-[var(--text-tertiary)] disabled:!border-[var(--border-default)] disabled:!shadow-none btn-neu"
+            class="flex-1 font-semibold disabled:!bg-[var(--surface-3)] disabled:!text-[var(--text-tertiary)] disabled:!border-[var(--border-default)] disabled:!shadow-none btn-bevel commit-ready"
             x-bind:class="{ 
                 'animate-commit-flash': commitFlash
             }"
@@ -88,22 +88,34 @@
 
         <flux:dropdown position="top">
             <flux:button 
-                icon:trailing="chevron-up"
                 variant="primary"
                 size="sm"
                 square
                 :disabled="$stagedCount === 0 || empty(trim($message))"
-                class="disabled:!bg-[var(--surface-3)] disabled:!text-[var(--text-tertiary)] disabled:!border-[var(--border-default)] disabled:!shadow-none"
-            />
+                class="disabled:!bg-[var(--surface-3)] disabled:!text-[var(--text-tertiary)] disabled:!border-[var(--border-default)] disabled:!shadow-none btn-bevel"
+            >
+                <x-pixelarticons-chevron-up class="w-4 h-4" />
+            </flux:button>
             <flux:menu>
-                <flux:menu.item wire:click="commit" icon="check">
+                <flux:menu.item wire:click="commit">
+                    <x-slot:icon>
+                        <x-pixelarticons-check class="w-4 h-4" />
+                    </x-slot:icon>
                     {{ $isAmend ? 'Amend' : 'Commit' }} (⌘↵)
                 </flux:menu.item>
-                <flux:menu.item wire:click="commitAndPush" icon="arrow-up-tray">
+                <flux:menu.item wire:click="commitAndPush">
+                    <x-slot:icon>
+                        <x-pixelarticons-arrow-up class="w-4 h-4" />
+                    </x-slot:icon>
                     Commit & Push (⌘⇧↵)
                 </flux:menu.item>
                 <flux:menu.separator />
-                <flux:menu.item wire:click="toggleAmend" :icon="$isAmend ? 'check' : ''">
+                <flux:menu.item wire:click="toggleAmend">
+                    @if($isAmend)
+                        <x-slot:icon>
+                            <x-pixelarticons-check class="w-4 h-4" />
+                        </x-slot:icon>
+                    @endif
                     Amend Previous Commit
                 </flux:menu.item>
             </flux:menu>

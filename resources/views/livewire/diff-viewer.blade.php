@@ -1,4 +1,4 @@
-<div class="h-full flex flex-col bg-white dark:bg-[var(--surface-0)] font-mono crt-scanlines relative"
+<div class="h-full flex flex-col bg-[#1e1b50] dark:bg-[var(--surface-0)] font-display crt-scanlines crt-monitor relative"
      x-data="{
          init() {
              const saved = localStorage.getItem('gitty-diff-view-mode');
@@ -11,41 +11,41 @@
     @if($isEmpty && !$file)
         <div class="flex-1 flex items-center justify-center animate-fade-in">
             <div class="text-center">
-                <div class="w-20 h-20 mx-auto mb-4 opacity-60">{!! file_get_contents(resource_path('svg/empty-states/no-file.svg')) !!}</div>
-                <div class="text-[var(--text-tertiary)] uppercase tracking-wider text-sm">No file selected</div>
+                <div class="w-20 h-20 mx-auto mb-4 opacity-60 text-[#9595cc]">{!! file_get_contents(resource_path('svg/empty-states/no-file.svg')) !!}</div>
+                <div class="text-[#7070b0] uppercase tracking-wider text-sm">No file selected</div>
             </div>
         </div>
     @elseif($isEmpty && $file)
         <div class="flex-1 flex items-center justify-center animate-fade-in">
             <div class="text-center">
-                <div class="w-20 h-20 mx-auto mb-4 opacity-60">{!! file_get_contents(resource_path('svg/empty-states/no-diff.svg')) !!}</div>
-                <div class="text-[var(--text-tertiary)] uppercase tracking-wider text-sm">No changes to display</div>
+                <div class="w-20 h-20 mx-auto mb-4 opacity-60 text-[#9595cc]">{!! file_get_contents(resource_path('svg/empty-states/no-diff.svg')) !!}</div>
+                <div class="text-[#7070b0] uppercase tracking-wider text-sm">No changes to display</div>
             </div>
         </div>
     @elseif($isLargeFile)
-        <div class="border-b border-[var(--border-default)] px-4 h-10 flex items-center bg-white dark:bg-[var(--surface-0)]">
+        <div class="diff-header border-b border-[#302d68] px-4 h-10 flex items-center">
             <div class="flex items-center gap-3 flex-1 overflow-hidden">
                 <flux:tooltip :content="$file" class="min-w-0 flex-1">
-                    <span class="text-[var(--text-primary)] text-sm truncate block font-display tracking-wide">{{ $file }}</span>
+                    <span class="text-sm truncate block font-display tracking-wide">{{ $file }}</span>
                 </flux:tooltip>
-                <div class="flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-medium uppercase tracking-wider shrink-0 whitespace-nowrap" style="background-color: #B0480015; color: #B04800">
+                <div class="flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-medium uppercase tracking-wider shrink-0 whitespace-nowrap" style="background-color: #E0580015; color: #E05800">
                     LARGE FILE
                 </div>
             </div>
         </div>
         <div class="flex-1 flex items-center justify-center animate-fade-in">
             <div class="text-center">
-                <div class="w-20 h-20 mx-auto mb-4 opacity-60">{!! file_get_contents(resource_path('svg/empty-states/large-file.svg')) !!}</div>
-                <div class="text-[var(--text-tertiary)] uppercase tracking-wider text-sm">File too large (&gt;1MB) — diff skipped</div>
+                <div class="w-20 h-20 mx-auto mb-4 opacity-60 text-[#9595cc]">{!! file_get_contents(resource_path('svg/empty-states/large-file.svg')) !!}</div>
+                <div class="text-[#7070b0] uppercase tracking-wider text-sm">File too large (&gt;1MB) — diff skipped</div>
             </div>
         </div>
     @elseif($isImage && $imageData)
         {{-- Image Comparison View --}}
-        <div class="border-b border-[var(--border-default)] px-4 h-10 flex items-center bg-white dark:bg-[var(--surface-0)] sticky top-0 z-10" style="box-shadow: var(--shadow-sm)">
+        <div class="diff-header border-b border-[#302d68] px-4 h-10 flex items-center sticky top-0 z-10">
             <div class="flex items-center justify-between gap-3 flex-1 overflow-hidden">
                 <div class="flex items-center gap-3 min-w-0 flex-1">
                     <flux:tooltip :content="$file" class="min-w-0 flex-1">
-                        <span class="text-[var(--text-primary)] text-sm truncate block font-display tracking-wide">{{ $file }}</span>
+                        <span class="text-sm truncate block font-display tracking-wide">{{ $file }}</span>
                     </flux:tooltip>
                     @php
                         $isNew = $imageData['oldImage'] === null;
@@ -53,9 +53,9 @@
                         $isModified = $imageData['oldImage'] !== null && $imageData['newImage'] !== null;
                         
                         $badgeColor = match(true) {
-                            $isNew => '#267018',
-                            $isDeleted => '#C41030',
-                            $isModified => '#8A6410',
+                            $isNew => '#1E8C0A',
+                            $isDeleted => '#D91440',
+                            $isModified => '#C08800',
                             default => '#686C7C',
                         };
                         $badgeText = match(true) {
@@ -164,7 +164,7 @@
                     <div class="bg-white rounded-lg border border-[var(--border-default)] p-4">
                         <div class="flex items-center gap-2 mb-3">
                             <div class="px-2 py-0.5 rounded text-xs font-medium uppercase tracking-wider" 
-                                 style="background-color: #26701815; color: #267018">
+                                 style="background-color: #1E8C0A15; color: #1E8C0A">
                                 NEW
                             </div>
                             <span class="text-xs text-[var(--text-secondary)] font-mono">{{ $this->formatFileSize($imageData['newSize']) }}</span>
@@ -180,7 +180,7 @@
                     <div class="bg-white rounded-lg border border-[var(--border-default)] p-4">
                         <div class="flex items-center gap-2 mb-3">
                             <div class="px-2 py-0.5 rounded text-xs font-medium uppercase tracking-wider" 
-                                 style="background-color: #C4103015; color: #C41030">
+                                 style="background-color: #D9144015; color: #D91440">
                                 DELETED
                             </div>
                             <span class="text-xs text-[var(--text-secondary)] font-mono">{{ $this->formatFileSize($imageData['oldSize']) }}</span>
@@ -193,36 +193,36 @@
             @endif
         </div>
     @elseif($isBinary)
-        <div class="border-b border-[var(--border-default)] px-4 h-10 flex items-center bg-white dark:bg-[var(--surface-0)]">
+        <div class="diff-header border-b border-[#302d68] px-4 h-10 flex items-center">
             <div class="flex items-center gap-3 flex-1 overflow-hidden">
                 <flux:tooltip :content="$file" class="min-w-0 flex-1">
-                    <span class="text-[var(--text-primary)] text-sm truncate block font-display tracking-wide">{{ $file }}</span>
+                    <span class="text-sm truncate block font-display tracking-wide">{{ $file }}</span>
                 </flux:tooltip>
-                <div class="flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-medium uppercase tracking-wider shrink-0 whitespace-nowrap" style="background-color: #686C7C15; color: #686C7C">
+                <div class="flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-medium uppercase tracking-wider shrink-0 whitespace-nowrap" style="background-color: rgba(100,140,180,0.15); color: #6090c0">
                     BINARY
                 </div>
             </div>
         </div>
         <div class="flex-1 flex items-center justify-center animate-fade-in">
             <div class="text-center">
-                <div class="w-20 h-20 mx-auto mb-4 opacity-60">{!! file_get_contents(resource_path('svg/empty-states/binary-file.svg')) !!}</div>
-                <div class="text-[var(--text-tertiary)] uppercase tracking-wider text-sm">Binary file — cannot display diff</div>
+                <div class="w-20 h-20 mx-auto mb-4 opacity-60 text-[#9595cc]">{!! file_get_contents(resource_path('svg/empty-states/binary-file.svg')) !!}</div>
+                <div class="text-[#7070b0] uppercase tracking-wider text-sm">Binary file — cannot display diff</div>
             </div>
         </div>
     @else
-        <div class="border-b border-[var(--border-default)] px-4 h-10 flex items-center bg-white dark:bg-[var(--surface-0)] sticky top-0 z-10" style="box-shadow: var(--shadow-sm)">
+        <div class="diff-header border-b border-[#302d68] px-4 h-10 flex items-center sticky top-0 z-10">
             <div class="flex items-center justify-between gap-3 flex-1 overflow-hidden">
                 <div class="flex items-center gap-3 min-w-0 flex-1">
                     <flux:tooltip :content="$file" class="min-w-0 flex-1">
-                        <span class="text-[var(--text-primary)] text-sm truncate block">{{ $file }}</span>
+                        <span class="text-sm truncate block">{{ $file }}</span>
                     </flux:tooltip>
                     @if($diffData)
                         @php
                             $badgeColor = match(strtoupper($diffData['status'])) {
-                                'MODIFIED', 'M' => '#8A6410',
-                                'ADDED', 'A' => '#267018',
-                                'DELETED', 'D' => '#C41030',
-                                'RENAMED', 'R' => '#18206F',
+                                'MODIFIED', 'M' => '#C08800',
+                                'ADDED', 'A' => '#1E8C0A',
+                                'DELETED', 'D' => '#D91440',
+                                'RENAMED', 'R' => '#4040B0',
                                 default => '#686C7C',
                             };
                         @endphp
@@ -236,24 +236,24 @@
                         <span class="text-[var(--color-green)] font-bold">+{{ $diffData['additions'] }}</span>
                         <span class="text-[var(--color-red)] font-bold">-{{ $diffData['deletions'] }}</span>
                         <flux:tooltip content="View Blame">
-                            <flux:button @click="$dispatch('show-blame', { file: '{{ $file }}' })" variant="ghost" size="xs" square 
+                            <flux:button wire:click="showBlame" variant="ghost" size="xs" square 
                                 class="flex items-center justify-center">
-                                <x-phosphor-identification-card class="w-4 h-4" />
+                                <x-pixelarticons-card-id class="w-4 h-4" />
                             </flux:button>
                         </flux:tooltip>
                         <flux:tooltip content="Open in Editor">
                             <flux:button wire:click="openInEditor" variant="ghost" size="xs" square 
                                 class="flex items-center justify-center">
-                                <x-phosphor-code class="w-4 h-4" />
+                                <x-pixelarticons-code class="w-4 h-4" />
                             </flux:button>
                         </flux:tooltip>
                         <flux:tooltip :content="$diffViewMode === 'unified' ? 'Switch to split view' : 'Switch to unified view'">
                             <flux:button wire:click="toggleDiffViewMode" variant="ghost" size="xs" square 
                                 class="flex items-center justify-center">
                                 @if($diffViewMode === 'unified')
-                                    <x-phosphor-columns-light class="w-3.5 h-3.5" />
+                                    <x-pixelarticons-layout-columns class="w-3.5 h-3.5" />
                                 @else
-                                    <x-phosphor-rows-light class="w-3.5 h-3.5" />
+                                    <x-pixelarticons-layout-rows class="w-3.5 h-3.5" />
                                 @endif
                             </flux:button>
                         </flux:tooltip>
@@ -388,7 +388,7 @@
                                                      data-line-type="{{ $line['type'] }}"
                                                      @click="toggle({{ $lineIndex }}, '{{ $line['type'] }}')"
                                                      @click.shift="rangeSelect({{ $lineIndex }}, '{{ $line['type'] }}')"
-                                                     :class="{ 'border-l-2 border-[#18206F]': isSelected({{ $lineIndex }}) }"
+                                                     :class="{ 'border-l-2 border-[#4040B0]': isSelected({{ $lineIndex }}) }"
                                                      style="cursor: {{ $line['type'] !== 'context' ? 'pointer' : 'default' }}">
                                                     <span class="line-number">{{ $line['oldLineNumber'] ?? '' }}</span>
                                                     <span class="line-number">{{ $line['newLineNumber'] ?? '' }}</span>
@@ -397,7 +397,7 @@
                                             @endforeach
 
                                             <div x-show="hasSelection()" x-transition
-                                                 class="flex items-center gap-2 px-4 py-1.5 bg-[var(--surface-1)] border-t border-[var(--border-default)]">
+                                                 class="flex items-center gap-2 px-4 py-1.5 bg-[#252260] dark:bg-[var(--surface-1)] border-t border-[#302d68] dark:border-[var(--border-default)]">
                                                 <span class="text-xs text-[var(--text-tertiary)] font-mono" x-text="selected.size + ' lines selected'"></span>
                                                 <div class="flex-1"></div>
                                                 @if($isStaged)

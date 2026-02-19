@@ -98,7 +98,7 @@ class CommandPalette extends Component
                 'event' => 'keyboard-stage-all',
                 'keywords' => ['stage', 'add', 'all', 'git add'],
                 'requiresInput' => false,
-                'icon' => 'phosphor-plus',
+                'icon' => 'pixelarticons-plus',
             ],
             [
                 'id' => 'unstage-all',
@@ -107,7 +107,7 @@ class CommandPalette extends Component
                 'event' => 'keyboard-unstage-all',
                 'keywords' => ['unstage', 'remove', 'all', 'reset'],
                 'requiresInput' => false,
-                'icon' => 'phosphor-minus',
+                'icon' => 'pixelarticons-minus',
             ],
             [
                 'id' => 'discard-all',
@@ -116,7 +116,7 @@ class CommandPalette extends Component
                 'event' => 'palette-discard-all',
                 'keywords' => ['discard', 'revert', 'all', 'checkout'],
                 'requiresInput' => false,
-                'icon' => 'phosphor-trash',
+                'icon' => 'pixelarticons-trash',
             ],
             [
                 'id' => 'stash-all',
@@ -125,7 +125,7 @@ class CommandPalette extends Component
                 'event' => 'keyboard-stash',
                 'keywords' => ['stash', 'save', 'shelve'],
                 'requiresInput' => false,
-                'icon' => 'phosphor-archive',
+                'icon' => 'pixelarticons-archive',
             ],
             [
                 'id' => 'toggle-view',
@@ -134,7 +134,7 @@ class CommandPalette extends Component
                 'event' => 'palette-toggle-view',
                 'keywords' => ['view', 'tree', 'flat', 'list'],
                 'requiresInput' => false,
-                'icon' => 'phosphor-list-bullets',
+                'icon' => 'pixelarticons-bulletlist',
             ],
             [
                 'id' => 'commit',
@@ -143,7 +143,7 @@ class CommandPalette extends Component
                 'event' => 'keyboard-commit',
                 'keywords' => ['commit', 'save', 'check in'],
                 'requiresInput' => false,
-                'icon' => 'phosphor-check',
+                'icon' => 'pixelarticons-check',
             ],
             [
                 'id' => 'commit-push',
@@ -152,7 +152,7 @@ class CommandPalette extends Component
                 'event' => 'keyboard-commit-push',
                 'keywords' => ['commit', 'push', 'save', 'upload'],
                 'requiresInput' => false,
-                'icon' => 'phosphor-check-circle',
+                'icon' => 'pixelarticons-check-double',
             ],
             [
                 'id' => 'toggle-amend',
@@ -161,7 +161,7 @@ class CommandPalette extends Component
                 'event' => 'palette-toggle-amend',
                 'keywords' => ['amend', 'edit', 'last commit'],
                 'requiresInput' => false,
-                'icon' => 'phosphor-pencil-simple',
+                'icon' => 'pixelarticons-edit',
             ],
             [
                 'id' => 'undo-last-commit',
@@ -170,7 +170,7 @@ class CommandPalette extends Component
                 'event' => 'palette-undo-last-commit',
                 'keywords' => ['undo', 'reset', 'last commit', 'revert'],
                 'requiresInput' => false,
-                'icon' => 'phosphor-arrow-counter-clockwise',
+                'icon' => 'pixelarticons-undo',
             ],
             [
                 'id' => 'push',
@@ -179,7 +179,7 @@ class CommandPalette extends Component
                 'event' => 'palette-push',
                 'keywords' => ['push', 'upload', 'send'],
                 'requiresInput' => false,
-                'icon' => 'phosphor-arrow-up',
+                'icon' => 'pixelarticons-arrow-up',
             ],
             [
                 'id' => 'pull',
@@ -188,7 +188,7 @@ class CommandPalette extends Component
                 'event' => 'palette-pull',
                 'keywords' => ['pull', 'download', 'receive'],
                 'requiresInput' => false,
-                'icon' => 'phosphor-arrow-down',
+                'icon' => 'pixelarticons-arrow-down',
             ],
             [
                 'id' => 'fetch',
@@ -197,7 +197,7 @@ class CommandPalette extends Component
                 'event' => 'palette-fetch',
                 'keywords' => ['fetch', 'refresh', 'update'],
                 'requiresInput' => false,
-                'icon' => 'phosphor-arrows-clockwise',
+                'icon' => 'pixelarticons-sync',
             ],
             [
                 'id' => 'fetch-all',
@@ -206,7 +206,7 @@ class CommandPalette extends Component
                 'event' => 'palette-fetch-all',
                 'keywords' => ['fetch', 'all', 'remotes', 'update'],
                 'requiresInput' => false,
-                'icon' => 'phosphor-cloud-arrow-down',
+                'icon' => 'pixelarticons-cloud-download',
             ],
             [
                 'id' => 'force-push',
@@ -215,7 +215,7 @@ class CommandPalette extends Component
                 'event' => 'palette-force-push',
                 'keywords' => ['force', 'push', 'lease', 'overwrite'],
                 'requiresInput' => false,
-                'icon' => 'phosphor-arrow-fat-up',
+                'icon' => 'pixelarticons-arrow-up-box',
             ],
             [
                 'id' => 'create-branch',
@@ -224,7 +224,7 @@ class CommandPalette extends Component
                 'event' => null,
                 'keywords' => ['branch', 'create', 'new', 'checkout -b'],
                 'requiresInput' => true,
-                'icon' => 'phosphor-git-branch',
+                'icon' => 'pixelarticons-git-branch',
             ],
             [
                 'id' => 'toggle-sidebar',
@@ -233,7 +233,7 @@ class CommandPalette extends Component
                 'event' => 'palette-toggle-sidebar',
                 'keywords' => ['sidebar', 'panel', 'toggle', 'hide'],
                 'requiresInput' => false,
-                'icon' => 'phosphor-sidebar-simple',
+                'icon' => 'pixelarticons-layout-sidebar-left',
             ],
             [
                 'id' => 'toggle-history',
@@ -242,7 +242,7 @@ class CommandPalette extends Component
                 'event' => 'toggle-history-panel',
                 'keywords' => ['history', 'log', 'commits', 'toggle'],
                 'requiresInput' => false,
-                'icon' => 'phosphor-clock-counter-clockwise',
+                'icon' => 'pixelarticons-clock',
             ],
             [
                 'id' => 'show-shortcuts',
@@ -251,7 +251,7 @@ class CommandPalette extends Component
                 'event' => 'open-shortcut-help',
                 'keywords' => ['shortcuts', 'keyboard', 'help', 'keys'],
                 'requiresInput' => false,
-                'icon' => 'phosphor-keyboard',
+                'icon' => 'pixelarticons-keyboard',
             ],
             [
                 'id' => 'open-settings',
@@ -260,7 +260,7 @@ class CommandPalette extends Component
                 'event' => 'open-settings',
                 'keywords' => ['settings', 'preferences', 'config'],
                 'requiresInput' => false,
-                'icon' => 'phosphor-gear',
+                'icon' => 'pixelarticons-sliders',
             ],
             [
                 'id' => 'open-folder',
@@ -269,7 +269,7 @@ class CommandPalette extends Component
                 'event' => 'palette-open-folder',
                 'keywords' => ['open', 'folder', 'repository', 'browse'],
                 'requiresInput' => false,
-                'icon' => 'phosphor-folder-open',
+                'icon' => 'pixelarticons-folder-plus',
             ],
             [
                 'id' => 'toggle-diff-view',
@@ -278,7 +278,7 @@ class CommandPalette extends Component
                 'event' => 'palette-toggle-diff-view',
                 'keywords' => ['diff', 'split', 'side', 'unified', 'view', 'columns'],
                 'requiresInput' => false,
-                'icon' => 'phosphor-columns',
+                'icon' => 'pixelarticons-layout-columns',
             ],
             [
                 'id' => 'abort-merge',
@@ -287,7 +287,7 @@ class CommandPalette extends Component
                 'event' => 'palette-abort-merge',
                 'keywords' => ['abort', 'merge', 'cancel', 'conflict'],
                 'requiresInput' => false,
-                'icon' => 'phosphor-x-circle',
+                'icon' => 'pixelarticons-close-box',
             ],
             [
                 'id' => 'create-tag',
@@ -296,7 +296,7 @@ class CommandPalette extends Component
                 'event' => 'palette-create-tag',
                 'keywords' => ['tag', 'create', 'version', 'release'],
                 'requiresInput' => false,
-                'icon' => 'phosphor-tag',
+                'icon' => 'pixelarticons-label',
             ],
             [
                 'id' => 'open-in-editor',
@@ -305,7 +305,7 @@ class CommandPalette extends Component
                 'event' => 'palette-open-in-editor',
                 'keywords' => ['editor', 'open', 'code', 'vscode', 'cursor', 'sublime'],
                 'requiresInput' => false,
-                'icon' => 'phosphor-code',
+                'icon' => 'pixelarticons-code',
             ],
             [
                 'id' => 'continue-rebase',
@@ -314,7 +314,7 @@ class CommandPalette extends Component
                 'event' => 'palette-continue-rebase',
                 'keywords' => ['rebase', 'continue', 'resume'],
                 'requiresInput' => false,
-                'icon' => 'phosphor-git-merge',
+                'icon' => 'pixelarticons-git-merge',
             ],
             [
                 'id' => 'abort-rebase',
@@ -323,7 +323,7 @@ class CommandPalette extends Component
                 'event' => 'palette-abort-rebase',
                 'keywords' => ['rebase', 'abort', 'cancel'],
                 'requiresInput' => false,
-                'icon' => 'phosphor-x-circle',
+                'icon' => 'pixelarticons-close-box',
             ],
             [
                 'id' => 'search',
@@ -332,7 +332,7 @@ class CommandPalette extends Component
                 'event' => 'open-search',
                 'keywords' => ['search', 'find', 'commits', 'content', 'files'],
                 'requiresInput' => false,
-                'icon' => 'phosphor-magnifying-glass',
+                'icon' => 'pixelarticons-search',
             ],
             [
                 'id' => 'focus-commit',
@@ -341,7 +341,7 @@ class CommandPalette extends Component
                 'event' => 'focus-commit-message',
                 'keywords' => ['focus', 'commit', 'message', 'textarea'],
                 'requiresInput' => false,
-                'icon' => 'phosphor-text-aa',
+                'icon' => 'pixelarticons-art-text',
             ],
             [
                 'id' => 'select-all',
@@ -350,7 +350,7 @@ class CommandPalette extends Component
                 'event' => 'keyboard-select-all',
                 'keywords' => ['select', 'all', 'files'],
                 'requiresInput' => false,
-                'icon' => 'phosphor-selection-all',
+                'icon' => 'pixelarticons-checkbox-on',
             ],
         ];
     }

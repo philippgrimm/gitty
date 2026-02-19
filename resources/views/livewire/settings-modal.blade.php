@@ -1,5 +1,5 @@
 <div>
-    <flux:modal wire:model="showModal" class="space-y-6">
+    <flux:modal wire:model="showModal" class="space-y-6 !max-w-2xl">
         <div>
             <flux:heading size="lg" class="font-mono uppercase tracking-wider">Settings</flux:heading>
             <flux:subheading class="font-mono">
@@ -7,109 +7,113 @@
             </flux:subheading>
         </div>
 
-        <div class="space-y-6">
-            <div class="space-y-4">
-                <div class="text-xs uppercase tracking-wider font-medium text-[var(--text-tertiary)] border-b border-[var(--border-default)] pb-2">
-                    Git
+        <div class="grid grid-cols-2 gap-x-8 gap-y-6">
+            <div class="space-y-6">
+                <div class="space-y-4">
+                    <div class="text-xs uppercase tracking-wider font-medium text-[var(--text-tertiary)] border-b border-[var(--border-default)] pb-2">
+                        Git
+                    </div>
+                    
+                    <flux:field>
+                        <flux:label class="font-mono">Auto-fetch interval (seconds, 0 = disabled)</flux:label>
+                        <flux:input 
+                            wire:model="autoFetchInterval"
+                            type="number"
+                            min="0"
+                            class="font-mono"
+                        />
+                    </flux:field>
+
+                    <flux:field>
+                        <flux:label class="font-mono">Default branch</flux:label>
+                        <flux:input 
+                            wire:model="defaultBranch"
+                            type="text"
+                            class="font-mono"
+                        />
+                    </flux:field>
+
+                    <flux:field>
+                        <flux:label class="font-mono">Diff context lines</flux:label>
+                        <flux:input 
+                            wire:model="diffContextLines"
+                            type="number"
+                            min="0"
+                            class="font-mono"
+                        />
+                    </flux:field>
                 </div>
-                
-                <flux:field>
-                    <flux:label class="font-mono">Auto-fetch interval (seconds, 0 = disabled)</flux:label>
-                    <flux:input 
-                        wire:model="autoFetchInterval"
-                        type="number"
-                        min="0"
-                        class="font-mono"
+
+                <div class="space-y-4">
+                    <div class="text-xs uppercase tracking-wider font-medium text-[var(--text-tertiary)] border-b border-[var(--border-default)] pb-2">
+                        Editor
+                    </div>
+                    
+                    <flux:field>
+                        <flux:label class="font-mono">External editor</flux:label>
+                        <flux:input 
+                            wire:model="externalEditor"
+                            type="text"
+                            placeholder="code, vim, nano, or custom path"
+                            class="font-mono"
+                        />
+                    </flux:field>
+                </div>
+            </div>
+
+            <div class="space-y-6">
+                <div class="space-y-4">
+                    <div class="text-xs uppercase tracking-wider font-medium text-[var(--text-tertiary)] border-b border-[var(--border-default)] pb-2">
+                        Appearance
+                    </div>
+                    
+                    <flux:field>
+                        <flux:label class="font-mono">Theme</flux:label>
+                        <flux:select wire:model.live="theme" class="font-mono">
+                            <flux:select.option value="light">Light</flux:select.option>
+                            <flux:select.option value="dark">Dark</flux:select.option>
+                            <flux:select.option value="system">System</flux:select.option>
+                        </flux:select>
+                    </flux:field>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="text-xs uppercase tracking-wider font-medium text-[var(--text-tertiary)] border-b border-[var(--border-default)] pb-2">
+                        Confirmations
+                    </div>
+                    
+                    <flux:checkbox 
+                        wire:model="confirmDiscard"
+                        label="Confirm before discarding changes"
                     />
-                </flux:field>
 
-                <flux:field>
-                    <flux:label class="font-mono">Default branch</flux:label>
-                    <flux:input 
-                        wire:model="defaultBranch"
-                        type="text"
-                        class="font-mono"
+                    <flux:checkbox 
+                        wire:model="confirmForcePush"
+                        label="Confirm before force push"
                     />
-                </flux:field>
+                </div>
 
-                <flux:field>
-                    <flux:label class="font-mono">Diff context lines</flux:label>
-                    <flux:input 
-                        wire:model="diffContextLines"
-                        type="number"
-                        min="0"
-                        class="font-mono"
+                <div class="space-y-4">
+                    <div class="text-xs uppercase tracking-wider font-medium text-[var(--text-tertiary)] border-b border-[var(--border-default)] pb-2">
+                        Display
+                    </div>
+                    
+                    <flux:checkbox 
+                        wire:model="showUntracked"
+                        label="Show untracked files"
                     />
-                </flux:field>
-            </div>
-
-            <div class="space-y-4">
-                <div class="text-xs uppercase tracking-wider font-medium text-[var(--text-tertiary)] border-b border-[var(--border-default)] pb-2">
-                    Editor
                 </div>
-                
-                <flux:field>
-                    <flux:label class="font-mono">External editor</flux:label>
-                    <flux:input 
-                        wire:model="externalEditor"
-                        type="text"
-                        placeholder="code, vim, nano, or custom path"
-                        class="font-mono"
+
+                <div class="space-y-4">
+                    <div class="text-xs uppercase tracking-wider font-medium text-[var(--text-tertiary)] border-b border-[var(--border-default)] pb-2">
+                        Notifications
+                    </div>
+                    
+                    <flux:checkbox 
+                        wire:model="notificationsEnabled"
+                        label="Enable notifications"
                     />
-                </flux:field>
-            </div>
-
-            <div class="space-y-4">
-                <div class="text-xs uppercase tracking-wider font-medium text-[var(--text-tertiary)] border-b border-[var(--border-default)] pb-2">
-                    Appearance
                 </div>
-                
-                <flux:field>
-                    <flux:label class="font-mono">Theme</flux:label>
-                    <flux:select wire:model.live="theme" class="font-mono">
-                        <flux:select.option value="light">Light</flux:select.option>
-                        <flux:select.option value="dark">Dark</flux:select.option>
-                        <flux:select.option value="system">System</flux:select.option>
-                    </flux:select>
-                </flux:field>
-            </div>
-
-            <div class="space-y-4">
-                <div class="text-xs uppercase tracking-wider font-medium text-[var(--text-tertiary)] border-b border-[var(--border-default)] pb-2">
-                    Confirmations
-                </div>
-                
-                <flux:checkbox 
-                    wire:model="confirmDiscard"
-                    label="Confirm before discarding changes"
-                />
-
-                <flux:checkbox 
-                    wire:model="confirmForcePush"
-                    label="Confirm before force push"
-                />
-            </div>
-
-            <div class="space-y-4">
-                <div class="text-xs uppercase tracking-wider font-medium text-[var(--text-tertiary)] border-b border-[var(--border-default)] pb-2">
-                    Display
-                </div>
-                
-                <flux:checkbox 
-                    wire:model="showUntracked"
-                    label="Show untracked files"
-                />
-            </div>
-
-            <div class="space-y-4">
-                <div class="text-xs uppercase tracking-wider font-medium text-[var(--text-tertiary)] border-b border-[var(--border-default)] pb-2">
-                    Notifications
-                </div>
-                
-                <flux:checkbox 
-                    wire:model="notificationsEnabled"
-                    label="Enable notifications"
-                />
             </div>
         </div>
 

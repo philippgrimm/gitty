@@ -1,5 +1,5 @@
 <div 
-    class="h-screen w-screen flex flex-col bg-[var(--surface-0)] text-[var(--text-primary)] font-mono overflow-hidden"
+    class="h-screen w-screen flex flex-col bg-[var(--surface-0)] text-[var(--text-primary)] font-display overflow-hidden crt-screen crt-scanlines crt-noise"
     @keydown.window.meta.enter.prevent="if (!$wire.repoPath) return; $wire.$dispatch('keyboard-commit')"
     @keydown.window.meta.shift.enter.prevent="if (!$wire.repoPath) return; $wire.$dispatch('keyboard-commit-push')"
     @keydown.window.meta.shift.k.prevent="if (!$wire.repoPath) return; $wire.$dispatch('keyboard-stage-all')"
@@ -21,14 +21,14 @@
     @livewire('shortcut-help', key('shortcut-help'))
     @livewire('search-panel', ['repoPath' => $repoPath ?? ''], key('search-panel'))
     
-    <div class="border-b border-[var(--border-default)] bg-[var(--surface-1)] px-3 flex items-center gap-2 h-9" style="box-shadow: var(--shadow-sm); -webkit-app-region: drag;">
+    <div class="border-b border-[var(--border-default)] bg-[var(--surface-1)] px-3 flex items-center gap-2 h-9 window-chrome" style="box-shadow: var(--shadow-sm); -webkit-app-region: drag;">
         {{-- Traffic light drag spacer (macOS window controls) --}}
         <div class="w-16" style="-webkit-app-region: drag;"></div>
 
         {{-- Sidebar toggle button --}}
         <div style="-webkit-app-region: no-drag;">
             <flux:button wire:click="toggleSidebar" variant="ghost" size="xs" square class="text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] flex items-center justify-center">
-                <x-phosphor-sidebar-simple class="w-4 h-4" />
+                <x-pixelarticons-layout-sidebar-left class="w-4 h-4" />
             </flux:button>
         </div>
 
@@ -79,15 +79,13 @@
              }"
              @theme-updated.window="theme = $event.detail.theme; localStorage.setItem('gitty-theme', theme); apply()">
             <flux:button @click="toggle()" variant="ghost" size="xs" square class="text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] flex items-center justify-center">
-                <template x-if="document.documentElement.classList.contains('dark')">
-                    <x-phosphor-sun-light class="w-4 h-4" />
-                </template>
-                <template x-if="!document.documentElement.classList.contains('dark')">
-                    <x-phosphor-moon-light class="w-4 h-4" />
-                </template>
+                <x-pixelarticons-sun x-show="theme === 'dark'" x-cloak class="w-4 h-4" />
+                <x-pixelarticons-moon x-show="theme === 'light'" x-cloak class="w-4 h-4" />
             </flux:button>
         </div>
     </div>
+
+    @livewire('settings-modal')
 
     @if(empty($repoPath))
         <div class="flex-1 flex items-center justify-center animate-fade-in" x-data="{ booted: false }" x-init="setTimeout(() => booted = true, 1500)">
@@ -169,7 +167,7 @@
                  @livewire('conflict-resolver', ['repoPath' => $repoPath], key('conflict-resolver-' . $repoPath))
                  @livewire('rebase-panel', ['repoPath' => $repoPath], key('rebase-panel-' . $repoPath))
                  {{-- Staging + Commit Panel --}}
-                <div class="flex flex-col overflow-hidden rounded-3xl neu-container"
+                <div class="flex flex-col overflow-hidden"
                      :style="'width: ' + effectiveWidth + 'px'"
                 >
                     <div class="flex-1 overflow-hidden">
@@ -184,14 +182,14 @@
                 <div @mousedown.prevent="startDrag($event)"
                      class="w-[5px] flex-shrink-0 cursor-col-resize relative group/resize"
                 >
-                    <div class="absolute inset-y-0 left-[2px] w-px bg-[var(--border-default)] group-hover/resize:bg-[#18206F] transition-colors"
-                         :class="isDragging && 'bg-[#18206F]'"
+                    <div class="absolute inset-y-0 left-[2px] w-px bg-[var(--border-default)] group-hover/resize:bg-[#4040B0] transition-colors"
+                         :class="isDragging && 'bg-[#4040B0]'"
                     ></div>
                 </div>
 
                 {{-- Right Panel: Diff Viewer or History Panel --}}
-                <div class="flex-1 overflow-hidden relative rounded-3xl neu-container">
-                    <div x-show="activeRightPanel === 'diff'" class="h-full">
+                <div class="flex-1 overflow-hidden relative">
+                    <div x-show="activeRightPanel === 'diff'" class="h-full py-2 pl-2">
                         @livewire('diff-viewer', ['repoPath' => $repoPath], key('diff-viewer-' . $repoPath))
                     </div>
                     <div x-show="activeRightPanel === 'history'" class="h-full">

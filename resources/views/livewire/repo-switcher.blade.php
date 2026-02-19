@@ -1,6 +1,6 @@
-<div class="flex items-center gap-3 font-mono">
+<div class="flex items-center gap-3 font-display">
     @if($error)
-        <div class="absolute top-16 left-1/2 transform -translate-x-1/2 z-50 bg-[var(--color-red)]/10 border border-[#C41030]/30 text-[var(--color-red)] px-6 py-3 text-xs uppercase tracking-wider font-semibold shadow-xl">
+        <div class="absolute top-16 left-1/2 transform -translate-x-1/2 z-50 bg-[var(--color-red)]/10 border border-[#D91440]/30 text-[var(--color-red)] px-6 py-3 text-xs uppercase tracking-wider font-semibold shadow-xl">
             {{ $error }}
         </div>
     @endif
@@ -11,13 +11,13 @@
             size="xs"
             class="flex items-center gap-2 px-2.5 py-1 !bg-[var(--surface-0)] border border-[var(--border-default)] hover:border-[var(--border-strong)] transition-colors text-xs rounded-lg"
         >
-            <x-phosphor-folder-light class="w-3.5 h-3.5 text-[var(--text-secondary)] shrink-0" />
+            <x-pixelarticons-folder class="w-3.5 h-3.5 text-[var(--text-secondary)] shrink-0" />
             @if($currentRepoName)
-                <span class="font-semibold text-[var(--text-primary)]">{{ $currentRepoName }}</span>
+                <span class="font-medium text-[var(--text-primary)]">{{ $currentRepoName }}</span>
             @else
                 <span class="text-[var(--text-tertiary)]">No repository open</span>
             @endif
-            <svg class="w-3 h-3 text-[var(--text-secondary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+            <x-pixelarticons-chevron-down class="w-3 h-3 text-[var(--text-secondary)]" />
         </flux:button>
 
         <flux:menu class="w-80 max-h-[500px] overflow-hidden !p-0">
@@ -68,7 +68,7 @@
                                             <div class="w-1.5 h-1.5 rounded-full bg-[var(--accent)]"></div>
                                         @endif
                                     </div>
-                                    <span class="text-sm truncate {{ $currentRepoPath === $repo['path'] ? 'font-semibold text-[var(--text-primary)]' : 'text-[var(--text-secondary)]' }}">
+                                    <span class="text-sm truncate {{ $currentRepoPath === $repo['path'] ? 'font-medium text-[var(--text-primary)]' : 'text-[var(--text-secondary)]' }}">
                                         {{ $repo['name'] }}
                                     </span>
                                 </div>
@@ -77,7 +77,7 @@
                                     wire:click.stop="removeRecentRepo({{ $repo['id'] }})"
                                     class="opacity-0 group-hover:opacity-100 transition-opacity text-[var(--text-tertiary)] hover:text-[var(--color-red)] p-0.5 shrink-0"
                                 >
-                                    <x-phosphor-trash-light class="w-3.5 h-3.5" />
+                                    <x-pixelarticons-trash class="w-3.5 h-3.5" />
                                 </button>
                             </div>
                         @endforeach
@@ -92,13 +92,13 @@
                 @endif
 
                 {{-- Open Repository button --}}
-                <div class="border-t border-[var(--border-subtle)] p-2 sticky bottom-0 bg-white dark:bg-[var(--surface-0)]">
+                <div class="border-t border-[var(--border-subtle)] p-2 sticky bottom-0 bg-white dark:bg-[var(--surface-1)]">
                     <button
                         wire:click="openFolderDialog"
                         type="button"
                         class="w-full flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs uppercase tracking-wider text-[var(--text-secondary)] hover:bg-[var(--surface-0)] dark:hover:bg-[var(--surface-3)] transition-colors rounded"
                     >
-                        <x-phosphor-folder-open-light class="w-3.5 h-3.5 shrink-0" />
+                        <x-pixelarticons-folder-plus class="w-3.5 h-3.5 shrink-0" />
                         <span>Open Repository</span>
                     </button>
                 </div>

@@ -310,11 +310,12 @@ class CommitPanel extends Component
         // If message is empty or just a prefill, replace with template prefix
         if (empty(trim($this->message)) || $this->message === $this->currentPrefill) {
             $this->message = $prefix;
+        } elseif (preg_match('/^(feat|fix|refactor|docs|test|chore|style|perf|ci|build)(\(.*?\))?:\s*/', $this->message, $matches)) {
+            // Replace existing template prefix with the new one, keeping the rest of the message
+            $this->message = $prefix.substr($this->message, strlen($matches[0]));
         } else {
-            // Prepend template type to existing message if it doesn't already have a type
-            if (! preg_match('/^(feat|fix|refactor|docs|test|chore|style|perf|ci|build)(\(.*?\))?:/', $this->message)) {
-                $this->message = $prefix.$this->message;
-            }
+            // Prepend template type to existing message
+            $this->message = $prefix.$this->message;
         }
     }
 

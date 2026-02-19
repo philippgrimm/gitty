@@ -1,8 +1,8 @@
-<div class="h-full flex flex-col bg-white dark:bg-[var(--surface-0)] text-[var(--text-primary)] font-mono">
+<div class="h-full flex flex-col bg-white dark:bg-[var(--surface-0)] text-[var(--text-primary)] font-display">
     @if(!$file || !$blameData)
         <div class="flex-1 flex items-center justify-center animate-fade-in">
             <div class="text-center space-y-3">
-                <x-phosphor-identification-card class="w-16 h-16 mx-auto text-[var(--text-tertiary)] opacity-40" />
+                <x-pixelarticons-card-id class="w-16 h-16 mx-auto text-[var(--text-tertiary)] opacity-40" />
                 <div class="text-[var(--text-tertiary)] uppercase tracking-wider text-xs font-medium">No file selected for blame</div>
                 <div class="text-[var(--text-tertiary)] text-xs">Right-click a file or click "Blame" in the diff header</div>
             </div>
@@ -11,7 +11,7 @@
         {{-- Header --}}
         <div class="sticky top-0 z-10 bg-white dark:bg-[var(--surface-0)] border-b border-[var(--border-default)] px-4 py-2 flex items-center justify-between" style="box-shadow: var(--shadow-sm);">
             <div class="flex items-center gap-3 min-w-0">
-                <x-phosphor-identification-card class="w-4 h-4 text-[var(--text-tertiary)] shrink-0" />
+                <x-pixelarticons-card-id class="w-4 h-4 text-[var(--text-tertiary)] shrink-0" />
                 <span class="text-sm text-[var(--text-secondary)] truncate">{{ $file }}</span>
                 <span class="text-xs text-[var(--text-tertiary)]">{{ count($blameData) }} lines</span>
             </div>
@@ -23,7 +23,7 @@
                     square
                     class="text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]"
                 >
-                    <x-phosphor-x class="w-4 h-4" />
+                    <x-pixelarticons-close class="w-4 h-4" />
                 </flux:button>
             </flux:tooltip>
         </div>
@@ -48,7 +48,7 @@
                                     <span class="text-[var(--text-tertiary)]">{{ $line['date'] }}</span>
                                     <button 
                                         wire:click="selectCommit('{{ $line['commitSha'] }}')"
-                                        class="text-[#18206F] hover:underline cursor-pointer"
+                                        class="text-[#4040B0] hover:underline cursor-pointer"
                                         title="View commit {{ $line['shortSha'] }}"
                                     >{{ $line['shortSha'] }}</button>
                                 </div>

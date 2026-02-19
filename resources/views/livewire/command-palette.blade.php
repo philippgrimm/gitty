@@ -66,7 +66,7 @@
                 <div class="px-4 py-2.5 border-b border-[var(--border-subtle)]">
                     <div class="flex items-center gap-2">
                         <button wire:click="cancelInput" class="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors">
-                            <x-phosphor-arrow-left class="w-4 h-4" />
+                            <x-pixelarticons-arrow-left class="w-4 h-4" />
                         </button>
                         <span class="text-sm text-[var(--text-primary)] font-medium font-display uppercase tracking-wider">Create Branch</span>
                     </div>
@@ -79,7 +79,7 @@
                         wire:model="inputValue"
                         wire:keydown.enter.prevent="submitInput"
                         placeholder="Branch name (e.g., feature/my-feature)"
-                        class="w-full bg-transparent border border-[var(--border-default)] rounded-lg outline-none text-sm text-[var(--text-primary)] placeholder-[#686C7C] font-mono px-3 py-2 focus:ring-1 focus:ring-[#18206F] focus:border-[#18206F] input-recessed phosphor-glow"
+                        class="w-full bg-transparent border border-[var(--border-default)] rounded-lg outline-none text-sm text-[var(--text-primary)] placeholder-[#686C7C] font-mono px-3 py-2 focus:ring-0 retro-input"
                         x-ref="inputField"
                         x-effect="if($wire.mode === 'input') $nextTick(() => { $refs.inputField?.focus(); const len = $refs.inputField?.value?.length || 0; $refs.inputField?.setSelectionRange(len, len); })"
                     />
@@ -96,12 +96,12 @@
                 {{-- Search Input Area --}}
                 <div class="px-4 py-2.5 border-b border-[var(--border-subtle)]">
                     <div class="flex items-center gap-2">
-                        <x-phosphor-magnifying-glass-light class="w-4 h-4 text-[var(--text-tertiary)] shrink-0" />
+                        <x-pixelarticons-search class="w-4 h-4 text-[var(--text-tertiary)] shrink-0" />
                         <input
                             type="text"
                             wire:model.live.debounce.150ms="query"
                             placeholder="Type a command..."
-                            class="w-full bg-transparent border-none outline-none text-sm text-[var(--text-primary)] placeholder-[#686C7C] font-display tracking-wide p-0 focus:ring-0 phosphor-glow"
+                            class="w-full bg-transparent border-none outline-none text-sm text-[var(--text-primary)] placeholder-[#686C7C] font-display tracking-wide p-0 focus:ring-0"
                             x-ref="searchInput"
                             x-effect="if($wire.isOpen) $nextTick(() => $refs.searchInput?.focus())"
                         />
@@ -119,7 +119,7 @@
                                 @endif
                                 class="flex items-center justify-between gap-3 px-4 py-2 transition-colors duration-75
                                     {{ ($command['disabled'] ?? false) ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer hover:bg-[var(--surface-0)] dark:hover:bg-[var(--surface-3)]' }}"
-                                x-bind:style="activeIndex === {{ $index }} && !{{ ($command['disabled'] ?? false) ? 'true' : 'false' }} ? 'background-color: rgba(24, 32, 111, 0.08)' : ''"
+                                x-bind:style="activeIndex === {{ $index }} && !{{ ($command['disabled'] ?? false) ? 'true' : 'false' }} ? 'background-color: rgba(64, 64, 176, 0.08)' : ''"
                             >
                                 <div class="flex items-center gap-3">
                                     <x-dynamic-component :component="$command['icon']" class="w-4 h-4 text-[var(--text-tertiary)] shrink-0" />

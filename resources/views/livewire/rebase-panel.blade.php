@@ -7,7 +7,7 @@
         </div>
 
         @if($showForceWarning)
-            <div class="p-3 bg-[rgba(223,142,29,0.1)] rounded border border-[var(--color-yellow)]">
+            <div class="p-3 bg-[rgba(192,136,0,0.1)] rounded border border-[var(--color-yellow)]">
                 <p class="text-sm text-[var(--color-yellow)] font-medium">⚠ These commits are pushed. Rebasing will require a force push.</p>
             </div>
         @endif
@@ -59,16 +59,16 @@
                     @dragover="dragOver({{ $index }}, $event)"
                     @drop="drop({{ $index }})"
                     @dragend="endDrag()"
-                    :class="dragOverIndex === {{ $index }} ? 'border-[#18206F] bg-[rgba(24,32,111,0.05)]' : 'border-[var(--border-default)]'"
+                    :class="dragOverIndex === {{ $index }} ? 'border-[#4040B0] bg-[rgba(64,64,176,0.05)]' : 'border-[var(--border-default)]'"
                     class="flex items-center gap-3 p-3 border rounded cursor-move transition-colors"
                 >
                     <div class="text-[var(--text-tertiary)]">
-                        <x-phosphor-dots-six-vertical class="w-4 h-4" />
+                        <x-pixelarticons-drag-and-drop class="w-4 h-4" />
                     </div>
 
                     <div class="flex-1 min-w-0">
                         <div class="flex items-center gap-2 mb-1">
-                            <span class="text-xs text-[#18206F] font-mono">{{ $commit['shortSha'] }}</span>
+                            <span class="text-xs text-[#4040B0] font-mono">{{ $commit['shortSha'] }}</span>
                             <span class="text-sm text-[var(--text-primary)] truncate">{{ $commit['message'] }}</span>
                         </div>
                     </div>
@@ -103,7 +103,7 @@
     @if($isRebasing)
         <div class="fixed bottom-4 right-4 z-50 bg-[var(--color-yellow)] text-white rounded-lg shadow-lg p-4 max-w-md">
             <div class="flex items-start gap-3">
-                <x-phosphor-git-merge class="w-5 h-5 shrink-0 mt-0.5" />
+                <x-pixelarticons-git-merge class="w-5 h-5 shrink-0 mt-0.5" />
                 <div class="flex-1">
                     <div class="font-medium mb-1">Rebase in Progress</div>
                     <div class="text-sm opacity-90 mb-3">Resolve conflicts and continue, or abort the rebase.</div>

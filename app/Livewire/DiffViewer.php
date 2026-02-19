@@ -83,6 +83,15 @@ class DiffViewer extends Component
         $this->openInEditor();
     }
 
+    public function showBlame(): void
+    {
+        if ($this->file === null) {
+            return;
+        }
+
+        $this->dispatch('show-blame', file: $this->file);
+    }
+
     #[On('file-selected')]
     public function onFileSelected(string $file, bool $staged): void
     {

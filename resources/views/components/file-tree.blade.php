@@ -16,9 +16,9 @@
                         class="text-[var(--text-tertiary)] transition-transform duration-200"
                         :class="expanded ? 'rotate-90' : ''"
                     >
-                        <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                        <x-pixelarticons-chevron-right class="w-3 h-3" />
                     </div>
-                    <x-phosphor-folder-simple class="w-3.5 h-3.5 text-[var(--text-tertiary)]" />
+                    <x-pixelarticons-folder class="w-3.5 h-3.5 text-[var(--text-tertiary)]" />
                     <div class="text-sm font-medium text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors">
                         {{ $node['name'] }}
                     </div>
@@ -36,7 +36,7 @@
                 @click="handleFileClick('{{ $node['path'] }}', {{ $staged ? 'true' : 'false' }}, $event)"
                 @contextmenu="showContextMenu('{{ $node['path'] }}', {{ $staged ? 'true' : 'false' }}, $event)"
                 class="group px-4 py-1.5 cursor-pointer flex items-center gap-3 relative"
-                :class="{ 'bg-[rgba(24,32,111,0.15)]': isSelected('{{ $node['path'] }}'), 'bg-white dark:bg-[var(--surface-0)] hover:bg-[var(--surface-0)] dark:hover:bg-[var(--surface-3)] transition-colors duration-150': !isSelected('{{ $node['path'] }}') }"
+                :class="{ 'bg-[rgba(64,64,176,0.15)]': isSelected('{{ $node['path'] }}'), 'bg-white dark:bg-[var(--surface-0)] hover:bg-[var(--surface-0)] dark:hover:bg-[var(--surface-3)] transition-colors duration-150': !isSelected('{{ $node['path'] }}') }"
                 style="padding-left: {{ ($level * 16) + 16 }}px"
             >
                 <div class="flex items-center gap-2.5 flex-1 min-w-0 pr-0 {{ $staged ? 'group-hover:pr-10' : 'group-hover:pr-16' }} transition-all duration-150">
@@ -52,7 +52,7 @@
                             default => ['label' => '?', 'color' => 'zinc', 'icon' => '?'],
                         };
                     @endphp
-                    <div class="w-2 h-2 rounded-full shrink-0 {{ match($statusConfig['color']) { 'yellow' => 'bg-[var(--color-yellow)]', 'green' => 'bg-[var(--color-green)]', 'red' => 'bg-[var(--color-red)]', 'blue' => 'bg-[#18206F]', 'orange' => 'bg-[var(--color-peach)]', default => 'bg-[#686C7C]' } }}"></div>
+                    <div class="w-2 h-2 rounded-full shrink-0 {{ match($statusConfig['color']) { 'yellow' => 'bg-[var(--color-yellow)] status-dot-modified', 'green' => 'bg-[var(--color-green)] status-dot-added', 'red' => 'bg-[var(--color-red)] status-dot-deleted', 'blue' => 'bg-[#4040B0] status-dot-renamed', 'orange' => 'bg-[var(--color-peach)] status-dot-untracked', default => 'bg-[#686C7C]' } }}"></div>
                     <flux:tooltip :content="$node['path']" delay="1000" class="min-w-0 flex-1">
                         <div class="text-sm truncate text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors duration-150">
                             {{ $node['name'] }}
@@ -71,7 +71,7 @@
                                 size="xs"
                                 square
                             >
-                                <x-phosphor-minus class="w-3.5 h-3.5" />
+                                <x-pixelarticons-minus class="w-3.5 h-3.5" />
                             </flux:button>
                         </flux:tooltip>
                     </div>
@@ -86,7 +86,7 @@
                                 size="xs"
                                 square
                             >
-                                <x-phosphor-plus class="w-3.5 h-3.5" />
+                                <x-pixelarticons-plus class="w-3.5 h-3.5" />
                             </flux:button>
                         </flux:tooltip>
                         <flux:tooltip content="Discard">
@@ -97,7 +97,7 @@
                                 square
                                 class="text-[var(--color-red)] hover:text-[var(--color-red)]"
                             >
-                                <x-phosphor-arrow-counter-clockwise class="w-3.5 h-3.5" />
+                                <x-pixelarticons-undo class="w-3.5 h-3.5" />
                             </flux:button>
                         </flux:tooltip>
                     </div>

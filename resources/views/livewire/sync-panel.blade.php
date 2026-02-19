@@ -3,7 +3,7 @@
         showOutputLog: false, 
         confirmForcePush: false 
     }"
-    class="flex items-center gap-1 font-mono"
+    class="flex items-center gap-1 font-display"
 >
     @php
         $ahead = $aheadBehind['ahead'] ?? 0;
@@ -21,9 +21,9 @@
                 class="text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] hover:bg-[var(--surface-2)] transition-colors flex items-center justify-center"
             >
                 @if($isOperationRunning && $lastOperation === 'push')
-                    <x-phosphor-circle-notch-light class="w-4 h-4 animate-spin" />
+                    <x-pixelarticons-loader class="w-4 h-4 animate-spin" />
                 @else
-                    <x-phosphor-arrow-up-light class="w-4 h-4" />
+                    <x-pixelarticons-arrow-up class="w-4 h-4" />
                 @endif
             </flux:button>
             @if($ahead > 0)
@@ -43,9 +43,9 @@
             class="text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] hover:bg-[var(--surface-2)] transition-colors"
         >
             @if($isOperationRunning && $lastOperation === 'pull')
-                <x-phosphor-circle-notch-light class="w-4 h-4 animate-spin" />
+                <x-pixelarticons-loader class="w-4 h-4 animate-spin" />
             @else
-                <x-phosphor-arrow-down-light class="w-4 h-4" />
+                <x-pixelarticons-arrow-down class="w-4 h-4" />
             @endif
         </flux:button>
             @if($behind > 0)
@@ -64,9 +64,9 @@
             class="text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] hover:bg-[var(--surface-2)] transition-colors"
         >
             @if($isOperationRunning && $lastOperation === 'fetch')
-                <x-phosphor-circle-notch-light class="w-4 h-4 animate-spin" />
+                <x-pixelarticons-loader class="w-4 h-4 animate-spin" />
             @else
-                <x-phosphor-arrows-clockwise-light class="w-4 h-4" />
+                <x-pixelarticons-sync class="w-4 h-4" />
             @endif
         </flux:button>
     </flux:tooltip>

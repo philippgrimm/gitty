@@ -1,39 +1,30 @@
-<svg viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Layer 1: Backdrop -->
-  <g>
-    <circle cx="80" cy="80" r="58" fill="#e6e9ef"/>
-  </g>
-  
-  <!-- Layer 2: Ground/Shadow -->
-  <g>
-    <ellipse cx="80" cy="108" rx="32" ry="6" fill="#dce0e8" opacity="0.5"/>
-  </g>
-  
-  <!-- Layer 3: Subject - Folder -->
-  <g>
-    <!-- Folder body -->
-    <path d="M52 72 L52 100 C52 102.2 53.8 104 56 104 L104 104 C106.2 104 108 102.2 108 100 L108 72 Z" 
-          fill="#dce0e8" stroke="#ccd0da" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-    
-    <!-- Folder tab -->
-    <path d="M52 72 L52 66 C52 63.8 53.8 62 56 62 L68 62 L72 66 L80 66 C82.2 66 84 67.8 84 70 L84 72" 
-          fill="#dce0e8" stroke="#ccd0da" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-    
-    <!-- Interior shade (folder opening) -->
-    <rect x="54" y="74" width="52" height="12" rx="1" fill="#ccd0da" opacity="0.3"/>
-  </g>
-  
-  <!-- Layer 4: Detail & Accent -->
-  <g>
-    <!-- Git branch icon - Zed Blue -->
-    <circle cx="90" cy="54" r="3" fill="#084CCF" stroke="#084CCF" stroke-width="1"/>
-    <circle cx="100" cy="54" r="3" fill="#084CCF" stroke="#084CCF" stroke-width="1"/>
-    <path d="M93 54 C95 54 97 54 97 54" stroke="#084CCF" stroke-width="1.5" stroke-linecap="round"/>
-    
-    <!-- Decorative dots -->
-    <circle cx="65" cy="55" r="1.5" fill="#ccd0da"/>
-    <circle cx="115" cy="75" r="1.5" fill="#9ca0b0"/>
-    <circle cx="45" cy="88" r="2" fill="#ccd0da"/>
-    <circle cx="118" cy="95" r="1.5" fill="#9ca0b0"/>
-  </g>
+<svg viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+  <!-- Folder tab outline -->
+  <rect x="32" y="40" width="40" height="8" fill="currentColor" opacity="0.5"/>
+  <rect x="64" y="48" width="8" height="8" fill="currentColor" opacity="0.5"/>
+
+  <!-- Folder body outline -->
+  <rect x="32" y="48" width="8" height="80" fill="currentColor" opacity="0.5"/>
+  <rect x="40" y="56" width="88" height="8" fill="currentColor" opacity="0.5"/>
+  <rect x="120" y="56" width="8" height="72" fill="currentColor" opacity="0.5"/>
+  <rect x="32" y="120" width="96" height="8" fill="currentColor" opacity="0.5"/>
+
+  <!-- Tab fill -->
+  <rect x="40" y="48" width="24" height="8" fill="currentColor" opacity="0.25"/>
+
+  <!-- Body fill -->
+  <rect x="40" y="64" width="80" height="56" fill="currentColor" opacity="0.15"/>
+
+  <!-- Interior shade (folder opening) -->
+  <rect x="40" y="64" width="80" height="16" fill="currentColor" opacity="0.2"/>
+
+  <!-- Git branch (Zed Blue) -->
+  <rect x="88" y="16" width="8" height="8" fill="#084CCF" opacity="0.85"/>
+  <rect x="104" y="16" width="8" height="8" fill="#084CCF" opacity="0.85"/>
+  <rect x="96" y="24" width="8" height="8" fill="#084CCF"/>
+  <rect x="96" y="32" width="8" height="8" fill="#084CCF" opacity="0.7"/>
+
+  <!-- Decorative pixels -->
+  <rect x="48" y="32" width="8" height="8" fill="currentColor" opacity="0.2"/>
+  <rect x="128" y="80" width="8" height="8" fill="currentColor" opacity="0.15"/>
 </svg>

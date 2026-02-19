@@ -1,38 +1,21 @@
-<svg viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Layer 1: Backdrop -->
-  <g>
-    <circle cx="80" cy="80" r="65" fill="#eff1f5"/>
-  </g>
-  
-  <!-- Layer 2: Concentric Rings -->
-  <g>
-    <circle cx="80" cy="80" r="50" fill="#e6e9ef"/>
-    <circle cx="80" cy="80" r="35" fill="#dce0e8"/>
-  </g>
-  
-  <!-- Layer 3: Ring Accents -->
-  <g>
-    <!-- Partial arcs between rings -->
-    <path d="M80 30 A50 50 0 0 1 110 45" stroke="#ccd0da" stroke-width="1" fill="none" stroke-linecap="round"/>
-    <path d="M50 45 A50 50 0 0 0 30 80" stroke="#ccd0da" stroke-width="1" fill="none" stroke-linecap="round"/>
-    <path d="M80 130 A50 50 0 0 1 50 115" stroke="#ccd0da" stroke-width="1" fill="none" stroke-linecap="round"/>
-  </g>
-  
-  <!-- Layer 4: Detail & Accent -->
-  <g>
-    <!-- Checkmark - Zed Blue -->
-    <path d="M65 80 L75 90 L95 68" 
-          stroke="#084CCF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-    
-    <!-- Cardinal direction dots -->
-    <circle cx="80" cy="30" r="2" fill="#ccd0da"/>
-    <circle cx="130" cy="80" r="2" fill="#ccd0da"/>
-    <circle cx="80" cy="130" r="2" fill="#ccd0da"/>
-    <circle cx="30" cy="80" r="2" fill="#ccd0da"/>
-    
-    <!-- Sparkle dots -->
-    <circle cx="110" cy="110" r="1.5" fill="#9ca0b0"/>
-    <circle cx="50" cy="50" r="1" fill="#9ca0b0"/>
-    <circle cx="115" cy="65" r="1.5" fill="#9ca0b0"/>
-  </g>
+<svg viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+  <!-- Concentric pixel squares -->
+  <rect x="8" y="8" width="144" height="144" fill="currentColor" opacity="0.08"/>
+  <rect x="24" y="24" width="112" height="112" fill="currentColor" opacity="0.12"/>
+  <rect x="40" y="40" width="80" height="80" fill="currentColor" opacity="0.18"/>
+
+  <!-- Ring accents -->
+  <rect x="24" y="16" width="48" height="8" fill="currentColor" opacity="0.2"/>
+  <rect x="8" y="72" width="8" height="32" fill="currentColor" opacity="0.2"/>
+  <rect x="96" y="136" width="40" height="8" fill="currentColor" opacity="0.2"/>
+
+  <!-- Checkmark (Zed Blue) — 16×16 blocks -->
+  <rect x="48" y="72" width="16" height="16" fill="#084CCF"/>
+  <rect x="64" y="88" width="16" height="16" fill="#084CCF"/>
+  <rect x="80" y="72" width="16" height="16" fill="#084CCF"/>
+  <rect x="96" y="56" width="16" height="16" fill="#084CCF"/>
+
+  <!-- Decorative pixels -->
+  <rect x="128" y="32" width="8" height="8" fill="currentColor" opacity="0.2"/>
+  <rect x="24" y="120" width="8" height="8" fill="currentColor" opacity="0.15"/>
 </svg>

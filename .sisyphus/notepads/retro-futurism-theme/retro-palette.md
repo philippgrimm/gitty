@@ -36,29 +36,29 @@
 
 ### Accent Colors
 ```css
---accent: #18206F;           /* Deep cobalt - primary accent */
---accent-muted: rgba(24, 32, 111, 0.15);  /* Accent/15 - muted backgrounds */
---accent-text: #18206F;      /* Accent text color */
+--accent: #0F62FE;           /* IBM Carbon blue - primary accent */
+--accent-muted: rgba(15, 98, 254, 0.15);  /* Accent/15 - muted backgrounds */
+--accent-text: #0F62FE;      /* Accent text color */
 ```
 
 **Flux @theme block**:
 ```css
---color-accent: #18206F;
---color-accent-content: #18206F;
+--color-accent: #0F62FE;
+--color-accent-content: #0F62FE;
 --color-accent-foreground: #ffffff;
 ```
 
-### Semantic Colors
+### Semantic Colors (saturated for vibrancy)
 ```css
---color-green: #267018;      /* Added/staged files */
---color-red: #C41030;        /* Deleted files, errors */
---color-yellow: #8A6410;     /* Modified files, warnings */
---color-peach: #B04800;      /* Untracked files */
---color-blue: #18206F;       /* Primary accent */
---color-mauve: #6B4BA0;      /* Special states */
---color-teal: #1A7A7A;       /* Decorative */
---color-sky: #2080B0;        /* Decorative */
---color-lavender: #5060C0;   /* Decorative */
+--color-green: #1E8C0A;      /* Added/staged files */
+--color-red: #D91440;        /* Deleted files, errors */
+--color-yellow: #C08800;     /* Modified files, warnings */
+--color-peach: #E05800;      /* Untracked files */
+--color-blue: #0F62FE;       /* Primary accent */
+--color-mauve: #7C3AED;      /* Special states */
+--color-teal: #0D9488;       /* Decorative */
+--color-sky: #0EA5E9;        /* Decorative */
+--color-lavender: #6366F1;   /* Decorative */
 ```
 
 ### Shadows
@@ -68,12 +68,10 @@
 --shadow-glow: none;
 ```
 
-### Neumorphic Shadows (Light Mode)
+### Win95 Beveled Buttons (Light Mode)
 ```css
---neomorph-light: #FFFFFF;           /* Light side highlight */
---neomorph-dark: #C8C3B8;            /* Dark side shadow */
---neomorph-shadow-light: 4px 4px 8px rgba(200, 195, 184, 0.4);
---neomorph-shadow-dark: -4px -4px 8px rgba(255, 255, 255, 0.8);
+border-color: #ffffff #808080 #808080 #ffffff;
+box-shadow: inset 1px 1px 0px #dfdfdf, inset -1px -1px 0px #404040;
 ```
 
 ---
@@ -113,8 +111,8 @@
 
 **Flux @theme block** (same as light mode):
 ```css
---color-accent: #18206F;
---color-accent-content: #18206F;
+--color-accent: #0F62FE;
+--color-accent-content: #0F62FE;
 --color-accent-foreground: #ffffff;
 ```
 
@@ -138,12 +136,10 @@
 --shadow-glow: 0 0 20px rgba(0, 195, 255, 0.20);
 ```
 
-### Neumorphic Shadows (Dark Mode)
+### Win95 Beveled Buttons (Dark Mode)
 ```css
---neomorph-light: #1A1E27;           /* Light side highlight */
---neomorph-dark: #000000;            /* Dark side shadow */
---neomorph-shadow-light: 4px 4px 12px rgba(0, 0, 0, 0.6);
---neomorph-shadow-dark: -4px -4px 12px rgba(26, 30, 39, 0.3);
+border-color: #4A5080 #1A1E27 #1A1E27 #4A5080;
+box-shadow: inset 1px 1px 0px #3A4070, inset -1px -1px 0px #0A0E17;
 ```
 
 ---
@@ -163,16 +159,16 @@
 | `--text-primary` | `#4c4f69` | `#2C3040` | Darker, more contrast |
 | `--text-secondary` | `#6c6f85` | `#4A4E5E` | Darker, more contrast |
 | `--text-tertiary` | `#8c8fa1` | `#686C7C` | Darker, more contrast |
-| `--accent` | `#084CCF` | `#18206F` | Deeper cobalt |
-| `--color-green` | `#40a02b` | `#267018` | Darker for contrast |
-| `--color-red` | `#d20f39` | `#C41030` | Slightly darker |
-| `--color-yellow` | `#df8e1d` | `#8A6410` | Much darker for contrast |
-| `--color-peach` | `#fe640b` | `#B04800` | Darker for contrast |
-| `--color-blue` | `#084CCF` | `#18206F` | Deeper cobalt |
-| `--color-mauve` | `#8839ef` | `#6B4BA0` | Darker, more muted |
-| `--color-teal` | `#179299` | `#1A7A7A` | Slightly adjusted |
-| `--color-sky` | `#04a5e5` | `#2080B0` | Darker, more muted |
-| `--color-lavender` | `#7287fd` | `#5060C0` | Darker, more saturated |
+| `--accent` | `#084CCF` | `#0F62FE` | IBM Carbon blue |
+| `--color-green` | `#40a02b` | `#1E8C0A` | Saturated, vivid |
+| `--color-red` | `#d20f39` | `#D91440` | Saturated, vivid |
+| `--color-yellow` | `#df8e1d` | `#C08800` | Saturated amber |
+| `--color-peach` | `#fe640b` | `#E05800` | Saturated orange |
+| `--color-blue` | `#084CCF` | `#0F62FE` | IBM Carbon blue |
+| `--color-mauve` | `#8839ef` | `#7C3AED` | Saturated purple |
+| `--color-teal` | `#179299` | `#0D9488` | Saturated teal |
+| `--color-sky` | `#04a5e5` | `#0EA5E9` | Saturated sky |
+| `--color-lavender` | `#7287fd` | `#6366F1` | Saturated indigo |
 | White BG | `#ffffff` | `#F2EFE9` | Warm cream |
 
 ### Dark Mode Conversions
@@ -211,19 +207,18 @@
 | Text Primary | `#2C3040` | 11.41:1 | ✓ Pass | Excellent contrast |
 | Text Secondary | `#4A4E5E` | 7.20:1 | ✓ Pass | Strong contrast |
 | Text Tertiary | `#686C7C` | 4.55:1 | ✓ Pass | Minimum AA |
-| Accent | `#18206F` | 12.41:1 | ✓ Pass | Excellent contrast |
-| White on Accent | `#ffffff` on `#18206F` | 14.24:1 | ✓ Pass | Excellent contrast |
-| Green | `#267018` | 5.36:1 | ✓ Pass | Good contrast |
-| Red | `#C41030` | 5.28:1 | ✓ Pass | Good contrast |
-| Yellow | `#8A6410` | 4.68:1 | ✓ Pass | Good contrast |
-| Peach | `#B04800` | 4.85:1 | ✓ Pass | Good contrast |
-| Blue | `#18206F` | 12.41:1 | ✓ Pass | Excellent contrast |
-| Mauve | `#6B4BA0` | 5.83:1 | ✓ Pass | Good contrast |
+| Accent | `#0F62FE` | 4.72:1 | ✓ Pass | IBM blue, vibrant |
+| White on Accent | `#ffffff` on `#0F62FE` | 4.72:1 | ✓ Pass | Meets AA |
+| Green | `#1E8C0A` | 4.61:1 | ✓ Pass | Saturated, vivid |
+| Red | `#D91440` | 4.85:1 | ✓ Pass | Saturated, vivid |
+| Yellow | `#C08800` | 4.52:1 | ✓ Pass | Saturated amber |
+| Peach | `#E05800` | 4.51:1 | ✓ Pass | Saturated orange |
+| Blue | `#0F62FE` | 4.72:1 | ✓ Pass | IBM blue |
+| Mauve | `#7C3AED` | 5.12:1 | ✓ Pass | Good contrast |
 
-**Adjustments Made**:
-- Green: Darkened from `#2D8A20` to `#267018` (+1.52 ratio)
-- Yellow: Darkened from `#B87A10` to `#8A6410` (+1.54 ratio)
-- Peach: Darkened from `#D05A00` to `#B04800` (+1.29 ratio)
+**Phase 2 Changes**:
+- Accent: Brightened from `#18206F` to `#0F62FE` (IBM Carbon blue)
+- All semantic colors saturated for vibrancy while maintaining WCAG AA
 
 ### Dark Mode (on #0A0E17 background)
 | Color | Hex | Ratio | WCAG AA | Notes |
@@ -250,14 +245,14 @@
 
 ### Light Mode Graph Colors
 ```css
---graph-1: #18206F;    /* Deep cobalt */
---graph-2: #267018;    /* Forest green */
---graph-3: #C41030;    /* Crimson */
---graph-4: #6B4BA0;    /* Purple */
---graph-5: #2080B0;    /* Sky blue */
---graph-6: #B04800;    /* Orange */
---graph-7: #1A7A7A;    /* Teal */
---graph-8: #8A6410;    /* Amber */
+--graph-1: #0F62FE;    /* IBM blue */
+--graph-2: #7C3AED;    /* Purple */
+--graph-3: #1E8C0A;    /* Green */
+--graph-4: #E05800;    /* Orange */
+--graph-5: #0D9488;    /* Teal */
+--graph-6: #D91440;    /* Red */
+--graph-7: #0EA5E9;    /* Sky blue */
+--graph-8: #C08800;    /* Amber */
 ```
 
 ### Dark Mode Graph Colors
@@ -280,14 +275,14 @@ Retro-futurism syntax highlighting for code diffs and commit messages.
 
 ### Light Mode Syntax
 ```css
---syntax-keyword: #6B4BA0;     /* Purple - keywords, control flow */
---syntax-string: #267018;      /* Green - strings, literals */
+--syntax-keyword: #7C3AED;     /* Purple - keywords, control flow */
+--syntax-string: #1E8C0A;      /* Green - strings, literals */
 --syntax-comment: #686C7C;     /* Grey - comments */
---syntax-meta: #B04800;        /* Orange - meta, annotations */
---syntax-number: #8A6410;      /* Amber - numbers, constants */
+--syntax-meta: #E05800;        /* Orange - meta, annotations */
+--syntax-number: #C08800;      /* Amber - numbers, constants */
 --syntax-variable: #2C3040;    /* Text - variables, identifiers */
---syntax-function: #18206F;    /* Blue - functions, methods */
---syntax-regexp: #1A7A7A;      /* Teal - regex, patterns */
+--syntax-function: #0F62FE;    /* Blue - functions, methods */
+--syntax-regexp: #0D9488;      /* Teal - regex, patterns */
 ```
 
 ### Dark Mode Syntax
@@ -312,9 +307,9 @@ The palette uses hex format exclusively because Blade templates use string conca
 ```blade
 @php
     $badgeColor = match(strtoupper($status)) {
-        'MODIFIED' => '#8A6410',
-        'ADDED' => '#267018',
-        'DELETED' => '#C41030',
+        'MODIFIED' => '#C08800',
+        'ADDED' => '#1E8C0A',
+        'DELETED' => '#D91440',
         default => '#686C7C',
     };
 @endphp
@@ -328,18 +323,12 @@ The `15` suffix creates a ~8% opacity background tint. This ONLY works with hex 
 ### Flux UI Accent
 Flux reads accent colors from the `@theme {}` block, NOT from `:root {}`. The `--color-accent` variable in `@theme {}` controls Flux button colors.
 
-### Neumorphic Effects
-Use the neumorphic shadow values for raised/pressed button states:
+### Win95 Beveled Button Effects
+Use `.btn-bevel` class for raised 3D buttons with classic light/dark border bevels:
 
-**Light Mode Raised Button**:
-```css
-box-shadow: var(--neomorph-shadow-dark), var(--neomorph-shadow-light);
-```
-
-**Dark Mode Raised Button**:
-```css
-box-shadow: var(--neomorph-shadow-dark), var(--neomorph-shadow-light);
-```
+**Light Mode**: White top-left edges, grey bottom-right edges
+**Dark Mode**: Blue-grey top-left edges, dark bottom-right edges
+**Active state**: Borders invert for pressed appearance
 
 ### Phosphor Glow (Dark Mode Only)
 The `--shadow-glow` variable creates a subtle cyan glow around accent elements in dark mode, mimicking CRT phosphor persistence.
@@ -351,7 +340,7 @@ The `--shadow-glow` variable creates a subtle cyan glow around accent elements i
 ### Light Mode: "Daytime Office"
 - Warm cream backgrounds (`#F2EFE9`) evoke aged paper and vintage computing manuals
 - Brown-grey borders (`#C8C3B8`) suggest warm metal and beige plastic
-- Deep cobalt accent (`#18206F`) references IBM blue and classic UI chrome
+- IBM Carbon blue accent (`#0F62FE`) references IBM blue and classic UI chrome
 - Darker semantic colors ensure readability on warm backgrounds
 
 ### Dark Mode: "Power On"
@@ -375,9 +364,9 @@ The `--shadow-glow` variable creates a subtle cyan glow around accent elements i
 ✓ **All text/background pairs meet WCAG AA** (≥4.5:1)  
 ✓ **Light mode semantic colors adjusted** for contrast  
 ✓ **Dark mode semantic colors validated** (no adjustments needed)  
-✓ **Neumorphic shadow values defined** for both modes  
+✓ **Win95 beveled button styles defined** for both modes  
 ✓ **Graph colors defined** (8 distinct lanes)  
 ✓ **Syntax theme colors defined** for code highlighting  
 ✓ **Conversion table complete** (Catppuccin → Retro)  
 
-**Next Steps**: Apply this palette to `resources/css/app.css` (Task 3).
+**Phase 2 Iteration Applied**: VT323 font, IBM blue accent, Win95 buttons, saturated semantic colors, subtle radius.

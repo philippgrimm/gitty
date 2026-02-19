@@ -1,66 +1,66 @@
-<svg viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Layer 1: Backdrop -->
-  <g>
-    <circle cx="80" cy="80" r="58" fill="#eff1f5"/>
-  </g>
-  
-  <!-- Layer 2: Ground/Shadow -->
-  <g>
-    <ellipse cx="80" cy="118" rx="30" ry="5" fill="#dce0e8" opacity="0.3"/>
-  </g>
-  
-  <!-- Layer 3: Subject - Document with Data Blocks -->
-  <g>
-    <!-- Main document body -->
-    <rect x="50" y="45" width="60" height="75" rx="6" 
-          fill="#e6e9ef" stroke="#ccd0da" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-    
-    <!-- Data block rows (fragmented, varying widths) -->
-    <!-- Row 1 -->
-    <rect x="58" y="58" width="8" height="4" rx="1" fill="#ccd0da"/>
-    <rect x="68" y="58" width="12" height="4" rx="1" fill="#084CCF" opacity="0.2"/>
-    <rect x="82" y="58" width="6" height="4" rx="1" fill="#ccd0da"/>
-    <rect x="90" y="58" width="14" height="4" rx="1" fill="#dce0e8"/>
-    
-    <!-- Row 2 -->
-    <rect x="58" y="66" width="10" height="4" rx="1" fill="#084CCF" opacity="0.2"/>
-    <rect x="70" y="66" width="6" height="4" rx="1" fill="#ccd0da"/>
-    <rect x="78" y="66" width="16" height="4" rx="1" fill="#dce0e8"/>
-    <rect x="96" y="66" width="8" height="4" rx="1" fill="#ccd0da"/>
-    
-    <!-- Row 3 -->
-    <rect x="58" y="74" width="14" height="4" rx="1" fill="#dce0e8"/>
-    <rect x="74" y="74" width="8" height="4" rx="1" fill="#ccd0da"/>
-    <rect x="84" y="74" width="12" height="4" rx="1" fill="#084CCF" opacity="0.2"/>
-    <rect x="98" y="74" width="6" height="4" rx="1" fill="#ccd0da"/>
-    
-    <!-- Row 4 -->
-    <rect x="58" y="82" width="6" height="4" rx="1" fill="#ccd0da"/>
-    <rect x="66" y="82" width="16" height="4" rx="1" fill="#dce0e8"/>
-    <rect x="84" y="82" width="10" height="4" rx="1" fill="#084CCF" opacity="0.2"/>
-    <rect x="96" y="82" width="8" height="4" rx="1" fill="#ccd0da"/>
-    
-    <!-- Row 5 -->
-    <rect x="58" y="90" width="12" height="4" rx="1" fill="#084CCF" opacity="0.2"/>
-    <rect x="72" y="90" width="8" height="4" rx="1" fill="#ccd0da"/>
-    <rect x="82" y="90" width="6" height="4" rx="1" fill="#dce0e8"/>
-    <rect x="90" y="90" width="14" height="4" rx="1" fill="#ccd0da"/>
-    
-    <!-- Row 6 -->
-    <rect x="58" y="98" width="10" height="4" rx="1" fill="#dce0e8"/>
-    <rect x="70" y="98" width="14" height="4" rx="1" fill="#ccd0da"/>
-    <rect x="86" y="98" width="8" height="4" rx="1" fill="#084CCF" opacity="0.2"/>
-    <rect x="96" y="98" width="8" height="4" rx="1" fill="#ccd0da"/>
-  </g>
-  
-  <!-- Layer 4: Detail & Accent -->
-  <g>
-    <!-- Diagonal slash indicator - Zed Blue -->
-    <line x1="45" y1="40" x2="115" y2="125" stroke="#084CCF" stroke-width="1.5" opacity="0.4" stroke-linecap="round"/>
-    
-    <!-- Decorative dots -->
-    <circle cx="42" cy="68" r="1.5" fill="#ccd0da"/>
-    <circle cx="118" cy="95" r="2" fill="#ccd0da"/>
-    <circle cx="115" cy="52" r="1.5" fill="#9ca0b0"/>
-  </g>
+<svg viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+  <!-- Document outline -->
+  <rect x="40" y="32" width="80" height="8" fill="currentColor" opacity="0.5"/>
+  <rect x="40" y="32" width="8" height="96" fill="currentColor" opacity="0.5"/>
+  <rect x="112" y="32" width="8" height="96" fill="currentColor" opacity="0.5"/>
+  <rect x="40" y="120" width="80" height="8" fill="currentColor" opacity="0.5"/>
+
+  <!-- Document fill -->
+  <rect x="48" y="40" width="64" height="80" fill="currentColor" opacity="0.15"/>
+
+  <!-- Data block rows (fragmented, varying widths) -->
+  <!-- Row 1 -->
+  <rect x="56" y="48" width="8" height="8" fill="currentColor" opacity="0.35"/>
+  <rect x="72" y="48" width="16" height="8" fill="#084CCF" opacity="0.3"/>
+  <rect x="96" y="48" width="8" height="8" fill="currentColor" opacity="0.25"/>
+
+  <!-- Row 2 -->
+  <rect x="56" y="56" width="16" height="8" fill="currentColor" opacity="0.25"/>
+  <rect x="80" y="56" width="8" height="8" fill="currentColor" opacity="0.35"/>
+  <rect x="96" y="56" width="8" height="8" fill="#084CCF" opacity="0.3"/>
+
+  <!-- Row 3 -->
+  <rect x="56" y="64" width="8" height="8" fill="#084CCF" opacity="0.3"/>
+  <rect x="72" y="64" width="16" height="8" fill="currentColor" opacity="0.35"/>
+  <rect x="96" y="64" width="8" height="8" fill="currentColor" opacity="0.25"/>
+
+  <!-- Row 4 -->
+  <rect x="56" y="72" width="16" height="8" fill="currentColor" opacity="0.35"/>
+  <rect x="80" y="72" width="8" height="8" fill="currentColor" opacity="0.25"/>
+  <rect x="96" y="72" width="8" height="8" fill="currentColor" opacity="0.35"/>
+
+  <!-- Row 5 -->
+  <rect x="56" y="80" width="8" height="8" fill="currentColor" opacity="0.25"/>
+  <rect x="72" y="80" width="16" height="8" fill="#084CCF" opacity="0.3"/>
+  <rect x="96" y="80" width="8" height="8" fill="currentColor" opacity="0.35"/>
+
+  <!-- Row 6 -->
+  <rect x="56" y="88" width="16" height="8" fill="#084CCF" opacity="0.3"/>
+  <rect x="80" y="88" width="8" height="8" fill="currentColor" opacity="0.35"/>
+  <rect x="96" y="88" width="8" height="8" fill="currentColor" opacity="0.25"/>
+
+  <!-- Row 7 -->
+  <rect x="56" y="96" width="8" height="8" fill="currentColor" opacity="0.35"/>
+  <rect x="72" y="96" width="16" height="8" fill="currentColor" opacity="0.25"/>
+  <rect x="96" y="96" width="8" height="8" fill="#084CCF" opacity="0.3"/>
+
+  <!-- Row 8 -->
+  <rect x="56" y="104" width="16" height="8" fill="currentColor" opacity="0.25"/>
+  <rect x="80" y="104" width="8" height="8" fill="#084CCF" opacity="0.3"/>
+  <rect x="96" y="104" width="8" height="8" fill="currentColor" opacity="0.35"/>
+
+  <!-- Diagonal slash (Zed Blue) -->
+  <rect x="48" y="40" width="8" height="8" fill="#084CCF" opacity="0.5"/>
+  <rect x="56" y="48" width="8" height="8" fill="#084CCF" opacity="0.5"/>
+  <rect x="64" y="56" width="8" height="8" fill="#084CCF" opacity="0.5"/>
+  <rect x="72" y="64" width="8" height="8" fill="#084CCF" opacity="0.5"/>
+  <rect x="80" y="72" width="8" height="8" fill="#084CCF" opacity="0.5"/>
+  <rect x="88" y="80" width="8" height="8" fill="#084CCF" opacity="0.5"/>
+  <rect x="96" y="88" width="8" height="8" fill="#084CCF" opacity="0.5"/>
+  <rect x="104" y="96" width="8" height="8" fill="#084CCF" opacity="0.5"/>
+  <rect x="112" y="104" width="8" height="8" fill="#084CCF" opacity="0.5"/>
+
+  <!-- Decorative pixels -->
+  <rect x="32" y="56" width="8" height="8" fill="currentColor" opacity="0.2"/>
+  <rect x="128" y="88" width="8" height="8" fill="currentColor" opacity="0.15"/>
 </svg>

@@ -73,7 +73,7 @@
             this.selectedFiles = items.map(el => el.dataset.filePath);
         }
     }"
-    class="h-full flex flex-col bg-white dark:bg-[var(--surface-0)] text-[var(--text-primary)] font-mono"
+    class="h-full flex flex-col bg-white dark:bg-[var(--surface-0)] text-[var(--text-primary)] font-display"
     @keyboard-stash.window="selectedFiles.length > 0 ? $wire.stashSelected(selectedFiles).then(() => clearSelection()) : $wire.stashAll()"
     @keyboard-select-all.window="selectAllFiles()"
     @keyboard-escape.window="clearSelection()"
@@ -95,9 +95,9 @@
                 class="text-[#686C7C] hover:text-[#4A4E5E]"
             >
                 @if($treeView)
-                    <x-phosphor-list class="w-4 h-4" />
+                    <x-pixelarticons-list class="w-4 h-4" />
                 @else
-                    <x-phosphor-folder class="w-4 h-4" />
+                    <x-pixelarticons-folder class="w-4 h-4" />
                 @endif
             </flux:button>
             <div class="flex items-center gap-1">
@@ -111,7 +111,7 @@
                         square
                         class="text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]"
                     >
-                        <x-phosphor-archive class="w-4 h-4" />
+                        <x-pixelarticons-archive class="w-4 h-4" />
                     </flux:button>
                 </flux:tooltip>
                 <flux:tooltip content="Stage All">
@@ -124,7 +124,7 @@
                         square
                         class="text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]"
                     >
-                        <x-phosphor-plus class="w-4 h-4" />
+                        <x-pixelarticons-plus class="w-4 h-4" />
                     </flux:button>
                 </flux:tooltip>
                 <flux:tooltip content="Unstage All">
@@ -137,7 +137,7 @@
                         square
                         class="text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]"
                     >
-                        <x-phosphor-minus class="w-4 h-4" />
+                        <x-pixelarticons-minus class="w-4 h-4" />
                     </flux:button>
                 </flux:tooltip>
                 <flux:tooltip content="Discard All">
@@ -148,7 +148,7 @@
                         square
                         class="text-[var(--text-tertiary)] hover:text-[var(--color-red)]"
                     >
-                        <x-phosphor-trash class="w-4 h-4" />
+                        <x-pixelarticons-trash class="w-4 h-4" />
                     </flux:button>
                 </flux:tooltip>
             </div>
@@ -158,7 +158,7 @@
                 <div class="border-b border-[var(--border-default)]">
                     <div class="sticky top-0 z-10 bg-[var(--surface-1)] border-b border-[var(--border-default)] px-4 py-2 flex items-center justify-between">
                         <div class="flex items-center gap-3">
-                            <div class="text-xs uppercase tracking-wider font-medium text-[var(--text-tertiary)] font-display phosphor-text-glow">Staged</div>
+                            <div class="text-xs uppercase tracking-wider font-medium text-[var(--text-tertiary)] font-display">Staged</div>
                             <span class="text-xs text-[var(--text-tertiary)] font-mono">{{ $stagedFiles->count() }}</span>
                         </div>
                     </div>
@@ -184,19 +184,19 @@
                                                 'A' => ['label' => 'A', 'color' => 'green', 'icon' => '+'],
                                                 'D' => ['label' => 'D', 'color' => 'red', 'icon' => '−'],
                                                 'R' => ['label' => 'R', 'color' => 'blue', 'icon' => '→'],
-                                                'U' => ['label' => 'U', 'color' => 'orange', 'icon' => 'U'],
-                                                default => ['label' => '?', 'color' => 'zinc', 'icon' => '?'],
-                                            };
-                                        @endphp
-                                        <div class="w-2 h-2 rounded-full shrink-0 {{ match($statusConfig['color']) { 'yellow' => 'bg-[var(--color-yellow)]', 'green' => 'bg-[var(--color-green)]', 'red' => 'bg-[var(--color-red)]', 'blue' => 'bg-[#18206F]', 'orange' => 'bg-[var(--color-peach)]', default => 'bg-[var(--text-tertiary)]' } }}"></div>
-                                        <flux:tooltip :content="$file['path']" delay="1000" class="min-w-0 flex-1">
-                                            <div class="text-sm truncate text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors duration-150">
-                                                {{ basename($file['path']) }}
-                                            </div>
-                                        </flux:tooltip>
-                                    </div>
-                                    <div class="absolute right-0 inset-y-0 flex items-center pr-4 pl-2 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
-                                        <flux:tooltip content="Unstage">
+                                                 'U' => ['label' => 'U', 'color' => 'orange', 'icon' => 'U'],
+                                                 default => ['label' => '?', 'color' => 'zinc', 'icon' => '?'],
+                                             };
+                                         @endphp
+                                         <div class="w-2 h-2 rounded-full shrink-0 {{ match($statusConfig['color']) { 'yellow' => 'bg-[var(--color-yellow)] status-dot-modified', 'green' => 'bg-[var(--color-green)] status-dot-added', 'red' => 'bg-[var(--color-red)] status-dot-deleted', 'blue' => 'bg-[#4040B0] status-dot-renamed', 'orange' => 'bg-[var(--color-peach)] status-dot-untracked', default => 'bg-[var(--text-tertiary)]' } }}"></div>
+                                         <flux:tooltip :content="$file['path']" delay="1000" class="min-w-0 flex-1">
+                                             <div class="text-sm truncate text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors duration-150">
+                                                 {{ basename($file['path']) }}
+                                             </div>
+                                         </flux:tooltip>
+                                     </div>
+                                     <div class="absolute right-0 inset-y-0 flex items-center pr-4 pl-2 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+                                         <flux:tooltip content="Unstage">
                                             <flux:button 
                                                 @click.stop="isSelected('{{ $file['path'] }}') && selectedFiles.length > 1 ? $wire.unstageSelected(selectedFiles).then(() => clearSelection()) : $wire.unstageFile('{{ $file['path'] }}')"
                                                 wire:loading.attr="disabled"
@@ -205,7 +205,7 @@
                                                 size="xs"
                                                 square
                                             >
-                                                <x-phosphor-minus class="w-3.5 h-3.5" />
+                                                <x-pixelarticons-minus class="w-3.5 h-3.5" />
                                             </flux:button>
                                         </flux:tooltip>
                                     </div>
@@ -220,7 +220,7 @@
                 <div>
                     <div class="sticky top-0 z-10 bg-[var(--surface-1)] border-b border-[var(--border-default)] px-4 py-2 flex items-center justify-between">
                         <div class="flex items-center gap-3">
-                            <div class="text-xs uppercase tracking-wider font-medium text-[var(--text-tertiary)] font-display phosphor-text-glow">Changes</div>
+                            <div class="text-xs uppercase tracking-wider font-medium text-[var(--text-tertiary)] font-display">Changes</div>
                             <span class="text-xs text-[var(--text-tertiary)] font-mono">{{ $unstagedFiles->count() + $untrackedFiles->count() }}</span>
                         </div>
                     </div>
@@ -246,20 +246,20 @@
                                                 'A' => ['label' => 'A', 'color' => 'green', 'icon' => '+'],
                                                 'D' => ['label' => 'D', 'color' => 'red', 'icon' => '−'],
                                                 'R' => ['label' => 'R', 'color' => 'blue', 'icon' => '→'],
-                                                'U' => ['label' => 'U', 'color' => 'orange', 'icon' => 'U'],
-                                                '?' => ['label' => 'U', 'color' => 'green', 'icon' => '?'],
-                                                default => ['label' => '?', 'color' => 'zinc', 'icon' => '?'],
-                                            };
-                                        @endphp
-                                        <div class="w-2 h-2 rounded-full shrink-0 {{ match($statusConfig['color']) { 'yellow' => 'bg-[var(--color-yellow)]', 'green' => 'bg-[var(--color-green)]', 'red' => 'bg-[var(--color-red)]', 'blue' => 'bg-[#18206F]', 'orange' => 'bg-[var(--color-peach)]', default => 'bg-[var(--text-tertiary)]' } }}"></div>
-                                        <flux:tooltip :content="$file['path']" delay="1000" class="min-w-0 flex-1">
-                                            <div class="text-sm truncate text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors duration-150">
-                                                {{ basename($file['path']) }}
-                                            </div>
-                                        </flux:tooltip>
-                                    </div>
-                                    <div class="absolute right-0 inset-y-0 flex items-center gap-1 pr-4 pl-2 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
-                                        <flux:tooltip content="Stage">
+                                                 'U' => ['label' => 'U', 'color' => 'orange', 'icon' => 'U'],
+                                                 '?' => ['label' => 'U', 'color' => 'green', 'icon' => '?'],
+                                                 default => ['label' => '?', 'color' => 'zinc', 'icon' => '?'],
+                                             };
+                                         @endphp
+                                         <div class="w-2 h-2 rounded-full shrink-0 {{ match($statusConfig['color']) { 'yellow' => 'bg-[var(--color-yellow)] status-dot-modified', 'green' => 'bg-[var(--color-green)] status-dot-added', 'red' => 'bg-[var(--color-red)] status-dot-deleted', 'blue' => 'bg-[#4040B0] status-dot-renamed', 'orange' => 'bg-[var(--color-peach)] status-dot-untracked', default => 'bg-[var(--text-tertiary)]' } }}"></div>
+                                         <flux:tooltip :content="$file['path']" delay="1000" class="min-w-0 flex-1">
+                                             <div class="text-sm truncate text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors duration-150">
+                                                 {{ basename($file['path']) }}
+                                             </div>
+                                         </flux:tooltip>
+                                     </div>
+                                     <div class="absolute right-0 inset-y-0 flex items-center gap-1 pr-4 pl-2 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+                                         <flux:tooltip content="Stage">
                                             <flux:button 
                                                 @click.stop="isSelected('{{ $file['path'] }}') && selectedFiles.length > 1 ? $wire.stageSelected(selectedFiles).then(() => clearSelection()) : $wire.stageFile('{{ $file['path'] }}')"
                                                 wire:loading.attr="disabled"
@@ -268,7 +268,7 @@
                                                 size="xs"
                                                 square
                                             >
-                                                <x-phosphor-plus class="w-3.5 h-3.5" />
+                                                <x-pixelarticons-plus class="w-3.5 h-3.5" />
                                             </flux:button>
                                         </flux:tooltip>
                                         <flux:tooltip content="Discard">
@@ -279,7 +279,7 @@
                                                 square
                                                 class="text-[var(--color-red)] hover:text-[var(--color-red)]"
                                             >
-                                                <x-phosphor-arrow-counter-clockwise class="w-3.5 h-3.5" />
+                                                <x-pixelarticons-undo class="w-3.5 h-3.5" />
                                             </flux:button>
                                         </flux:tooltip>
                                     </div>
@@ -299,7 +299,7 @@
             @keydown.escape.window="hideContextMenu()"
             @scroll.window="hideContextMenu()"
             :style="`position: fixed; left: ${contextMenu.x}px; top: ${contextMenu.y}px; z-index: 50;`"
-            class="bg-white dark:bg-[var(--surface-0)] border border-[var(--border-default)] rounded-lg shadow-lg py-1 min-w-[180px] font-mono text-sm"
+            class="bg-white dark:bg-[var(--surface-0)] border border-[var(--border-default)] rounded-lg shadow-lg py-1 min-w-[180px] font-mono text-sm terminal-dropdown"
         >
             {{-- Stage or Unstage (context-aware) --}}
             <button x-show="!contextMenuIsStaged"

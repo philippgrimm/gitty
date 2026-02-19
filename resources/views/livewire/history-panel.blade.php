@@ -17,15 +17,13 @@
             this.hideContextMenu();
         }
     }"
-    class="h-full flex flex-col bg-white dark:bg-[var(--surface-0)] text-[var(--text-primary)] font-mono crt-scanlines relative"
+    class="h-full flex flex-col bg-white dark:bg-[var(--surface-0)] text-[var(--text-primary)] font-display crt-scanlines relative"
 >
     @if($commits->isEmpty())
         <div class="flex-1 flex items-center justify-center animate-fade-in">
             <div class="text-center space-y-3">
                 <div class="w-20 h-20 mx-auto opacity-60">
-                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12 8V12L15 15M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
+                    <x-pixelarticons-clock class="w-full h-full" />
                 </div>
                 <div class="text-[var(--text-tertiary)] uppercase tracking-wider text-xs font-medium">No commits yet</div>
             </div>
@@ -34,8 +32,8 @@
         {{-- Header bar --}}
         <div class="sticky top-0 z-10 bg-[var(--surface-1)] border-b border-[var(--border-default)] px-4 py-2 flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <x-phosphor-clock-counter-clockwise-light class="w-4 h-4 text-[var(--text-tertiary)]" />
-                            <div class="text-xs uppercase tracking-wider font-medium text-[var(--text-tertiary)] font-display phosphor-text-glow">History</div>
+                <x-pixelarticons-clock class="w-4 h-4 text-[var(--text-tertiary)]" />
+                            <div class="text-xs uppercase tracking-wider font-medium text-[var(--text-tertiary)] font-display">History</div>
                 <span class="text-xs text-[var(--text-tertiary)] font-mono">{{ $commits->count() }}</span>
             </div>
             <flux:tooltip content="Close History (⌘H)">
@@ -46,7 +44,7 @@
                     square
                     class="text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]"
                 >
-                    <x-phosphor-x class="w-4 h-4" />
+                    <x-pixelarticons-close class="w-4 h-4" />
                 </flux:button>
             </flux:tooltip>
         </div>
@@ -65,14 +63,14 @@
                 $graphWidth = max(40, ($maxLane + 1) * 20);
                 
                 $laneColors = [
-                    '#18206F',
-                    '#6B4BA0',
-                    '#267018',
-                    '#B04800',
-                    '#1A7A7A',
-                    '#C41030',
-                    '#2080B0',
-                    '#8A6410',
+                    '#4040B0',
+                    '#7C3AED',
+                    '#1E8C0A',
+                    '#E05800',
+                    '#0D9488',
+                    '#D91440',
+                    '#0EA5E9',
+                    '#C08800',
                 ];
             @endphp
 
@@ -92,7 +90,7 @@
                     wire:click="selectCommit('{{ $commit->sha }}')"
                     @contextmenu="showContextMenu('{{ $commit->sha }}', $event)"
                     class="flex cursor-pointer border-b border-[var(--border-subtle)] transition-colors duration-150"
-                    :class="$wire.selectedCommitSha === '{{ $commit->sha }}' ? 'bg-[rgba(24,32,111,0.15)]' : 'bg-white dark:bg-[var(--surface-0)] hover:bg-[var(--surface-0)] dark:hover:bg-[var(--surface-3)]'"
+                    :class="$wire.selectedCommitSha === '{{ $commit->sha }}' ? 'bg-[rgba(64,64,176,0.15)]' : 'bg-white dark:bg-[var(--surface-0)] hover:bg-[var(--surface-0)] dark:hover:bg-[var(--surface-3)]'"
                 >
                     {{-- Graph column --}}
                     @if($showGraph && $graphNode)
@@ -161,7 +159,7 @@
                         <div class="flex items-center justify-between gap-3 mb-1">
                             <div class="flex items-center gap-3 min-w-0">
                                 <flux:tooltip :content="$commit->sha" delay="500">
-                                    <span class="text-xs text-[#18206F] font-mono">{{ $commit->shortSha }}</span>
+                                    <span class="text-xs text-[#4040B0] font-mono">{{ $commit->shortSha }}</span>
                                 </flux:tooltip>
                                 @if(!empty($commit->author))
                                     <span class="text-sm text-[var(--text-primary)] truncate">{{ $commit->author }}</span>
@@ -189,16 +187,16 @@
                                         $displayRef = str_replace('tag: ', '', $displayRef);
                                         
                                         if ($isHead && !str_contains($ref, '->')) {
-                                            $bgColor = '#B04800';
+                                            $bgColor = '#E05800';
                                             $textColor = '#ffffff';
                                         } elseif ($isTag) {
-                                            $bgColor = '#6B4BA0';
+                                            $bgColor = '#7C3AED';
                                             $textColor = '#ffffff';
                                         } elseif ($isRemote) {
-                                            $bgColor = '#1A7A7A';
+                                            $bgColor = '#0D9488';
                                             $textColor = '#ffffff';
                                         } else {
-                                            $bgColor = '#267018';
+                                            $bgColor = '#1E8C0A';
                                             $textColor = '#ffffff';
                                         }
                                     @endphp
@@ -241,7 +239,7 @@
         @keydown.escape.window="hideContextMenu()"
         @scroll.window="hideContextMenu()"
         :style="`position: fixed; left: ${contextMenu.x}px; top: ${contextMenu.y}px; z-index: 50;`"
-        class="bg-white dark:bg-[var(--surface-0)] border border-[var(--border-default)] rounded-lg shadow-lg py-1 min-w-[180px] font-mono text-sm"
+        class="bg-white dark:bg-[var(--surface-0)] border border-[var(--border-default)] rounded-lg shadow-lg py-1 min-w-[180px] font-mono text-sm terminal-dropdown"
     >
         <button 
             @click="copyToClipboard(contextMenu.targetSha)"
@@ -260,21 +258,21 @@
             @click="$wire.promptRevert(contextMenu.targetSha, $wire.commits.find(c => c.sha === contextMenu.targetSha)?.message || ''); hideContextMenu()"
             class="w-full px-3 py-1.5 text-left hover:bg-[var(--surface-0)] dark:hover:bg-[var(--surface-3)] text-[var(--text-primary)] flex items-center gap-2"
         >
-            <x-phosphor-arrow-counter-clockwise class="w-4 h-4" />
+            <x-pixelarticons-undo class="w-4 h-4" />
             <span>Revert this Commit</span>
         </button>
         <button 
             @click="$wire.promptCherryPick(contextMenu.targetSha, $wire.commits.find(c => c.sha === contextMenu.targetSha)?.message || ''); hideContextMenu()"
             class="w-full px-3 py-1.5 text-left hover:bg-[var(--surface-0)] dark:hover:bg-[var(--surface-3)] text-[var(--text-primary)] flex items-center gap-2"
         >
-            <x-phosphor-git-commit class="w-4 h-4" />
+            <x-pixelarticons-git-commit class="w-4 h-4" />
             <span>Cherry-pick this Commit</span>
         </button>
         <button 
             @click="$wire.promptReset(contextMenu.targetSha, $wire.commits.find(c => c.sha === contextMenu.targetSha)?.message || ''); hideContextMenu()"
             class="w-full px-3 py-1.5 text-left hover:bg-[var(--surface-0)] dark:hover:bg-[var(--surface-3)] text-[var(--text-primary)] flex items-center gap-2"
         >
-            <x-phosphor-arrow-bend-up-left class="w-4 h-4" />
+            <x-pixelarticons-reply class="w-4 h-4" />
             <span>Reset to this Commit</span>
         </button>
         <div class="border-t border-[var(--border-subtle)] my-1"></div>
@@ -282,7 +280,7 @@
             @click="$wire.promptInteractiveRebase(contextMenu.targetSha); hideContextMenu()"
             class="w-full px-3 py-1.5 text-left hover:bg-[var(--surface-0)] dark:hover:bg-[var(--surface-3)] text-[var(--text-primary)] flex items-center gap-2"
         >
-            <x-phosphor-git-merge class="w-4 h-4" />
+            <x-pixelarticons-git-merge class="w-4 h-4" />
             <span>Interactive Rebase</span>
         </button>
     </div>
@@ -296,7 +294,7 @@
         
         <div class="space-y-3">
             <label class="flex items-start gap-3 p-3 rounded border cursor-pointer transition-colors"
-                :class="$wire.resetMode === 'soft' ? 'border-[#18206F] bg-[rgba(24,32,111,0.05)]' : 'border-[var(--border-default)] hover:border-[var(--border-strong)]'">
+                :class="$wire.resetMode === 'soft' ? 'border-[#4040B0] bg-[rgba(64,64,176,0.05)]' : 'border-[var(--border-default)] hover:border-[var(--border-strong)]'">
                 <input type="radio" wire:model.live="resetMode" value="soft" class="mt-0.5">
                 <div>
                     <div class="font-medium text-sm text-[var(--text-primary)]">Soft Reset</div>
@@ -305,7 +303,7 @@
             </label>
             
             <label class="flex items-start gap-3 p-3 rounded border cursor-pointer transition-colors"
-                :class="$wire.resetMode === 'mixed' ? 'border-[#18206F] bg-[rgba(24,32,111,0.05)]' : 'border-[var(--border-default)] hover:border-[var(--border-strong)]'">
+                :class="$wire.resetMode === 'mixed' ? 'border-[#4040B0] bg-[rgba(64,64,176,0.05)]' : 'border-[var(--border-default)] hover:border-[var(--border-strong)]'">
                 <input type="radio" wire:model.live="resetMode" value="mixed" class="mt-0.5">
                 <div>
                     <div class="font-medium text-sm text-[var(--text-primary)]">Mixed Reset</div>
@@ -314,7 +312,7 @@
             </label>
             
             <label class="flex items-start gap-3 p-3 rounded border cursor-pointer transition-colors"
-                :class="$wire.resetMode === 'hard' ? 'border-[var(--color-red)] bg-[rgba(210,15,57,0.05)]' : 'border-[var(--border-default)] hover:border-[var(--border-strong)]'">
+                :class="$wire.resetMode === 'hard' ? 'border-[var(--color-red)] bg-[rgba(217,20,64,0.05)]' : 'border-[var(--border-default)] hover:border-[var(--border-strong)]'">
                 <input type="radio" wire:model.live="resetMode" value="hard" class="mt-0.5">
                 <div>
                     <div class="font-medium text-sm text-[var(--color-red)]">Hard Reset</div>
@@ -324,7 +322,7 @@
         </div>
         
         @if($resetMode === 'hard')
-            <div class="p-3 bg-[rgba(210,15,57,0.1)] rounded border border-[var(--color-red)]">
+            <div class="p-3 bg-[rgba(217,20,64,0.1)] rounded border border-[var(--color-red)]">
                 <p class="text-sm text-[var(--color-red)] font-medium mb-2">All changes after this commit will be PERMANENTLY LOST.</p>
                 <flux:input wire:model.live="hardResetConfirmText" placeholder='Type "DISCARD" to confirm' />
             </div>

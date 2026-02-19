@@ -64,7 +64,7 @@
             {{-- Search Input Area --}}
             <div class="px-4 py-2.5 border-b border-[#D4CFC6]">
                 <div class="flex items-center gap-2">
-                    <x-phosphor-magnifying-glass-light class="w-4 h-4 text-[#686C7C] shrink-0" />
+                    <x-pixelarticons-search class="w-4 h-4 text-[#686C7C] shrink-0" />
                     <input
                         type="text"
                         wire:model.live.debounce.300ms="query"
@@ -80,19 +80,19 @@
             <div class="px-4 py-2 border-b border-[#D4CFC6] flex gap-2">
                 <button
                     wire:click="setScope('commits')"
-                    class="px-3 py-1 text-xs font-medium font-display uppercase tracking-wider rounded transition-colors {{ $scope === 'commits' ? 'bg-[#18206F] text-white' : 'text-[#4A4E5E] hover:bg-[#E8E5DF]' }}"
+                    class="px-3 py-1 text-xs font-medium font-display uppercase tracking-wider rounded transition-colors {{ $scope === 'commits' ? 'bg-[#4040B0] text-white' : 'text-[#4A4E5E] hover:bg-[#E8E5DF]' }}"
                 >
                     Commits
                 </button>
                 <button
                     wire:click="setScope('content')"
-                    class="px-3 py-1 text-xs font-medium font-display uppercase tracking-wider rounded transition-colors {{ $scope === 'content' ? 'bg-[#18206F] text-white' : 'text-[#4A4E5E] hover:bg-[#E8E5DF]' }}"
+                    class="px-3 py-1 text-xs font-medium font-display uppercase tracking-wider rounded transition-colors {{ $scope === 'content' ? 'bg-[#4040B0] text-white' : 'text-[#4A4E5E] hover:bg-[#E8E5DF]' }}"
                 >
                     Content
                 </button>
                 <button
                     wire:click="setScope('files')"
-                    class="px-3 py-1 text-xs font-medium font-display uppercase tracking-wider rounded transition-colors {{ $scope === 'files' ? 'bg-[#18206F] text-white' : 'text-[#4A4E5E] hover:bg-[#E8E5DF]' }}"
+                    class="px-3 py-1 text-xs font-medium font-display uppercase tracking-wider rounded transition-colors {{ $scope === 'files' ? 'bg-[#4040B0] text-white' : 'text-[#4A4E5E] hover:bg-[#E8E5DF]' }}"
                 >
                     Files
                 </button>
@@ -111,9 +111,9 @@
                                 data-result-item
                                 wire:click="selectResult('{{ $result['path'] }}')"
                                 class="flex items-center gap-3 px-4 py-2.5 cursor-pointer hover:bg-[#E8E5DF] transition-colors duration-75"
-                                x-bind:style="activeIndex === {{ $index }} ? 'background-color: rgba(24, 32, 111, 0.08)' : ''"
+                                x-bind:style="activeIndex === {{ $index }} ? 'background-color: rgba(64, 64, 176, 0.08)' : ''"
                             >
-                                <x-phosphor-file-text class="w-4 h-4 text-[#4A4E5E] shrink-0" />
+                                <x-pixelarticons-file class="w-4 h-4 text-[#4A4E5E] shrink-0" />
                                 <span class="text-[13px] text-[#2C3040] font-mono">{{ $result['path'] }}</span>
                             </div>
                         @endforeach
@@ -123,9 +123,9 @@
                                 data-result-item
                                 wire:click="selectResult('{{ $result['sha'] }}')"
                                 class="flex items-start gap-3 px-4 py-2.5 cursor-pointer hover:bg-[#E8E5DF] transition-colors duration-75"
-                                x-bind:style="activeIndex === {{ $index }} ? 'background-color: rgba(24, 32, 111, 0.08)' : ''"
+                                x-bind:style="activeIndex === {{ $index }} ? 'background-color: rgba(64, 64, 176, 0.08)' : ''"
                             >
-                                <x-phosphor-git-commit class="w-4 h-4 text-[#4A4E5E] shrink-0 mt-0.5" />
+                                <x-pixelarticons-git-commit class="w-4 h-4 text-[#4A4E5E] shrink-0 mt-0.5" />
                                 <div class="flex-1 min-w-0">
                                     <div class="flex items-center gap-2">
                                         <span class="text-[11px] text-[#686C7C] font-mono">{{ $result['shortSha'] }}</span>

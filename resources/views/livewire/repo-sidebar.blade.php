@@ -38,7 +38,7 @@
             this.tagMenu.show = false; 
         }
     }"
-    class="h-full flex flex-col bg-[var(--surface-0)] text-[var(--text-primary)] font-mono overflow-hidden"
+    class="h-full flex flex-col bg-[var(--surface-0)] text-[var(--text-primary)] font-display overflow-hidden"
 >
     <div class="flex-1 overflow-y-auto">
         <div class="border-b border-[var(--border-default)]">
@@ -51,7 +51,7 @@
                     <span class="text-xs text-[var(--text-tertiary)] font-mono">{{ count($remotes) }}</span>
                 </div>
                 <div class="text-[var(--text-tertiary)] transition-transform duration-150" :class="{ 'rotate-90': remotesOpen }">
-                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                    <x-pixelarticons-chevron-right class="w-3.5 h-3.5" />
                 </div>
             </button>
             <div x-show="remotesOpen" x-collapse class="divide-y divide-[#C8C3B8]">
@@ -83,11 +83,11 @@
                             @click.stop="$wire.set('showCreateTagModal', true)"
                             class="shrink-0 p-0.5 rounded text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] hover:bg-[var(--surface-3)] transition-colors"
                         >
-                            <x-phosphor-plus class="w-3.5 h-3.5" />
+                            <x-pixelarticons-plus class="w-3.5 h-3.5" />
                         </button>
                     </flux:tooltip>
                     <div class="text-[var(--text-tertiary)] transition-transform duration-150" :class="{ 'rotate-90': tagsOpen }">
-                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                        <x-pixelarticons-chevron-right class="w-3.5 h-3.5" />
                     </div>
                 </div>
             </div>
@@ -112,7 +112,7 @@
                             @click.stop="openTagMenu('{{ $tag['name'] }}', $event)"
                             class="shrink-0 p-0.5 rounded text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] hover:bg-[var(--surface-3)] transition-colors"
                         >
-                            <x-phosphor-dots-three class="w-4 h-4" />
+                            <x-pixelarticons-more-horizontal class="w-4 h-4" />
                         </button>
                     </div>
                 @empty
@@ -133,7 +133,7 @@
                         @click="$wire.pushTag(tagMenu.name); hideTagMenu()"
                         class="w-full px-3 py-1.5 text-left hover:bg-[var(--surface-0)] dark:hover:bg-[var(--surface-3)] text-[var(--text-primary)] flex items-center gap-2"
                     >
-                        <x-phosphor-arrow-up class="w-3.5 h-3.5" />
+                        <x-pixelarticons-arrow-up class="w-3.5 h-3.5" />
                         Push to Remote
                     </button>
                     <div class="border-t border-[var(--border-subtle)] my-1"></div>
@@ -141,7 +141,7 @@
                         @click="confirmDeleteTag = tagMenu.name; showDeleteTagModal = true; hideTagMenu()"
                         class="w-full px-3 py-1.5 text-left hover:bg-[var(--surface-0)] dark:hover:bg-[var(--surface-3)] text-[var(--color-red)] flex items-center gap-2"
                     >
-                        <x-phosphor-trash class="w-3.5 h-3.5" />
+                        <x-pixelarticons-trash class="w-3.5 h-3.5" />
                         Delete
                     </button>
                 </div>
@@ -158,7 +158,7 @@
                     <span class="text-xs text-[var(--text-tertiary)] font-mono">{{ count($stashes) }}</span>
                 </div>
                 <div class="text-[var(--text-tertiary)] transition-transform duration-150" :class="{ 'rotate-90': stashesOpen }">
-                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                    <x-pixelarticons-chevron-right class="w-3.5 h-3.5" />
                 </div>
             </button>
             <div x-show="stashesOpen" x-collapse>
@@ -178,7 +178,7 @@
                             @click.stop="openStashMenu({{ $stash['index'] }}, $event)"
                             class="shrink-0 p-0.5 rounded text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] hover:bg-[var(--surface-3)] transition-colors"
                         >
-                            <x-phosphor-dots-three class="w-4 h-4" />
+                            <x-pixelarticons-more-horizontal class="w-4 h-4" />
                         </button>
                     </div>
                 @empty
@@ -199,14 +199,14 @@
                         @click="$wire.applyStash(stashMenu.index); hideStashMenu()"
                         class="w-full px-3 py-1.5 text-left hover:bg-[var(--surface-0)] dark:hover:bg-[var(--surface-3)] text-[var(--text-primary)] flex items-center gap-2"
                     >
-                        <x-phosphor-arrow-counter-clockwise class="w-3.5 h-3.5" />
+                        <x-pixelarticons-undo class="w-3.5 h-3.5" />
                         Apply
                     </button>
                     <button 
                         @click="$wire.popStash(stashMenu.index); hideStashMenu()"
                         class="w-full px-3 py-1.5 text-left hover:bg-[var(--surface-0)] dark:hover:bg-[var(--surface-3)] text-[var(--text-primary)] flex items-center gap-2"
                     >
-                        <x-phosphor-arrow-square-out class="w-3.5 h-3.5" />
+                        <x-pixelarticons-external-link class="w-3.5 h-3.5" />
                         Pop
                     </button>
                     <div class="border-t border-[var(--border-subtle)] my-1"></div>
@@ -214,7 +214,7 @@
                         @click="confirmDropIndex = stashMenu.index; showDropModal = true; hideStashMenu()"
                         class="w-full px-3 py-1.5 text-left hover:bg-[var(--surface-0)] dark:hover:bg-[var(--surface-3)] text-[var(--color-red)] flex items-center gap-2"
                     >
-                        <x-phosphor-trash class="w-3.5 h-3.5" />
+                        <x-pixelarticons-trash class="w-3.5 h-3.5" />
                         Drop
                     </button>
                 </div>
