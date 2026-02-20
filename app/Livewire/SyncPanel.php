@@ -27,6 +27,8 @@ class SyncPanel extends Component
 
     public array $aheadBehind = ['ahead' => 0, 'behind' => 0];
 
+    public bool $hasUpstream = false;
+
     public function mount(): void
     {
         $this->isOperationRunning = false;
@@ -37,6 +39,7 @@ class SyncPanel extends Component
             $gitService = new GitService($this->repoPath);
             $status = $gitService->status();
             $this->aheadBehind = ['ahead' => $status->aheadBehind->ahead, 'behind' => $status->aheadBehind->behind];
+            $this->hasUpstream = $status->upstream !== null;
         } catch (\Exception $e) {
             $this->aheadBehind = ['ahead' => 0, 'behind' => 0];
         }
@@ -44,12 +47,16 @@ class SyncPanel extends Component
 
     #[On('status-updated')]
     #[On('remote-updated')]
-    public function refreshAheadBehind(int $stagedCount = 0, array $aheadBehind = []): void
+    public function refreshAheadBehind(int $stagedCount = 0, array $aheadBehind = [], ?bool $hasUpstream = null): void
     {
         if (! empty($aheadBehind) && array_key_exists('ahead', $aheadBehind) && array_key_exists('behind', $aheadBehind)) {
             $this->aheadBehind = $aheadBehind;
         } else {
             $this->refreshAheadBehindData();
+        }
+
+        if ($hasUpstream !== null) {
+            $this->hasUpstream = $hasUpstream;
         }
     }
 
@@ -65,6 +72,7 @@ class SyncPanel extends Component
             $gitService = new GitService($this->repoPath);
             $status = $gitService->status();
             $this->aheadBehind = ['ahead' => $status->aheadBehind->ahead, 'behind' => $status->aheadBehind->behind];
+            $this->hasUpstream = $status->upstream !== null;
         } catch (\Exception $e) {
             $this->aheadBehind = ['ahead' => 0, 'behind' => 0];
         }
@@ -72,16 +80,25 @@ class SyncPanel extends Component
 
     public function syncPush(): void
     {
+        $gitService = new GitService($this->repoPath);
+
+        if ($gitService->isDetachedHead()) {
+            $this->error = 'Cannot push from detached HEAD state';
+
+            return;
+        }
+
+        if (! $this->hasUpstream) {
+            $this->publishBranch();
+
+            return;
+        }
+
         $commitCount = $this->aheadBehind['ahead'] ?? 0;
         $currentBranch = null;
 
-        $this->executeSyncOperation(function () use (&$currentBranch) {
-            $gitService = new GitService($this->repoPath);
+        $this->executeSyncOperation(function () use (&$currentBranch, $gitService) {
             $currentBranch = $gitService->currentBranch();
-
-            if ($gitService->isDetachedHead()) {
-                throw new \RuntimeException('Cannot push from detached HEAD state');
-            }
 
             $remoteService = new RemoteService($this->repoPath);
 
@@ -92,6 +109,31 @@ class SyncPanel extends Component
             app(NotificationService::class)->notify(
                 'Push Complete',
                 "Pushed {$commitCount} commit(s) to origin/{$currentBranch}"
+            );
+        }
+    }
+
+    public function publishBranch(): void
+    {
+        $currentBranch = null;
+
+        $this->executeSyncOperation(function () use (&$currentBranch) {
+            $gitService = new GitService($this->repoPath);
+            $currentBranch = $gitService->currentBranch();
+
+            if ($gitService->isDetachedHead()) {
+                throw new \RuntimeException('Cannot publish from detached HEAD state');
+            }
+
+            $remoteService = new RemoteService($this->repoPath);
+
+            return $remoteService->pushSetUpstream('origin', $currentBranch);
+        }, 'publish');
+
+        if (empty($this->error) && $currentBranch) {
+            app(NotificationService::class)->notify(
+                'Branch Published',
+                "Published {$currentBranch} to origin/{$currentBranch}"
             );
         }
     }
@@ -171,7 +213,7 @@ class SyncPanel extends Component
         $this->isOperationRunning = false;
 
         if (empty($this->error)) {
-            $this->dispatch('status-updated', stagedCount: 0, aheadBehind: $this->aheadBehind);
+            $this->dispatch('status-updated', stagedCount: 0, aheadBehind: $this->aheadBehind, hasUpstream: $this->hasUpstream);
         }
     }
 
@@ -203,6 +245,12 @@ class SyncPanel extends Component
     public function handlePaletteForcePush(): void
     {
         $this->syncForcePushWithLease();
+    }
+
+    #[On('palette-publish')]
+    public function handlePalettePublish(): void
+    {
+        $this->publishBranch();
     }
 
     public function render()

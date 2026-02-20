@@ -17,6 +17,8 @@ class NativeAppServiceProvider implements ProvidesPhpIni
         Menu::create(
             Menu::app(),
 
+            Menu::edit(),
+
             Menu::make(
                 Menu::label('Open Repository...')->hotkey('CmdOrCtrl+O')->event('menu:file:open-repo'),
                 Menu::label('Recent Repositories'),

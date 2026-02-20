@@ -182,11 +182,13 @@ class CommitPanel extends Component
                 $gitService = new GitService($this->repoPath);
                 $status = $gitService->status();
                 $aheadBehind = ['ahead' => $status->aheadBehind->ahead, 'behind' => $status->aheadBehind->behind];
+                $hasUpstream = $status->upstream !== null;
             } catch (\Exception) {
                 $aheadBehind = ['ahead' => 0, 'behind' => 0];
+                $hasUpstream = false;
             }
 
-            $this->dispatch('status-updated', stagedCount: 0, aheadBehind: $aheadBehind);
+            $this->dispatch('status-updated', stagedCount: 0, aheadBehind: $aheadBehind, hasUpstream: $hasUpstream);
         } catch (\Exception $e) {
             $this->error = GitErrorHandler::translate($e->getMessage());
             $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);
@@ -227,11 +229,13 @@ class CommitPanel extends Component
                 $gitService = new GitService($this->repoPath);
                 $status = $gitService->status();
                 $aheadBehind = ['ahead' => $status->aheadBehind->ahead, 'behind' => $status->aheadBehind->behind];
+                $hasUpstream = $status->upstream !== null;
             } catch (\Exception) {
                 $aheadBehind = ['ahead' => 0, 'behind' => 0];
+                $hasUpstream = false;
             }
 
-            $this->dispatch('status-updated', stagedCount: 0, aheadBehind: $aheadBehind);
+            $this->dispatch('status-updated', stagedCount: 0, aheadBehind: $aheadBehind, hasUpstream: $hasUpstream);
         } catch (\Exception $e) {
             $this->error = GitErrorHandler::translate($e->getMessage());
             $this->dispatch('show-error', message: $this->error, type: 'error', persistent: false);

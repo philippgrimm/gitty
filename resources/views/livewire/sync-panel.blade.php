@@ -10,7 +10,7 @@
         $behind = $aheadBehind['behind'] ?? 0;
     @endphp
 
-    <flux:tooltip :content="$ahead > 0 ? 'Push (' . $ahead . ')' : 'Push'" position="bottom">
+    <flux:tooltip :content="!$hasUpstream ? 'Publish Branch' : ($ahead > 0 ? 'Push (' . $ahead . ')' : 'Push')" position="bottom">
         <div class="relative">
             <flux:button 
                 wire:click="syncPush" 
@@ -20,13 +20,15 @@
                 square
                 class="text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] hover:bg-[var(--surface-2)] transition-colors flex items-center justify-center"
             >
-                @if($isOperationRunning && $lastOperation === 'push')
+                @if($isOperationRunning && in_array($lastOperation, ['push', 'publish']))
                     <x-pixelarticons-loader class="w-4 h-4 animate-spin" />
                 @else
                     <x-pixelarticons-arrow-up class="w-4 h-4" />
                 @endif
             </flux:button>
-            @if($ahead > 0)
+            @if(!$hasUpstream)
+                <span style="top: 2px; right: 2px;" class="absolute w-2 h-2 rounded-full bg-[var(--color-lavender)] pointer-events-none ring-1 ring-[#E8E5DF]"></span>
+            @elseif($ahead > 0)
                 <span style="top: 2px; right: 2px;" class="absolute w-2 h-2 rounded-full bg-[var(--color-green)] pointer-events-none ring-1 ring-[#E8E5DF]"></span>
             @endif
         </div>

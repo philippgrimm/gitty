@@ -5,7 +5,7 @@
     @keydown.window.meta.shift.k.prevent="if (!$wire.repoPath) return; $wire.$dispatch('keyboard-stage-all')"
     @keydown.window.meta.shift.u.prevent="if (!$wire.repoPath) return; $wire.$dispatch('keyboard-unstage-all')"
     @keydown.window.meta.shift.s.prevent="if (!$wire.repoPath) return; $wire.$dispatch('keyboard-stash')"
-    @keydown.window.meta.a.prevent="if (!$wire.repoPath) return; $wire.$dispatch('keyboard-select-all')"
+    @keydown.window.meta.a.prevent="if (!$wire.repoPath || document.activeElement.tagName === 'TEXTAREA' || document.activeElement.tagName === 'INPUT') return; $wire.$dispatch('keyboard-select-all')"
     @keydown.window.meta.b.prevent="if (!$wire.repoPath) return; $wire.toggleSidebar()"
     @keydown.window.meta.k.prevent="if (!$event.shiftKey) $wire.$dispatch('toggle-command-palette')"
     @keydown.window.meta.shift.p.prevent="$wire.$dispatch('toggle-command-palette')"
@@ -23,7 +23,7 @@
     
     <div class="border-b border-[var(--border-default)] bg-[var(--surface-1)] px-3 flex items-center gap-2 h-9 window-chrome" style="box-shadow: var(--shadow-sm); -webkit-app-region: drag;">
         {{-- Traffic light drag spacer (macOS window controls) --}}
-        <div class="w-16" style="-webkit-app-region: drag;"></div>
+        <div class="w-16 shrink-0" style="-webkit-app-region: drag;"></div>
 
         {{-- Sidebar toggle button --}}
         <div style="-webkit-app-region: no-drag;">

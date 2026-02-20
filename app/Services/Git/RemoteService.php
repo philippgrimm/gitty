@@ -64,6 +64,16 @@ class RemoteService extends AbstractGitService
         return $result->output();
     }
 
+    public function pushSetUpstream(string $remote, string $branch): string
+    {
+        $result = $this->commandRunner->runOrFail('push -u', [$remote, $branch], 'Git push failed');
+
+        $this->cache->invalidateGroup($this->repoPath, 'status');
+        $this->cache->invalidateGroup($this->repoPath, 'branches');
+
+        return $result->output();
+    }
+
     public function forcePushWithLease(string $remote, string $branch): string
     {
         $result = $this->commandRunner->runOrFail('push --force-with-lease', [$remote, $branch], 'Git force push failed');
