@@ -70,16 +70,16 @@
         <div class="text-xs text-[#686C7C]">↑↓ message history</div>
     @endif
 
-    <flux:button.group class="w-full">
-        <flux:button 
+    <div class="flex w-full commit-button-group">
+        <flux:button
             wire:click="commit"
             wire:loading.attr="disabled"
             wire:target="commit,commitAndPush,toggleAmend"
             variant="primary"
             size="sm"
             :disabled="$stagedCount === 0 || empty(trim($message))"
-            class="flex-1 font-semibold disabled:!bg-[var(--surface-3)] disabled:!text-[var(--text-tertiary)] disabled:!border-[var(--border-default)] disabled:!shadow-none btn-bevel commit-ready"
-            x-bind:class="{ 
+            class="flex-1 font-semibold disabled:!bg-[var(--surface-3)] disabled:!text-[var(--text-tertiary)] disabled:!border-[var(--border-default)] disabled:!shadow-none btn-bevel !border-r-0 !rounded-r-none commit-ready"
+            x-bind:class="{
                 'animate-commit-flash': commitFlash
             }"
         >
@@ -87,12 +87,12 @@
         </flux:button>
 
         <flux:dropdown position="top">
-            <flux:button 
+            <flux:button
                 variant="primary"
                 size="sm"
                 square
                 :disabled="$stagedCount === 0 || empty(trim($message))"
-                class="disabled:!bg-[var(--surface-3)] disabled:!text-[var(--text-tertiary)] disabled:!border-[var(--border-default)] disabled:!shadow-none btn-bevel"
+                class="disabled:!bg-[var(--surface-3)] disabled:!text-[var(--text-tertiary)] disabled:!border-[var(--border-default)] disabled:!shadow-none btn-bevel !rounded-l-none !border-l !border-l-[rgba(255,255,255,0.3)]"
             >
                 <x-pixelarticons-chevron-up class="w-4 h-4" />
             </flux:button>
@@ -120,7 +120,7 @@
                 </flux:menu.item>
             </flux:menu>
         </flux:dropdown>
-    </flux:button.group>
+    </div>
 
     <flux:modal wire:model="showUndoConfirmation" class="space-y-6">
         <div>

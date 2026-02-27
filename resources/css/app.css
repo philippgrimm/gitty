@@ -1010,3 +1010,8 @@
     letter-spacing: 0.5px;
     text-transform: uppercase;
 }
+
+/* Commit Split Button Group — seamless bevel join */
+.dark .commit-button-group [data-flux-button].\!border-l {
+    border-left-color: rgba(74, 80, 128, 0.6) !important;
+}

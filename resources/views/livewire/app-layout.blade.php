@@ -133,7 +133,7 @@
                      },
                      get effectiveWidth() {
                          if (this.panelWidth) return this.panelWidth;
-                         return Math.round(this.$el.offsetWidth / 3);
+                         return Math.max(320, Math.round(this.$el.offsetWidth * 0.35));
                      },
                      startDrag(e) {
                          this.isDragging = true;
@@ -146,7 +146,7 @@
                          if (!this.isDragging) return;
                          const delta = e.clientX - this.startX;
                          const maxWidth = Math.round(this.$el.offsetWidth * 0.5);
-                         this.panelWidth = Math.min(Math.max(this.startWidth + delta, 200), maxWidth);
+                         this.panelWidth = Math.min(Math.max(this.startWidth + delta, 280), maxWidth);
                      },
                      stopDrag() {
                          if (!this.isDragging) return;

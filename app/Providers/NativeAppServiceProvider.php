@@ -53,10 +53,10 @@ class NativeAppServiceProvider implements ProvidesPhpIni
 
         $window = Window::open()
             ->title('Gitty')
-            ->width(1200)
-            ->height(800)
-            ->minWidth(900)
-            ->minHeight(600);
+            ->width(1440)
+            ->height(900)
+            ->minWidth(1024)
+            ->minHeight(700);
 
         // Custom window chrome for macOS (hidden title bar with inset traffic lights)
         // Note: titleBarStyle() may not be available in all NativePhp versions
