@@ -12,6 +12,7 @@ jobs:
   build-macos:
     name: Build macOS DMG
     runs-on: macos-latest
+    timeout-minutes: 60
     
     steps:
       - name: Checkout code
@@ -49,6 +50,34 @@ jobs:
       
       - name: Build frontend assets
         run: npm run build
+
+      - name: Import code signing certificate
+        if: ${{ env.MACOS_CERTIFICATE_P12 != '' }}
+        env:
+          MACOS_CERTIFICATE_P12: ${{ secrets.MACOS_CERTIFICATE_P12 }}
+          MACOS_CERTIFICATE_PASSWORD: ${{ secrets.MACOS_CERTIFICATE_PASSWORD }}
+        run: |
+          KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
+          KEYCHAIN_PASSWORD=$(openssl rand -base64 32)
+
+          # Decode certificate
+          echo "$MACOS_CERTIFICATE_P12" | base64 --decode > $RUNNER_TEMP/certificate.p12
+
+          # Create temporary keychain
+          security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+          security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+
+          # Import certificate
+          security import $RUNNER_TEMP/certificate.p12 -P "$MACOS_CERTIFICATE_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
+          security set-key-partition-list -S apple-tool:,apple: -k "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+          security list-keychain -d user -s $KEYCHAIN_PATH
+
+          # Export for electron-builder
+          echo "CSC_KEYCHAIN=$KEYCHAIN_PATH" >> $GITHUB_ENV
+
+          # Cleanup certificate file
+          rm -f $RUNNER_TEMP/certificate.p12
       
       - name: Extract version from tag
         id: version
@@ -81,15 +110,16 @@ jobs:
           sed -i.bak "s/'version' => env('NATIVEPHP_APP_VERSION', '[^']*')/'version' => env('NATIVEPHP_APP_VERSION', '${{ steps.version.outputs.VERSION }}')/g" config/nativephp.php
           rm config/nativephp.php.bak
       
-      - name: Build macOS app (x64)
-        run: php artisan native:build mac x64 --no-interaction
+      - name: Build macOS app (x64 + arm64)
+        run: php artisan native:build mac --no-interaction
         env:
           NATIVEPHP_APP_VERSION: ${{ steps.version.outputs.VERSION }}
-      
-      - name: Build macOS app (arm64)
-        run: php artisan native:build mac arm64 --no-interaction
-        env:
-          NATIVEPHP_APP_VERSION: ${{ steps.version.outputs.VERSION }}
+          CSC_LINK: ${{ secrets.MACOS_CERTIFICATE_P12 }}
+          CSC_KEY_PASSWORD: ${{ secrets.MACOS_CERTIFICATE_PASSWORD }}
+          NATIVEPHP_APPLE_ID: ${{ secrets.APPLE_ID }}
+          NATIVEPHP_APPLE_ID_PASS: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          NATIVEPHP_APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
       - name: Create GitHub Release with Assets
         env:
@@ -110,5 +140,13 @@ jobs:
           
           ---
           *Built automatically from commit ${{ github.sha }}*" \
-            nativephp/electron/dist/*-x64.dmg \
-            nativephp/electron/dist/*-arm64.dmg
+            nativephp/electron/dist/*.dmg \
+            nativephp/electron/dist/latest-mac.yml \
+            nativephp/electron/dist/*.blockmap
+
+      - name: Cleanup keychain
+        if: always()
+        run: |
+          if [ -f "$RUNNER_TEMP/app-signing.keychain-db" ]; then
+            security delete-keychain $RUNNER_TEMP/app-signing.keychain-db
+          fi
