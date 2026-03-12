@@ -19,6 +19,9 @@
     }"
     class="h-full flex flex-col bg-white dark:bg-[var(--surface-0)] text-[var(--text-primary)] font-display crt-scanlines relative"
 >
+    @if(!$loaded)
+        @include('livewire.placeholders.history-panel-skeleton')
+    @else
     @if($commits->isEmpty())
         <div class="flex-1 flex items-center justify-center animate-fade-in">
             <div class="text-center space-y-3">
@@ -369,4 +372,5 @@
             <flux:button variant="primary" wire:click="confirmCherryPick">Cherry-pick</flux:button>
         </div>
     </flux:modal>
+    @endif
 </div>

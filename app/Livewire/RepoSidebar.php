@@ -49,6 +49,11 @@ class RepoSidebar extends Component
         $this->loadBranchData();
     }
 
+    public function placeholder(): \Illuminate\View\View
+    {
+        return view('livewire.placeholders.repo-sidebar-skeleton');
+    }
+
     public function refreshSidebar(): void
     {
         $gitService = new GitService($this->repoPath);
