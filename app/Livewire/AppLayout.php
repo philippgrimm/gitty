@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Livewire;
 
 use App\Services\Git\GitCacheService;
+use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -19,6 +20,8 @@ class AppLayout extends Component
 
     public function mount(?string $repoPath = null): void
     {
+        $t = microtime(true);
+
         if (! \App\Services\Git\GitConfigValidator::checkGitBinary()) {
             $this->dispatch('show-error', message: 'Git is not installed', type: 'error', persistent: true);
         }
@@ -41,6 +44,13 @@ class AppLayout extends Component
         }
 
         $this->previousRepoPath = $this->repoPath;
+
+        if (config('app.debug')) {
+            Log::debug(sprintf(
+                '[perf] AppLayout::mount() %.1fms',
+                (microtime(true) - $t) * 1000
+            ));
+        }
     }
 
     private function loadMostRecentRepo(): string

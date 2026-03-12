@@ -11,6 +11,7 @@ use App\Services\Git\GitService;
 use App\Services\Git\RemoteService;
 use App\Services\Git\StashService;
 use App\Services\Git\TagService;
+use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
@@ -46,7 +47,16 @@ class RepoSidebar extends Component
 
     public function mount(): void
     {
+        $t = microtime(true);
+
         $this->loadBranchData();
+
+        if (config('app.debug')) {
+            Log::debug(sprintf(
+                '[perf] RepoSidebar::mount() (branches only) %.1fms',
+                (microtime(true) - $t) * 1000
+            ));
+        }
     }
 
     public function placeholder(): \Illuminate\View\View
@@ -141,6 +151,8 @@ class RepoSidebar extends Component
         if ($this->secondaryDataLoaded) {
             return;
         }
+
+        $t = microtime(true);
         $this->secondaryDataLoaded = true;
 
         try {
@@ -165,6 +177,13 @@ class RepoSidebar extends Component
                     'sha' => $stash->sha,
                 ])
                 ->toArray();
+
+            if (config('app.debug')) {
+                Log::debug(sprintf(
+                    '[perf] RepoSidebar::loadSecondaryData() %.1fms',
+                    (microtime(true) - $t) * 1000
+                ));
+            }
         } catch (\Exception) {
             $this->remotes = [];
             $this->tags = [];

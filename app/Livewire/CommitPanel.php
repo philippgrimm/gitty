@@ -8,6 +8,7 @@ use App\Services\Git\CommitService;
 use App\Services\Git\GitErrorHandler;
 use App\Services\Git\GitService;
 use App\Services\SettingsService;
+use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
@@ -43,6 +44,8 @@ class CommitPanel extends Component
 
     public function mount(): void
     {
+        $t = microtime(true);
+
         $gitService = new GitService($this->repoPath);
         $status = $gitService->status();
         $this->stagedCount = $status->changedFiles
@@ -51,12 +54,28 @@ class CommitPanel extends Component
 
         $this->currentPrefill = $this->getCommitPrefill();
         $this->message = $this->currentPrefill;
+
+        if (config('app.debug')) {
+            Log::debug(sprintf(
+                '[perf] CommitPanel::mount() (status only) %.1fms',
+                (microtime(true) - $t) * 1000
+            ));
+        }
     }
 
     public function loadHistoryData(): void
     {
+        $t = microtime(true);
+
         $this->loadCommitHistory();
         $this->loadStoredHistory();
+
+        if (config('app.debug')) {
+            Log::debug(sprintf(
+                '[perf] CommitPanel::loadHistoryData() %.1fms',
+                (microtime(true) - $t) * 1000
+            ));
+        }
     }
 
     public function loadCommitHistory(): void

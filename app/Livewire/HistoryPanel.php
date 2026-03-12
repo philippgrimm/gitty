@@ -9,6 +9,7 @@ use App\Services\Git\GitService;
 use App\Services\Git\GraphService;
 use App\Services\Git\ResetService;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
@@ -56,8 +57,17 @@ class HistoryPanel extends Component
 
     public function mount(string $repoPath): void
     {
+        $t = microtime(true);
+
         $this->repoPath = $repoPath;
         $this->commits = collect();
+
+        if (config('app.debug')) {
+            Log::debug(sprintf(
+                '[perf] HistoryPanel::mount() (deferred) %.1fms',
+                (microtime(true) - $t) * 1000
+            ));
+        }
     }
 
     #[On('activate-history')]
@@ -67,8 +77,16 @@ class HistoryPanel extends Component
             return;
         }
 
+        $t = microtime(true);
         $this->loaded = true;
         $this->loadCommits();
+
+        if (config('app.debug')) {
+            Log::debug(sprintf(
+                '[perf] HistoryPanel::activate() (git log) %.1fms',
+                (microtime(true) - $t) * 1000
+            ));
+        }
     }
 
     private function getCommits(): Collection
