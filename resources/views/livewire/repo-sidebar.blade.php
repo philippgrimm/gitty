@@ -1,4 +1,5 @@
 <div 
+    wire:init="loadSecondaryData"
     wire:poll.30s.visible="refreshSidebar"
     x-data="{ 
         branchesOpen: false, 

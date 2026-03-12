@@ -51,6 +51,10 @@ class CommitPanel extends Component
 
         $this->currentPrefill = $this->getCommitPrefill();
         $this->message = $this->currentPrefill;
+    }
+
+    public function loadHistoryData(): void
+    {
         $this->loadCommitHistory();
         $this->loadStoredHistory();
     }

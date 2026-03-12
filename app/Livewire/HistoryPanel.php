@@ -28,6 +28,8 @@ class HistoryPanel extends Component
 
     public bool $showGraph = true;
 
+    public bool $loaded = false;
+
     public bool $showResetModal = false;
 
     public bool $showRevertModal = false;
@@ -56,6 +58,16 @@ class HistoryPanel extends Component
     {
         $this->repoPath = $repoPath;
         $this->commits = collect();
+    }
+
+    #[On('activate-history')]
+    public function activate(): void
+    {
+        if ($this->loaded) {
+            return;
+        }
+
+        $this->loaded = true;
         $this->loadCommits();
     }
 

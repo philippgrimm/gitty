@@ -192,7 +192,9 @@
                     <div x-show="activeRightPanel === 'diff'" class="h-full py-2 pl-2">
                         @livewire('diff-viewer', ['repoPath' => $repoPath], key('diff-viewer-' . $repoPath))
                     </div>
-                    <div x-show="activeRightPanel === 'history'" class="h-full">
+                    <div x-show="activeRightPanel === 'history'"
+                         x-init="$watch('activeRightPanel', v => { if (v === 'history') window.dispatchEvent(new CustomEvent('activate-history')) })"
+                         class="h-full">
                         @livewire('history-panel', ['repoPath' => $repoPath], key('history-panel-' . $repoPath))
                     </div>
                     <div x-show="activeRightPanel === 'blame'" class="h-full">

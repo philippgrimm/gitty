@@ -1,4 +1,5 @@
 <div 
+    wire:init="loadHistoryData"
     x-data="{ showDropdown: false, commitFlash: false, charCount: 0 }" 
     x-effect="charCount = $wire.message?.length || 0"
     x-on:committed.window="commitFlash = true; setTimeout(() => commitFlash = false, 200);"

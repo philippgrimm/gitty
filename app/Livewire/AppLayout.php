@@ -76,7 +76,7 @@ class AppLayout extends Component
     public function handleRepoSwitched(string $path): void
     {
         if ($this->previousRepoPath && $this->previousRepoPath !== $path) {
-            $cache = new GitCacheService;
+            $cache = app(GitCacheService::class);
             $cache->invalidateAll($this->previousRepoPath);
         }
 

@@ -42,9 +42,11 @@ class RepoSidebar extends Component
 
     private ?string $lastSidebarHash = null;
 
+    public bool $secondaryDataLoaded = false;
+
     public function mount(): void
     {
-        $this->refreshSidebar();
+        $this->loadBranchData();
     }
 
     public function refreshSidebar(): void
@@ -104,6 +106,65 @@ class RepoSidebar extends Component
         $this->remotes = $remotes;
         $this->tags = $tags;
         $this->stashes = $stashes;
+    }
+
+    private function loadBranchData(): void
+    {
+        try {
+            $gitService = new GitService($this->repoPath);
+            $branchService = new BranchService($this->repoPath);
+
+            $status = $gitService->status();
+            $this->currentBranch = $status->branch;
+
+            $this->branches = $branchService->branches()
+                ->filter(fn ($branch) => ! $branch->isRemote)
+                ->map(fn ($branch) => [
+                    'name' => $branch->name,
+                    'isCurrent' => $branch->isCurrent,
+                    'lastCommitSha' => $branch->lastCommitSha,
+                ])
+                ->toArray();
+        } catch (\Exception) {
+            $this->currentBranch = '';
+            $this->branches = [];
+        }
+    }
+
+    public function loadSecondaryData(): void
+    {
+        if ($this->secondaryDataLoaded) {
+            return;
+        }
+        $this->secondaryDataLoaded = true;
+
+        try {
+            $remoteService = new RemoteService($this->repoPath);
+            $this->remotes = $remoteService->remotes()
+                ->map(fn ($remote) => [
+                    'name' => $remote->name,
+                    'fetchUrl' => $remote->fetchUrl,
+                    'pushUrl' => $remote->pushUrl,
+                ])
+                ->toArray();
+
+            $tagService = new TagService($this->repoPath);
+            $this->tags = $tagService->tags()->toArray();
+
+            $stashService = new StashService($this->repoPath);
+            $this->stashes = $stashService->stashList()
+                ->map(fn ($stash) => [
+                    'index' => $stash->index,
+                    'message' => $stash->message,
+                    'branch' => $stash->branch,
+                    'sha' => $stash->sha,
+                ])
+                ->toArray();
+        } catch (\Exception) {
+            $this->remotes = [];
+            $this->tags = [];
+            $this->stashes = [];
+        }
     }
 
     public function switchBranch(string $name): void
@@ -187,7 +248,7 @@ class RepoSidebar extends Component
             }
 
             // Invalidate cache
-            $cache = new GitCacheService;
+            $cache = app(GitCacheService::class);
             $cache->invalidateGroup($this->repoPath, 'branches');
             $cache->invalidateGroup($this->repoPath, 'status');
             $cache->invalidateGroup($this->repoPath, 'stashes');
