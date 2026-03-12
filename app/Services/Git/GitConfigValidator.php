@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Process;
 
 class GitConfigValidator extends AbstractGitService
 {
+    private static ?bool $gitBinaryExists = null;
+
     public function validate(): array
     {
         $issues = [];
@@ -32,9 +34,27 @@ class GitConfigValidator extends AbstractGitService
 
     public static function checkGitBinary(): bool
     {
+        if (self::$gitBinaryExists !== null) {
+            return self::$gitBinaryExists;
+        }
+
         $result = Process::run('which git');
 
-        return $result->exitCode() === 0;
+        if ($result->exitCode() === 0) {
+            self::$gitBinaryExists = true;
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Reset the binary existence cache (intended for testing environments).
+     */
+    public static function resetCache(): void
+    {
+        self::$gitBinaryExists = null;
     }
 
     public function validateAll(): array

@@ -27,6 +27,8 @@ class SettingsService
         'notifications_enabled' => true,
     ];
 
+    private ?array $cache = null;
+
     public function defaults(): array
     {
         return self::DEFAULTS;
@@ -34,13 +36,11 @@ class SettingsService
 
     public function get(string $key, mixed $default = null): mixed
     {
-        $setting = Setting::where('key', $key)->first();
-
-        if ($setting === null) {
-            return $default ?? self::DEFAULTS[$key] ?? $default;
+        if ($this->cache === null) {
+            $this->loadAll();
         }
 
-        return $this->castValue($key, $setting->value);
+        return $this->cache[$key] ?? $default ?? self::DEFAULTS[$key] ?? $default;
     }
 
     public function set(string $key, mixed $value): void
@@ -51,6 +51,10 @@ class SettingsService
             ['key' => $key],
             ['value' => $storedValue]
         );
+
+        if ($this->cache !== null) {
+            $this->cache[$key] = $this->castValue($key, $storedValue);
+        }
     }
 
     public function all(): array
@@ -70,6 +74,19 @@ class SettingsService
     public function reset(): void
     {
         Setting::query()->delete();
+        $this->cache = null;
+    }
+
+    private function loadAll(): void
+    {
+        $stored = Setting::all()->pluck('value', 'key')->toArray();
+
+        $merged = array_merge(self::DEFAULTS, $stored);
+
+        $this->cache = [];
+        foreach ($merged as $key => $value) {
+            $this->cache[$key] = $this->castValue($key, $value);
+        }
     }
 
     private function castValue(string $key, mixed $value): mixed

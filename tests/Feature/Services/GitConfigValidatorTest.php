@@ -6,6 +6,8 @@ use App\Services\Git\GitConfigValidator;
 use Illuminate\Support\Facades\Process;
 
 beforeEach(function () {
+    GitConfigValidator::resetCache();
+
     $testDir = '/tmp/gitty-test-repo';
     if (! is_dir($testDir.'/.git')) {
         mkdir($testDir.'/.git', 0755, true);
