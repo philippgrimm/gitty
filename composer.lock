@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a75724b4d3bf487aa22216eb788cd4ed",
+    "content-hash": "89019eb240f001e328c83a345e5b64ad",
     "packages": [
         {
             "name": "blade-ui-kit/blade-icons",
@@ -2489,16 +2489,16 @@
         },
         {
             "name": "nativephp/desktop",
-            "version": "2.1.0",
+            "version": "2.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/NativePHP/desktop.git",
-                "reference": "1dafd3c8e06941519dedf7fe38adbfaa352394a2"
+                "reference": "5aa09597ec6cd83011d606ce5d9b2dd1055cc727"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/NativePHP/desktop/zipball/1dafd3c8e06941519dedf7fe38adbfaa352394a2",
-                "reference": "1dafd3c8e06941519dedf7fe38adbfaa352394a2",
+                "url": "https://api.github.com/repos/NativePHP/desktop/zipball/5aa09597ec6cd83011d606ce5d9b2dd1055cc727",
+                "reference": "5aa09597ec6cd83011d606ce5d9b2dd1055cc727",
                 "shasum": ""
             },
             "require": {
@@ -2588,7 +2588,7 @@
             ],
             "support": {
                 "issues": "https://github.com/NativePHP/desktop/issues",
-                "source": "https://github.com/NativePHP/desktop/tree/2.1.0"
+                "source": "https://github.com/NativePHP/desktop/tree/2.1.1"
             },
             "funding": [
                 {
@@ -2600,7 +2600,7 @@
                     "type": "opencollective"
                 }
             ],
-            "time": "2026-01-07T14:13:04+00:00"
+            "time": "2026-02-27T12:01:59+00:00"
         },
         {
             "name": "nativephp/php-bin",
