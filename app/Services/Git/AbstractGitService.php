@@ -14,12 +14,13 @@ abstract class AbstractGitService
 
     public function __construct(
         protected string $repoPath,
+        ?GitCacheService $cache = null,
     ) {
         $gitDir = rtrim($this->repoPath, '/').'/.git';
         if (! is_dir($gitDir)) {
             throw new InvalidRepositoryException($this->repoPath);
         }
-        $this->cache = new GitCacheService;
+        $this->cache = $cache ?? \app(GitCacheService::class);
         $this->commandRunner = new GitCommandRunner($this->repoPath);
     }
 }
