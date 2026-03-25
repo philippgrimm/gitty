@@ -18,7 +18,7 @@ afterEach(function () {
 
 test('GitService handles empty status output gracefully', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(''),
+        'git status --porcelain=v2 --branch -uall' => Process::result(''),
     ]);
 
     $service = new GitService($this->testRepoPath);
@@ -30,7 +30,7 @@ test('GitService handles empty status output gracefully', function () {
 
 test('GitService handles detached HEAD in status', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(
+        'git status --porcelain=v2 --branch -uall' => Process::result(
             "# branch.oid abc123def456\n# branch.head (detached)\n"
         ),
     ]);
@@ -88,7 +88,7 @@ test('GitService log handles empty repository', function () {
 
 test('GitService status handles binary file changes', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(
+        'git status --porcelain=v2 --branch -uall' => Process::result(
             "# branch.oid abc123\n# branch.head main\n1 M. N... 100644 100644 100644 abc123 def456 image.png\n"
         ),
     ]);

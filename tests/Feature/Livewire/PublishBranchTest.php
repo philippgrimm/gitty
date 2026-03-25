@@ -24,7 +24,7 @@ beforeEach(function () {
 
 test('sync panel sets hasUpstream to false when branch has no upstream', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(
+        'git status --porcelain=v2 --branch -uall' => Process::result(
             "# branch.oid abc123\n# branch.head feature/new-branch\n"
         ),
     ]);
@@ -36,7 +36,7 @@ test('sync panel sets hasUpstream to false when branch has no upstream', functio
 
 test('sync panel sets hasUpstream to true when branch has upstream', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
     ]);
 
     Livewire::test(SyncPanel::class, ['repoPath' => $this->testRepoPath])
@@ -50,7 +50,7 @@ test('sync panel sets hasUpstream to true when branch has upstream', function ()
 
 test('sync panel publishBranch runs git push -u', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(
+        'git status --porcelain=v2 --branch -uall' => Process::result(
             "# branch.oid abc123\n# branch.head feature/new-branch\n"
         ),
         "git push -u 'origin' 'feature/new-branch'" => Process::result(''),
@@ -67,7 +67,7 @@ test('sync panel publishBranch runs git push -u', function () {
 
 test('sync panel syncPush calls publishBranch when no upstream', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(
+        'git status --porcelain=v2 --branch -uall' => Process::result(
             "# branch.oid abc123\n# branch.head feature/new-branch\n"
         ),
         "git push -u 'origin' 'feature/new-branch'" => Process::result(''),
@@ -86,7 +86,7 @@ test('sync panel syncPush calls publishBranch when no upstream', function () {
 
 test('sync panel updates hasUpstream after publishing', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         "git push -u 'origin' 'main'" => Process::result(''),
     ]);
 
@@ -102,7 +102,7 @@ test('sync panel updates hasUpstream after publishing', function () {
 
 test('sync panel refreshAheadBehind accepts hasUpstream param', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(
+        'git status --porcelain=v2 --branch -uall' => Process::result(
             "# branch.oid abc123\n# branch.head feature/new-branch\n"
         ),
     ]);
@@ -120,7 +120,7 @@ test('sync panel refreshAheadBehind accepts hasUpstream param', function () {
 
 test('commit panel passes hasUpstream false in status-updated when no upstream', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(
+        'git status --porcelain=v2 --branch -uall' => Process::result(
             "# branch.oid abc123\n# branch.head feature/new-branch\n1 M. N... 100644 100644 100644 b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1 d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3 README.md\n"
         ),
         'git commit -m *' => Process::result(''),
@@ -137,7 +137,7 @@ test('commit panel passes hasUpstream false in status-updated when no upstream',
 
 test('commit panel passes hasUpstream true when branch has upstream', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
         'git commit -m *' => Process::result(''),
         'git log --oneline -n 10' => Process::result(GitOutputFixtures::logOneline()),
     ]);

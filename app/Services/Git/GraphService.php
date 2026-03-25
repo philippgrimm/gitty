@@ -5,58 +5,187 @@ declare(strict_types=1);
 namespace App\Services\Git;
 
 use App\DTOs\GraphNode;
+use App\DTOs\HistoryRow;
 
+/**
+ * Builds canonical history rows from git's native graph output.
+ */
 class GraphService extends AbstractGitService
 {
-    public function getGraphData(int $limit = 200): array
+    /**
+     * @return array<HistoryRow>
+     */
+    public function getHistoryRows(int $limit = 100, int $skip = 0, string $scope = 'current'): array
     {
-        $result = $this->commandRunner->run(
-            "log --all --format='%H|||%P|||%an|||%ar|||%s|||%D' -n {$limit}"
-        );
+        $safeLimit = max(1, $limit);
+        $safeSkip = max(0, $skip);
+        $safeScope = $scope === 'all' ? 'all' : 'current';
+
+        $result = $this->commandRunner->run($this->buildHistoryCommand($safeLimit, $safeSkip, $safeScope));
 
         if ($result->exitCode() !== 0) {
             return [];
         }
 
-        $lines = array_filter(explode("\n", trim($result->output())));
-        $nodes = [];
-        $commitToLane = [];
-        $activeLanes = [];
-        $nextLane = 0;
+        return $this->parseHistoryRows($result->output());
+    }
 
-        foreach ($lines as $line) {
-            $parts = explode('|||', $line);
+    /**
+     * Legacy compatibility method used by existing tests and callers.
+     *
+     * @return array<GraphNode>
+     */
+    public function getGraphData(int $limit = 200): array
+    {
+        $rows = $this->getHistoryRows(limit: $limit, skip: 0, scope: 'all');
+        $graphNodes = [];
 
-            $sha = $parts[0] ?? '';
-            $parentString = $parts[1] ?? '';
-            $author = $parts[2] ?? '';
-            $date = $parts[3] ?? '';
-            $message = $parts[4] ?? '';
-            $refString = $parts[5] ?? '';
+        foreach ($rows as $row) {
+            $commitLane = array_search('*', $row->graphCells, true);
+            $lane = is_int($commitLane) ? $commitLane : 0;
 
-            $parents = array_filter(explode(' ', $parentString));
-            $refs = [];
-            if (! empty($refString)) {
-                $refs = array_map('trim', explode(',', $refString));
-            }
-
-            $branch = $this->determineBranch($refs);
-
-            $lane = $this->assignLane($sha, $parents, $commitToLane, $activeLanes, $nextLane);
-
-            $nodes[] = new GraphNode(
-                sha: $sha,
-                parents: $parents,
-                branch: $branch,
-                refs: $refs,
-                message: $message,
-                author: $author,
-                date: $date,
+            $graphNodes[] = new GraphNode(
+                sha: $row->sha,
+                parents: $row->parents,
+                branch: $this->determineBranch($row->refs),
+                refs: $row->refs,
+                message: $row->message,
+                author: $row->author,
+                date: $row->date,
                 lane: $lane,
             );
         }
 
-        return $nodes;
+        return $graphNodes;
+    }
+
+    private function buildHistoryCommand(int $limit, int $skip, string $scope): string
+    {
+        $command = "log --graph --date-order --decorate=short --format='%x1e%H%x1f%P%x1f%an%x1f%ar%x1f%s%x1f%D' -n {$limit} --skip {$skip}";
+
+        if ($scope === 'all') {
+            $command .= ' --all';
+        }
+
+        return $command;
+    }
+
+    /**
+     * @return array<HistoryRow>
+     */
+    private function parseHistoryRows(string $output): array
+    {
+        if (trim($output) === '') {
+            return [];
+        }
+
+        $lines = explode("\n", rtrim($output, "\n"));
+        $entries = [];
+        $currentEntry = null;
+
+        foreach ($lines as $line) {
+            if ($line === '') {
+                continue;
+            }
+
+            if (str_contains($line, "\x1e")) {
+                if ($currentEntry !== null) {
+                    $entries[] = $currentEntry;
+                }
+
+                [$graphPrefix, $payload] = explode("\x1e", $line, 2);
+                $currentEntry = [
+                    'graphPrefix' => $graphPrefix,
+                    'payload' => $payload,
+                    'continuationPrefixes' => [],
+                ];
+
+                continue;
+            }
+
+            if ($currentEntry !== null) {
+                $currentEntry['continuationPrefixes'][] = $line;
+            }
+        }
+
+        if ($currentEntry !== null) {
+            $entries[] = $currentEntry;
+        }
+
+        $rows = [];
+        foreach ($entries as $entry) {
+            $historyRow = $this->parseHistoryRow($entry);
+            if ($historyRow !== null) {
+                $rows[] = $historyRow;
+            }
+        }
+
+        return $rows;
+    }
+
+    private function parseHistoryRow(array $entry): ?HistoryRow
+    {
+        $fields = explode("\x1f", (string) ($entry['payload'] ?? ''));
+        $sha = trim((string) ($fields[0] ?? ''));
+
+        if ($sha === '') {
+            return null;
+        }
+
+        $parentString = trim((string) ($fields[1] ?? ''));
+        $parents = $parentString === ''
+            ? []
+            : array_values(array_filter(explode(' ', $parentString)));
+
+        $refString = trim((string) ($fields[5] ?? ''));
+        $refs = [];
+        if ($refString !== '') {
+            $refs = array_values(array_filter(array_map('trim', explode(',', $refString))));
+        }
+
+        $graphCells = $this->parseGraphCells((string) ($entry['graphPrefix'] ?? ''));
+        $continuationCells = [];
+        foreach ($entry['continuationPrefixes'] ?? [] as $prefix) {
+            $continuationCells[] = $this->parseGraphCells((string) $prefix);
+        }
+
+        return new HistoryRow(
+            sha: $sha,
+            shortSha: substr($sha, 0, 7),
+            parents: $parents,
+            refs: $refs,
+            message: trim((string) ($fields[4] ?? '')),
+            author: trim((string) ($fields[2] ?? '')),
+            date: trim((string) ($fields[3] ?? '')),
+            graphCells: $graphCells,
+            continuationCells: $continuationCells,
+            hasGraphData: ! empty($graphCells),
+        );
+    }
+
+    /**
+     * @return array<string>
+     */
+    private function parseGraphCells(string $prefix): array
+    {
+        $chars = preg_split('//u', $prefix, -1, PREG_SPLIT_NO_EMPTY);
+        if (! is_array($chars)) {
+            return [];
+        }
+
+        $cells = [];
+        foreach ($chars as $char) {
+            $cells[] = match ($char) {
+                '*', '|', '/', '\\', '_', ' ' => $char,
+                default => ' ',
+            };
+        }
+
+        while (! empty($cells) && end($cells) === ' ') {
+            array_pop($cells);
+        }
+
+        return $cells;
     }
 
     private function determineBranch(array $refs): string
@@ -74,66 +203,5 @@ class GraphService extends AbstractGitService
         }
 
         return '';
-    }
-
-    private function assignLane(
-        string $sha,
-        array $parents,
-        array &$commitToLane,
-        array &$activeLanes,
-        int &$nextLane
-    ): int {
-        if (isset($commitToLane[$sha])) {
-            return $commitToLane[$sha];
-        }
-
-        $lane = 0;
-
-        if (count($parents) === 0) {
-            $lane = 0;
-        } elseif (count($parents) === 1) {
-            $firstParent = $parents[0];
-            if (isset($commitToLane[$firstParent])) {
-                $lane = $commitToLane[$firstParent];
-            } else {
-                $lane = 0;
-            }
-        } else {
-            $firstParent = $parents[0];
-            if (isset($commitToLane[$firstParent])) {
-                $lane = $commitToLane[$firstParent];
-            } else {
-                $lane = 0;
-            }
-
-            for ($i = 1; $i < count($parents); $i++) {
-                $parent = $parents[$i];
-                if (! isset($commitToLane[$parent])) {
-                    $mergeLane = $nextLane++;
-                    $commitToLane[$parent] = $mergeLane;
-                    $activeLanes[$mergeLane] = $parent;
-                }
-            }
-        }
-
-        $commitToLane[$sha] = $lane;
-        $activeLanes[$lane] = $sha;
-
-        if ($nextLane === 0) {
-            $nextLane = 1;
-        }
-
-        return $lane;
-    }
-
-    private function findAvailableLane(array $activeLanes, int &$nextLane): int
-    {
-        for ($i = 0; $i < $nextLane; $i++) {
-            if (! isset($activeLanes[$i])) {
-                return $i;
-            }
-        }
-
-        return $nextLane++;
     }
 }

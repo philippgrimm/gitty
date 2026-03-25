@@ -21,7 +21,7 @@ test('sync panel displays push, pull, and fetch buttons', function () {
     ]);
 
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
         'git remote -v' => Process::result(GitOutputFixtures::remoteList()),
         "git tag -l --sort=-creatordate --format='%(refname:short)|||%(objectname:short)|||%(creatordate:relative)|||%(contents:subject)'" => Process::result(''),
@@ -49,7 +49,7 @@ test('sync panel shows force push confirmation modal', function () {
     ]);
 
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
         'git remote -v' => Process::result(GitOutputFixtures::remoteList()),
         "git tag -l --sort=-creatordate --format='%(refname:short)|||%(objectname:short)|||%(creatordate:relative)|||%(contents:subject)'" => Process::result(''),
@@ -92,7 +92,7 @@ test('sync panel fetch all operation works via command palette', function () {
     ]);
 
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
         'git remote -v' => Process::result(GitOutputFixtures::remoteList()),
         "git tag -l --sort=-creatordate --format='%(refname:short)|||%(objectname:short)|||%(creatordate:relative)|||%(contents:subject)'" => Process::result(''),

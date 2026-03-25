@@ -54,12 +54,15 @@ class BranchManager extends Component
             $this->aheadBehind = ['ahead' => $status->aheadBehind->ahead, 'behind' => $status->aheadBehind->behind];
             $this->isDetachedHead = $gitService->isDetachedHead();
 
+            $checkoutTimestamps = $branchService->getLastCheckoutTimestamps();
+
             $this->branches = $branchService->branches()
                 ->map(fn ($branch) => [
                     'name' => $branch->name,
                     'isRemote' => $branch->isRemote,
                     'isCurrent' => $branch->isCurrent,
                     'lastCommitSha' => $branch->lastCommitSha,
+                    'lastCheckoutAt' => $checkoutTimestamps[$branch->name] ?? null,
                 ])
                 ->toArray();
 
@@ -190,7 +193,7 @@ class BranchManager extends Component
             }
 
             // Invalidate cache
-            $cache = new GitCacheService;
+            $cache = app(GitCacheService::class);
             $cache->invalidateGroup($this->repoPath, 'branches');
             $cache->invalidateGroup($this->repoPath, 'status');
             $cache->invalidateGroup($this->repoPath, 'stashes');
@@ -243,6 +246,7 @@ class BranchManager extends Component
             collect($this->branches)->filter(fn ($branch) => ! $branch['isRemote'] && ! str_contains($branch['name'], 'remotes/'))
         )->sortBy([
             fn ($a, $b) => $b['isCurrent'] <=> $a['isCurrent'],
+            fn ($a, $b) => ($b['lastCheckoutAt'] ?? 0) <=> ($a['lastCheckoutAt'] ?? 0),
             fn ($a, $b) => $a['name'] <=> $b['name'],
         ]);
     }

@@ -71,6 +71,46 @@ class BranchService extends AbstractGitService
         return $result->successful() && ! empty(trim($result->output()));
     }
 
+    /**
+     * Get last checkout timestamps per branch from git reflog.
+     *
+     * Parses reflog for "checkout: moving from X to Y" entries
+     * and returns the most recent checkout time for each branch.
+     *
+     * @return array<string, int> Branch name => unix timestamp
+     */
+    public function getLastCheckoutTimestamps(): array
+    {
+        return $this->cache->get(
+            $this->repoPath,
+            'branch_checkout_timestamps',
+            function () {
+                $result = $this->commandRunner->run('reflog --date=unix -n 2000');
+
+                if (! $result->successful() || empty(trim($result->output()))) {
+                    return [];
+                }
+
+                $lines = array_filter(explode("\n", trim($result->output())));
+                $timestamps = [];
+
+                foreach ($lines as $line) {
+                    if (preg_match('/HEAD@\{(\d+)\}.*checkout: moving from .+ to (.+)$/', $line, $matches)) {
+                        $branch = trim($matches[2]);
+
+                        // Only keep the first (most recent) occurrence per branch
+                        if (! isset($timestamps[$branch])) {
+                            $timestamps[$branch] = (int) $matches[1];
+                        }
+                    }
+                }
+
+                return $timestamps;
+            },
+            30
+        );
+    }
+
     public function mergeBranch(string $name): MergeResult
     {
         $result = $this->commandRunner->run('merge', [$name]);

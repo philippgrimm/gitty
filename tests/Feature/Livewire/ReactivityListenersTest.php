@@ -19,7 +19,7 @@ beforeEach(function () {
 
 test('branch manager refreshes branches when status-updated event is received', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
     ]);
 

@@ -13,7 +13,7 @@ class GitCacheService
     private const GROUPS = [
         'status' => ['status', 'diff'],
         'history' => ['log'],
-        'branches' => ['branches'],
+        'branches' => ['branches', 'branch_checkout_timestamps'],
         'remotes' => ['remotes'],
         'stashes' => ['stashes'],
         'tags' => ['tags'],
@@ -38,7 +38,7 @@ class GitCacheService
         $prefix = self::CACHE_PREFIX.":{$hash}:";
 
         $allKeys = array_merge(
-            ['status', 'diff', 'log', 'branches', 'remotes', 'stashes', 'tags']
+            ['status', 'diff', 'log', 'branches', 'branch_checkout_timestamps', 'remotes', 'stashes', 'tags']
         );
 
         foreach ($allKeys as $key) {

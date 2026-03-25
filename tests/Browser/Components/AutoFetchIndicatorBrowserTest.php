@@ -17,7 +17,7 @@ test('auto-fetch indicator component renders with inactive state', function () {
     BrowserTestHelper::ensureScreenshotsDirectory();
 
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
     ]);
 
     $component = Livewire::test(AutoFetchIndicator::class, ['repoPath' => BrowserTestHelper::MOCK_REPO_PATH]);
@@ -37,7 +37,7 @@ test('auto-fetch indicator component shows active state when enabled', function 
     Cache::put('auto-fetch:'.$repoHash.':last-fetch', now()->subMinutes(5)->timestamp);
 
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         'git fetch --all' => Process::result('Fetching origin'),
     ]);
 
@@ -57,7 +57,7 @@ test('auto-fetch indicator component shows paused state when queue is locked', f
     Cache::lock('git-op-'.$repoHash, 30)->get();
 
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
     ]);
 
     $component = Livewire::test(AutoFetchIndicator::class, ['repoPath' => BrowserTestHelper::MOCK_REPO_PATH]);

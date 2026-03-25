@@ -17,7 +17,7 @@ beforeEach(function () {
 
 test('commit panel dispatches status-updated with aheadBehind data after commit', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
         'git commit -m *' => Process::result(''),
         'git log --oneline -n 10' => Process::result(GitOutputFixtures::logOneline()),
     ]);
@@ -32,7 +32,7 @@ test('commit panel dispatches status-updated with aheadBehind data after commit'
 
 test('commit panel dispatches status-updated with aheadBehind data after commitAndPush', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
         'git commit -m *' => Process::result(''),
         'git push' => Process::result(''),
         'git log --oneline -n 10' => Process::result(GitOutputFixtures::logOneline()),
@@ -48,7 +48,7 @@ test('commit panel dispatches status-updated with aheadBehind data after commitA
 
 test('sync panel handleCommitted listener refreshes aheadBehind when committed event fires', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
     ]);
 
     Livewire::test(SyncPanel::class, ['repoPath' => $this->testRepoPath])
@@ -56,12 +56,12 @@ test('sync panel handleCommitted listener refreshes aheadBehind when committed e
         ->dispatch('committed')
         ->assertSet('aheadBehind', ['ahead' => 1, 'behind' => 0]);
 
-    Process::assertRan('git status --porcelain=v2 --branch', 2);
+    Process::assertRan('git status --porcelain=v2 --branch -uall', 2);
 });
 
 test('sync panel refreshAheadBehind falls back to refreshAheadBehindData when empty aheadBehind is passed', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
     ]);
 
     Livewire::test(SyncPanel::class, ['repoPath' => $this->testRepoPath])
@@ -69,12 +69,12 @@ test('sync panel refreshAheadBehind falls back to refreshAheadBehindData when em
         ->call('refreshAheadBehind', stagedCount: 0, aheadBehind: [])
         ->assertSet('aheadBehind', ['ahead' => 1, 'behind' => 0]);
 
-    Process::assertRan('git status --porcelain=v2 --branch', 2);
+    Process::assertRan('git status --porcelain=v2 --branch -uall', 2);
 });
 
 test('commit panel dispatches committed event after successful commit', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
         'git commit -m *' => Process::result(''),
         'git log --oneline -n 10' => Process::result(GitOutputFixtures::logOneline()),
     ]);

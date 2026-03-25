@@ -16,7 +16,7 @@ beforeEach(function () {
 
 test('getTemplates returns conventional commit types', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
         "git config --get 'commit.template'" => Process::result('', exitCode: 1),
     ]);
 
@@ -32,7 +32,7 @@ test('getTemplates returns conventional commit types', function () {
 
 test('applyTemplate sets message with prefix', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
         'git log --oneline -n 10' => Process::result(GitOutputFixtures::logOneline()),
     ]);
 
@@ -43,7 +43,7 @@ test('applyTemplate sets message with prefix', function () {
 
 test('applyTemplate prepends to existing message without type', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
         'git log --oneline -n 10' => Process::result(GitOutputFixtures::logOneline()),
     ]);
 
@@ -55,7 +55,7 @@ test('applyTemplate prepends to existing message without type', function () {
 
 test('applyTemplate does not double-prefix typed message', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
         'git log --oneline -n 10' => Process::result(GitOutputFixtures::logOneline()),
     ]);
 
@@ -67,7 +67,7 @@ test('applyTemplate does not double-prefix typed message', function () {
 
 test('applyTemplate replaces prefill with template', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusOnFeatureBranch()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusOnFeatureBranch()),
         'git log --oneline -n 10' => Process::result(GitOutputFixtures::logOneline()),
     ]);
 
@@ -79,7 +79,7 @@ test('applyTemplate replaces prefill with template', function () {
 
 test('loadCustomTemplate reads from repo .gitmessage file', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
         'git log --oneline -n 10' => Process::result(GitOutputFixtures::logOneline()),
     ]);
 
@@ -103,7 +103,7 @@ test('loadCustomTemplate reads from git config commit.template', function () {
     file_put_contents($customTemplatePath, "chore: \n\n# Custom template from config");
 
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
         'git log --oneline -n 10' => Process::result(GitOutputFixtures::logOneline()),
         "git config --get 'commit.template'" => Process::result($customTemplatePath),
     ]);
@@ -121,7 +121,7 @@ test('loadCustomTemplate reads from git config commit.template', function () {
 
 test('getTemplates returns only conventional commits when no custom template exists', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
         'git log --oneline -n 10' => Process::result(GitOutputFixtures::logOneline()),
         "git config --get 'commit.template'" => Process::result('', exitCode: 1),
     ]);

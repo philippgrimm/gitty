@@ -37,7 +37,7 @@ class BrowserTestHelper
     public static function getCommonProcessFakes(): array
     {
         return [
-            'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+            'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
             'git branch --list --all --format=*' => Process::result(GitOutputFixtures::branchList()),
             'git log --oneline -n 20' => Process::result(GitOutputFixtures::logOneline()),
         ];

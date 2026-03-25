@@ -63,6 +63,46 @@ test('it force deletes a branch', function () {
     Process::assertRan("git branch -D 'feature/old'");
 });
 
+test('it parses last checkout timestamps from reflog', function () {
+    Process::fake([
+        'git reflog --date=unix -n 2000' => Process::result(GitOutputFixtures::reflogCheckout()),
+    ]);
+
+    $service = new BranchService('/tmp/gitty-test-repo');
+    $timestamps = $service->getLastCheckoutTimestamps();
+
+    // Should have 4 branches with checkout events (main, feature/new-ui, feature/api-improvement, bugfix/parser-issue)
+    expect($timestamps)->toHaveCount(4)
+        ->and($timestamps['main'])->toBe(1708344000)
+        ->and($timestamps['feature/new-ui'])->toBe(1708340000)
+        ->and($timestamps['feature/api-improvement'])->toBe(1708310000)
+        ->and($timestamps['bugfix/parser-issue'])->toBe(1708290000);
+});
+
+test('it keeps only the most recent checkout per branch', function () {
+    Process::fake([
+        'git reflog --date=unix -n 2000' => Process::result(GitOutputFixtures::reflogCheckout()),
+    ]);
+
+    $service = new BranchService('/tmp/gitty-test-repo');
+    $timestamps = $service->getLastCheckoutTimestamps();
+
+    // feature/new-ui appears twice in the reflog (at 1708340000 and 1708320000)
+    // Should keep only the most recent (1708340000)
+    expect($timestamps['feature/new-ui'])->toBe(1708340000);
+});
+
+test('it returns empty array when reflog has no checkout entries', function () {
+    Process::fake([
+        'git reflog --date=unix -n 2000' => Process::result(GitOutputFixtures::reflogEmpty()),
+    ]);
+
+    $service = new BranchService('/tmp/gitty-test-repo');
+    $timestamps = $service->getLastCheckoutTimestamps();
+
+    expect($timestamps)->toBeEmpty();
+});
+
 test('it merges a branch', function () {
     Process::fake([
         "git merge 'feature/new-ui'" => Process::result(

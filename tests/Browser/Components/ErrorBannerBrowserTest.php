@@ -14,7 +14,7 @@ test('error banner is hidden by default', function () {
     BrowserTestHelper::ensureScreenshotsDirectory();
 
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
     ]);
 
     $page = visit('/');
@@ -29,7 +29,7 @@ test('error banner shows error message when dispatched', function () {
     BrowserTestHelper::ensureScreenshotsDirectory();
 
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
     ]);
 
     $page = visit('/');
@@ -47,7 +47,7 @@ test('error banner shows warning message', function () {
     BrowserTestHelper::ensureScreenshotsDirectory();
 
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
     ]);
 
     $page = visit('/');
@@ -65,7 +65,7 @@ test('error banner can be dismissed manually', function () {
     BrowserTestHelper::ensureScreenshotsDirectory();
 
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
     ]);
 
     $page = visit('/');

@@ -14,7 +14,7 @@ test('homepage loads successfully', function () {
     BrowserTestHelper::ensureScreenshotsDirectory();
 
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
     ]);
 
     $page = visit('/');

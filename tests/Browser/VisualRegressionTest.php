@@ -71,7 +71,7 @@ test('staging panel - light mode', function () {
     cache()->put('current_repo_id', $repo->id);
 
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithMixedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithMixedChanges()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
         'git remote -v' => Process::result(GitOutputFixtures::remoteList()),
         "git tag -l --sort=-creatordate --format='%(refname:short)|||%(objectname:short)|||%(creatordate:relative)|||%(contents:subject)'" => Process::result(''),
@@ -101,7 +101,7 @@ test('staging panel - dark mode', function () {
     cache()->put('current_repo_id', $repo->id);
 
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithMixedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithMixedChanges()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
         'git remote -v' => Process::result(GitOutputFixtures::remoteList()),
         "git tag -l --sort=-creatordate --format='%(refname:short)|||%(objectname:short)|||%(creatordate:relative)|||%(contents:subject)'" => Process::result(''),
@@ -139,7 +139,7 @@ test('diff viewer - light mode', function () {
     cache()->put('current_repo_id', $repo->id);
 
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithUnstagedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithUnstagedChanges()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
         'git remote -v' => Process::result(GitOutputFixtures::remoteList()),
         "git tag -l --sort=-creatordate --format='%(refname:short)|||%(objectname:short)|||%(creatordate:relative)|||%(contents:subject)'" => Process::result(''),
@@ -170,7 +170,7 @@ test('diff viewer - dark mode', function () {
     cache()->put('current_repo_id', $repo->id);
 
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithUnstagedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithUnstagedChanges()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
         'git remote -v' => Process::result(GitOutputFixtures::remoteList()),
         "git tag -l --sort=-creatordate --format='%(refname:short)|||%(objectname:short)|||%(creatordate:relative)|||%(contents:subject)'" => Process::result(''),
@@ -206,7 +206,7 @@ test('commit panel - light mode', function () {
     cache()->put('current_repo_id', $repo->id);
 
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
         'git remote -v' => Process::result(GitOutputFixtures::remoteList()),
         "git tag -l --sort=-creatordate --format='%(refname:short)|||%(objectname:short)|||%(creatordate:relative)|||%(contents:subject)'" => Process::result(''),
@@ -234,7 +234,7 @@ test('commit panel - dark mode', function () {
     cache()->put('current_repo_id', $repo->id);
 
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
         'git remote -v' => Process::result(GitOutputFixtures::remoteList()),
         "git tag -l --sort=-creatordate --format='%(refname:short)|||%(objectname:short)|||%(creatordate:relative)|||%(contents:subject)'" => Process::result(''),
@@ -270,7 +270,7 @@ test('full app layout - light mode', function () {
     cache()->put('current_repo_id', $repo->id);
 
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithMixedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithMixedChanges()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
         'git remote -v' => Process::result(GitOutputFixtures::remoteList()),
         "git tag -l --sort=-creatordate --format='%(refname:short)|||%(objectname:short)|||%(creatordate:relative)|||%(contents:subject)'" => Process::result(''),
@@ -301,7 +301,7 @@ test('full app layout - dark mode', function () {
     cache()->put('current_repo_id', $repo->id);
 
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithMixedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithMixedChanges()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
         'git remote -v' => Process::result(GitOutputFixtures::remoteList()),
         "git tag -l --sort=-creatordate --format='%(refname:short)|||%(objectname:short)|||%(creatordate:relative)|||%(contents:subject)'" => Process::result(''),

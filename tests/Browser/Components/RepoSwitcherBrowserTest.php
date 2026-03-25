@@ -26,7 +26,7 @@ test('repo switcher displays current repository', function () {
     cache()->put('current_repo_id', $repo->id);
 
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
         'git remote -v' => Process::result(GitOutputFixtures::remoteList()),
         "git tag -l --sort=-creatordate --format='%(refname:short)|||%(objectname:short)|||%(creatordate:relative)|||%(contents:subject)'" => Process::result(''),
@@ -85,7 +85,7 @@ test('repo switcher displays recent repositories list', function () {
     ]);
 
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
         'git remote -v' => Process::result(GitOutputFixtures::remoteList()),
         "git tag -l --sort=-creatordate --format='%(refname:short)|||%(objectname:short)|||%(creatordate:relative)|||%(contents:subject)'" => Process::result(''),

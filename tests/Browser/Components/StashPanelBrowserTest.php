@@ -21,7 +21,7 @@ test('stash panel displays stash list', function () {
     ]);
 
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
         'git remote -v' => Process::result(GitOutputFixtures::remoteList()),
         "git tag -l --sort=-creatordate --format='%(refname:short)|||%(objectname:short)|||%(creatordate:relative)|||%(contents:subject)'" => Process::result(''),
@@ -49,7 +49,7 @@ test('stash panel shows empty state when no stashes', function () {
     ]);
 
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
         'git remote -v' => Process::result(GitOutputFixtures::remoteList()),
         "git tag -l --sort=-creatordate --format='%(refname:short)|||%(objectname:short)|||%(creatordate:relative)|||%(contents:subject)'" => Process::result(''),
@@ -78,7 +78,7 @@ test('stash panel shows stash count', function () {
     ]);
 
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
         'git remote -v' => Process::result(GitOutputFixtures::remoteList()),
         "git tag -l --sort=-creatordate --format='%(refname:short)|||%(objectname:short)|||%(creatordate:relative)|||%(contents:subject)'" => Process::result(''),

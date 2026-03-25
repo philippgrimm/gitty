@@ -58,11 +58,20 @@
         <div style="-webkit-app-region: no-drag;" 
              x-data="{
                  theme: localStorage.getItem('gitty-theme') || 'system',
-                 init() { 
+                 _mediaQuery: null,
+                 _listener: null,
+                 init() {
                      this.apply();
-                     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { 
+                     this._mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+                     this._listener = () => {
                          if (this.theme === 'system') this.apply();
-                     });
+                     };
+                     this._mediaQuery.addEventListener('change', this._listener);
+                 },
+                 destroy() {
+                     if (this._mediaQuery && this._listener) {
+                         this._mediaQuery.removeEventListener('change', this._listener);
+                     }
                  },
                  apply() {
                      const dark = this.theme === 'dark' || 
@@ -114,7 +123,7 @@
                 style="width: {{ $sidebarCollapsed ? '0px' : '250px' }}; min-width: {{ $sidebarCollapsed ? '0px' : '250px' }};"
             >
                 @if(!$sidebarCollapsed)
-                    @livewire('repo-sidebar', ['repoPath' => $repoPath], key('repo-sidebar-' . $repoPath), lazy: true)
+                    <livewire:repo-sidebar :repoPath="$repoPath" :key="'repo-sidebar-' . $repoPath" lazy />
                 @endif
             </div>
 
@@ -161,6 +170,7 @@
                  @mousemove.window="onDrag($event)"
                  @mouseup.window="stopDrag()"
                  @file-selected.window="activeRightPanel = 'diff'"
+                 @commit-selected.window="activeRightPanel = 'history'"
                  @toggle-history-panel.window="activeRightPanel = activeRightPanel === 'history' ? 'diff' : 'history'"
                  @show-blame.window="activeRightPanel = 'blame'"
              >

@@ -16,7 +16,7 @@ test('it validates repository path has .git directory', function () {
 
 test('it parses porcelain v2 status with clean working tree', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => GitOutputFixtures::statusClean(),
+        'git status --porcelain=v2 --branch -uall' => GitOutputFixtures::statusClean(),
     ]);
 
     $service = new GitService('/tmp/gitty-test-repo');
@@ -33,7 +33,7 @@ test('it parses porcelain v2 status with clean working tree', function () {
 
 test('it parses porcelain v2 status with unstaged changes', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => GitOutputFixtures::statusWithUnstagedChanges(),
+        'git status --porcelain=v2 --branch -uall' => GitOutputFixtures::statusWithUnstagedChanges(),
     ]);
 
     $service = new GitService('/tmp/gitty-test-repo');
@@ -47,7 +47,7 @@ test('it parses porcelain v2 status with unstaged changes', function () {
 
 test('it parses porcelain v2 status with staged changes', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => GitOutputFixtures::statusWithStagedChanges(),
+        'git status --porcelain=v2 --branch -uall' => GitOutputFixtures::statusWithStagedChanges(),
     ]);
 
     $service = new GitService('/tmp/gitty-test-repo');
@@ -61,7 +61,7 @@ test('it parses porcelain v2 status with staged changes', function () {
 
 test('it parses porcelain v2 status with renamed files', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => GitOutputFixtures::statusWithRenamedFiles(),
+        'git status --porcelain=v2 --branch -uall' => GitOutputFixtures::statusWithRenamedFiles(),
     ]);
 
     $service = new GitService('/tmp/gitty-test-repo');
@@ -75,7 +75,7 @@ test('it parses porcelain v2 status with renamed files', function () {
 
 test('it detects detached HEAD state', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => GitOutputFixtures::statusDetachedHead(),
+        'git status --porcelain=v2 --branch -uall' => GitOutputFixtures::statusDetachedHead(),
     ]);
 
     $service = new GitService('/tmp/gitty-test-repo');
@@ -86,7 +86,7 @@ test('it detects detached HEAD state', function () {
 
 test('it calculates ahead/behind commits', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => GitOutputFixtures::statusAheadBehind(),
+        'git status --porcelain=v2 --branch -uall' => GitOutputFixtures::statusAheadBehind(),
     ]);
 
     $service = new GitService('/tmp/gitty-test-repo');

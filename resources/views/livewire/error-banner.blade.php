@@ -1,9 +1,11 @@
 {{-- Toast Container - Bottom Right --}}
 <div class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 pointer-events-none">
     <div 
-        x-data="{ 
+        x-data="{
+            _timeout: null,
             startTimer() {
-                setTimeout(() => {
+                clearTimeout(this._timeout);
+                this._timeout = setTimeout(() => {
                     $wire.dismiss();
                 }, 5000);
             }

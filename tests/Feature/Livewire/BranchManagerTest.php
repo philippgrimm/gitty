@@ -16,7 +16,7 @@ beforeEach(function () {
 
 test('component mounts with repo path and loads branches', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusAheadBehind()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusAheadBehind()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
     ]);
 
@@ -31,7 +31,7 @@ test('component mounts with repo path and loads branches', function () {
 
 test('component displays current branch with ahead/behind badges', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusAheadBehind()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusAheadBehind()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
     ]);
 
@@ -43,7 +43,7 @@ test('component displays current branch with ahead/behind badges', function () {
 
 test('component switches to another branch', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusAheadBehind()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusAheadBehind()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
         "git checkout 'main'" => Process::result(''),
     ]);
@@ -57,7 +57,7 @@ test('component switches to another branch', function () {
 
 test('component creates new branch via palette event', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
         "git checkout -b 'feature/new-feature' 'main'" => Process::result(''),
     ]);
@@ -71,7 +71,7 @@ test('component creates new branch via palette event', function () {
 
 test('component deletes branch', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
         "git branch -d 'feature/new-ui'" => Process::result(''),
     ]);
@@ -85,7 +85,7 @@ test('component deletes branch', function () {
 
 test('component prevents deleting current branch', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
     ]);
 
@@ -98,7 +98,7 @@ test('component prevents deleting current branch', function () {
 
 test('component merges branch successfully', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
         "git merge 'feature/new-ui'" => Process::result('Fast-forward merge completed'),
     ]);
@@ -113,7 +113,7 @@ test('component merges branch successfully', function () {
 
 test('component shows conflict warning when merge has conflicts', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
         "git merge 'feature/new-ui'" => function () {
             return Process::result('CONFLICT (content): Merge conflict in README.md', exitCode: 1);
@@ -128,7 +128,7 @@ test('component shows conflict warning when merge has conflicts', function () {
 
 test('component shows detached HEAD warning', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusDetachedHead()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusDetachedHead()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
     ]);
 
@@ -140,7 +140,7 @@ test('component shows detached HEAD warning', function () {
 
 test('component refreshes branches on demand', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
     ]);
 
@@ -151,9 +151,70 @@ test('component refreshes branches on demand', function () {
     Process::assertRan('git branch -a -vv');
 });
 
+test('branches include last checkout timestamps from reflog', function () {
+    Process::fake([
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
+        'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
+        'git reflog --date=unix -n 2000' => Process::result(GitOutputFixtures::reflogCheckout()),
+    ]);
+
+    $component = Livewire::test(BranchManager::class, ['repoPath' => $this->testRepoPath]);
+
+    $branches = collect($component->get('branches'));
+    $mainBranch = $branches->firstWhere('name', 'main');
+    $featureBranch = $branches->firstWhere('name', 'feature/new-ui');
+
+    expect($mainBranch['lastCheckoutAt'])->toBe(1708344000)
+        ->and($featureBranch['lastCheckoutAt'])->toBe(1708340000);
+});
+
+test('local branches are sorted by last checkout time', function () {
+    Process::fake([
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
+        'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
+        'git reflog --date=unix -n 2000' => Process::result(GitOutputFixtures::reflogCheckout()),
+    ]);
+
+    $component = Livewire::test(BranchManager::class, ['repoPath' => $this->testRepoPath]);
+    $html = $component->html();
+
+    // Extract positions of switchBranch calls — these appear in rendered order
+    preg_match_all("/switchBranch\('([^']+)'\)/", $html, $matches);
+    $orderedBranches = array_values(array_unique($matches[1]));
+
+    // main is current (always first), then sorted by most recent checkout:
+    // feature/new-ui (1708340000), feature/api-improvement (1708310000), bugfix/parser-issue (1708290000)
+    expect($orderedBranches)->toBe(['main', 'feature/new-ui', 'feature/api-improvement', 'bugfix/parser-issue']);
+});
+
+test('local branches without checkout history sort alphabetically after recent ones', function () {
+    // Reflog only has entries for main and feature/new-ui
+    $partialReflog = <<<'OUTPUT'
+a1b2c3d HEAD@{1708344000}: checkout: moving from feature/new-ui to main
+b2c3d4e HEAD@{1708340000}: checkout: moving from main to feature/new-ui
+
+OUTPUT;
+
+    Process::fake([
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
+        'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
+        'git reflog --date=unix -n 2000' => Process::result($partialReflog),
+    ]);
+
+    $component = Livewire::test(BranchManager::class, ['repoPath' => $this->testRepoPath]);
+    $html = $component->html();
+
+    preg_match_all("/switchBranch\('([^']+)'\)/", $html, $matches);
+    $orderedBranches = array_values(array_unique($matches[1]));
+
+    // main (current, always first), feature/new-ui (has checkout timestamp),
+    // then remaining without timestamps sorted alphabetically: bugfix/parser-issue, feature/api-improvement
+    expect($orderedBranches)->toBe(['main', 'feature/new-ui', 'bugfix/parser-issue', 'feature/api-improvement']);
+});
+
 test('context menu trigger exists on non-current local branches', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
     ]);
 
@@ -163,7 +224,7 @@ test('context menu trigger exists on non-current local branches', function () {
 
 test('context menu contains merge action for current branch', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
     ]);
 
@@ -173,7 +234,7 @@ test('context menu contains merge action for current branch', function () {
 
 test('component dispatches success toast on successful merge', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
         "git merge 'feature/new-ui'" => Process::result('Fast-forward merge completed'),
     ]);
@@ -189,7 +250,7 @@ test('component dispatches success toast on successful merge', function () {
 
 test('component does not dispatch success toast when merge has conflicts', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
         "git merge 'feature/new-ui'" => function () {
             return Process::result('CONFLICT (content): Merge conflict in README.md', exitCode: 1);
@@ -205,7 +266,7 @@ test('component does not dispatch success toast when merge has conflicts', funct
 
 test('switchBranch shows auto-stash modal when checkout fails due to dirty tree', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
         "git checkout 'feature/new-ui'" => function () {
             return Process::result(
@@ -225,7 +286,7 @@ test('switchBranch shows auto-stash modal when checkout fails due to dirty tree'
 
 test('switchBranch shows error toast for non-dirty-tree errors', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
         "git checkout 'feature/nonexistent'" => function () {
             return Process::result(
@@ -244,7 +305,7 @@ test('switchBranch shows error toast for non-dirty-tree errors', function () {
 
 test('confirmAutoStash stashes switches and restores changes', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
         'git stash push *' => Process::result('Saved working directory and index state'),
         "git checkout 'feature/new-ui'" => Process::result('Switched to branch \'feature/new-ui\''),
@@ -272,7 +333,7 @@ test('confirmAutoStash stashes switches and restores changes', function () {
 
 test('confirmAutoStash shows warning when stash apply conflicts', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
         'git stash push *' => Process::result('Saved working directory and index state'),
         "git checkout 'feature/new-ui'" => Process::result('Switched to branch \'feature/new-ui\''),
@@ -301,7 +362,7 @@ test('confirmAutoStash shows warning when stash apply conflicts', function () {
 
 test('cancelAutoStash resets state without action', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
     ]);
 
@@ -315,7 +376,7 @@ test('cancelAutoStash resets state without action', function () {
 
 test('deleteBranch shows force-delete modal when branch is not fully merged', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
         "git branch -d 'feature/new-ui'" => function () {
             return Process::result(
@@ -335,7 +396,7 @@ test('deleteBranch shows force-delete modal when branch is not fully merged', fu
 
 test('deleteBranch shows error toast for non-merge-related delete errors', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
         "git branch -d 'feature/new-ui'" => function () {
             return Process::result(
@@ -354,7 +415,7 @@ test('deleteBranch shows error toast for non-merge-related delete errors', funct
 
 test('forceDeleteBranch calls git branch -D and resets state', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
         "git branch -D 'feature/new-ui'" => Process::result(''),
     ]);
@@ -372,7 +433,7 @@ test('forceDeleteBranch calls git branch -D and resets state', function () {
 
 test('cancelForceDelete resets state without action', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
     ]);
 
@@ -386,7 +447,7 @@ test('cancelForceDelete resets state without action', function () {
 
 test('deleteBranch on current branch does not show force-delete modal', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
     ]);
 

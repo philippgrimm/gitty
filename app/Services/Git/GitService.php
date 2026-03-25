@@ -18,7 +18,7 @@ class GitService extends AbstractGitService
             $this->repoPath,
             'status',
             function () {
-                $result = $this->commandRunner->run('status --porcelain=v2 --branch');
+                $result = $this->commandRunner->run('status --porcelain=v2 --branch -uall');
 
                 return GitStatus::fromOutput($result->output());
             },

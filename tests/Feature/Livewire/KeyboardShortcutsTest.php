@@ -22,7 +22,7 @@ beforeEach(function () {
 
 test('commit panel responds to Cmd+Enter keyboard shortcut', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(
+        'git status --porcelain=v2 --branch -uall' => Process::result(
             "# branch.oid a1b2c3d\n# branch.head main\n# branch.upstream origin/main\n# branch.ab +0 -0\n1 M. N... 100644 100644 100644 abc123 def456 file.txt\n"
         ),
         'git commit -m *' => Process::result(''),
@@ -36,7 +36,7 @@ test('commit panel responds to Cmd+Enter keyboard shortcut', function () {
 
 test('commit panel responds to Cmd+Shift+Enter for commit and push', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(
+        'git status --porcelain=v2 --branch -uall' => Process::result(
             "# branch.oid a1b2c3d\n# branch.head main\n# branch.upstream origin/main\n# branch.ab +0 -0\n1 M. N... 100644 100644 100644 abc123 def456 file.txt\n"
         ),
         'git commit -m *' => Process::result(''),
@@ -51,7 +51,7 @@ test('commit panel responds to Cmd+Shift+Enter for commit and push', function ()
 
 test('staging panel responds to Cmd+Shift+K for stage all', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(
+        'git status --porcelain=v2 --branch -uall' => Process::result(
             "# branch.oid a1b2c3d\n# branch.head main\n# branch.upstream origin/main\n# branch.ab +0 -0\n1 .M N... 100644 100644 100644 abc123 def456 file.txt\n"
         ),
         'git add --all' => Process::result(''),
@@ -64,7 +64,7 @@ test('staging panel responds to Cmd+Shift+K for stage all', function () {
 
 test('staging panel responds to Cmd+Shift+U for unstage all', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(
+        'git status --porcelain=v2 --branch -uall' => Process::result(
             "# branch.oid a1b2c3d\n# branch.head main\n# branch.upstream origin/main\n# branch.ab +0 -0\n1 M. N... 100644 100644 100644 abc123 def456 file.txt\n"
         ),
         'git reset HEAD' => Process::result(''),

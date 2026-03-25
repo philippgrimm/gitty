@@ -26,7 +26,7 @@ test('full app renders with all panels visible', function () {
     cache()->put('current_repo_id', $repo->id);
 
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithMixedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithMixedChanges()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
         'git remote -v' => Process::result(GitOutputFixtures::remoteList()),
         "git tag -l --sort=-creatordate --format='%(refname:short)|||%(objectname:short)|||%(creatordate:relative)|||%(contents:subject)'" => Process::result(''),
@@ -79,7 +79,7 @@ test('selecting a file in staging panel triggers diff viewer to show content', f
     cache()->put('current_repo_id', $repo->id);
 
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithMixedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithMixedChanges()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
         'git remote -v' => Process::result(GitOutputFixtures::remoteList()),
         "git tag -l --sort=-creatordate --format='%(refname:short)|||%(objectname:short)|||%(creatordate:relative)|||%(contents:subject)'" => Process::result(''),
@@ -121,7 +121,7 @@ test('error banner appears when show-error event is dispatched', function () {
     cache()->put('current_repo_id', $repo->id);
 
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
         'git remote -v' => Process::result(GitOutputFixtures::remoteList()),
         "git tag -l --sort=-creatordate --format='%(refname:short)|||%(objectname:short)|||%(creatordate:relative)|||%(contents:subject)'" => Process::result(''),
@@ -188,7 +188,7 @@ test('full page screenshot of complete app layout with mixed changes', function 
     cache()->put('current_repo_id', $repo->id);
 
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithMixedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithMixedChanges()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
         'git remote -v' => Process::result(GitOutputFixtures::remoteList()),
         "git tag -l --sort=-creatordate --format='%(refname:short)|||%(objectname:short)|||%(creatordate:relative)|||%(contents:subject)'" => Process::result(''),
@@ -235,7 +235,7 @@ test('cross-component event flow between staging and commit panels', function ()
     cache()->put('current_repo_id', $repo->id);
 
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
         'git remote -v' => Process::result(GitOutputFixtures::remoteList()),
         "git tag -l --sort=-creatordate --format='%(refname:short)|||%(objectname:short)|||%(creatordate:relative)|||%(contents:subject)'" => Process::result(''),
@@ -275,7 +275,7 @@ test('sidebar sections expand to show full repository state', function () {
     cache()->put('current_repo_id', $repo->id);
 
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchListVerbose()),
         'git remote -v' => Process::result(GitOutputFixtures::remoteList()),
         "git tag -l --sort=-creatordate --format='%(refname:short)|||%(objectname:short)|||%(creatordate:relative)|||%(contents:subject)'" => Process::result(''),

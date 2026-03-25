@@ -348,6 +348,25 @@ index 0000000..f6a7b8c
 OUTPUT;
     }
 
+    public static function reflogCheckout(): string
+    {
+        return <<<'OUTPUT'
+a1b2c3d HEAD@{1708344000}: checkout: moving from feature/new-ui to main
+b2c3d4e HEAD@{1708340000}: checkout: moving from main to feature/new-ui
+c3d4e5f HEAD@{1708330000}: commit: feat: redesign UI
+d4e5f6a HEAD@{1708320000}: checkout: moving from feature/api-improvement to feature/new-ui
+e5f6a7b HEAD@{1708310000}: checkout: moving from bugfix/parser-issue to feature/api-improvement
+f6a7b8c HEAD@{1708300000}: commit: fix: resolve parser bug
+a7b8c9d HEAD@{1708290000}: checkout: moving from main to bugfix/parser-issue
+
+OUTPUT;
+    }
+
+    public static function reflogEmpty(): string
+    {
+        return '';
+    }
+
     public static function statusOnFeatureBranch(): string
     {
         return <<<'OUTPUT'

@@ -5,6 +5,22 @@ declare(strict_types=1);
 use App\Services\Git\GraphService;
 use Illuminate\Support\Facades\Process;
 
+function historyCommand(int $limit, int $skip, string $scope = 'current'): string
+{
+    $command = "git log --graph --date-order --decorate=short --format='%x1e%H%x1f%P%x1f%an%x1f%ar%x1f%s%x1f%D' -n {$limit} --skip {$skip}";
+
+    if ($scope === 'all') {
+        $command .= ' --all';
+    }
+
+    return $command;
+}
+
+function historyLine(string $graphPrefix, string $sha, string $parents, string $author, string $date, string $message, string $refs = ''): string
+{
+    return $graphPrefix."\x1e{$sha}\x1f{$parents}\x1f{$author}\x1f{$date}\x1f{$message}\x1f{$refs}";
+}
+
 beforeEach(function () {
     $this->testRepoPath = '/tmp/test-repo-'.uniqid();
     mkdir($this->testRepoPath);
@@ -27,137 +43,124 @@ test('constructor validates git repository', function () {
     rmdir($invalidPath);
 });
 
-test('getGraphData returns empty array for empty repository', function () {
+test('getHistoryRows returns empty array for empty repository', function () {
     Process::fake([
-        "git log --all --format='%H|||%P|||%an|||%ar|||%s|||%D' -n 200" => Process::result(
-            output: ''
-        ),
+        historyCommand(100, 0) => Process::result(output: ''),
     ]);
 
     $service = new GraphService($this->testRepoPath);
-    $graphData = $service->getGraphData();
+    $rows = $service->getHistoryRows(limit: 100, skip: 0);
 
-    expect($graphData)->toBeArray()
-        ->and($graphData)->toBeEmpty();
+    expect($rows)->toBeArray()
+        ->and($rows)->toBeEmpty();
 });
 
-test('getGraphData returns empty array on git error', function () {
+test('getHistoryRows returns empty array on git error', function () {
     Process::fake([
-        "git log --all --format='%H|||%P|||%an|||%ar|||%s|||%D' -n 200" => Process::result(
-            exitCode: 1,
-            errorOutput: 'fatal: bad revision'
-        ),
+        historyCommand(100, 0) => Process::result(exitCode: 1, errorOutput: 'fatal: bad revision'),
     ]);
 
     $service = new GraphService($this->testRepoPath);
-    $graphData = $service->getGraphData();
+    $rows = $service->getHistoryRows(limit: 100, skip: 0);
 
-    expect($graphData)->toBeArray()
-        ->and($graphData)->toBeEmpty();
+    expect($rows)->toBeArray()
+        ->and($rows)->toBeEmpty();
 });
 
-test('getGraphData parses linear history with single lane', function () {
+test('getHistoryRows parses linear history graph cells and metadata', function () {
+    $output = implode("\n", [
+        historyLine('* ', 'a1', 'b1', 'John Doe', '2 hours ago', 'Third commit', 'HEAD -> main, origin/main'),
+        historyLine('* ', 'b1', 'c1', 'John Doe', '3 hours ago', 'Second commit'),
+        historyLine('* ', 'c1', '', 'John Doe', '4 hours ago', 'Initial commit'),
+    ]);
+
     Process::fake([
-        "git log --all --format='%H|||%P|||%an|||%ar|||%s|||%D' -n 200" => Process::result(
-            output: implode("\n", [
-                'a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2|||b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3|||John Doe|||2 hours ago|||Third commit|||HEAD -> main',
-                'b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3|||c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4|||John Doe|||3 hours ago|||Second commit|||',
-                'c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4||||||John Doe|||4 hours ago|||Initial commit|||',
-            ])
-        ),
+        historyCommand(100, 0) => Process::result(output: $output),
     ]);
 
     $service = new GraphService($this->testRepoPath);
-    $graphData = $service->getGraphData();
+    $rows = $service->getHistoryRows(limit: 100, skip: 0);
 
-    expect($graphData)->toHaveCount(3)
-        ->and($graphData[0]->sha)->toBe('a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2')
-        ->and($graphData[0]->message)->toBe('Third commit')
-        ->and($graphData[0]->lane)->toBe(0)
-        ->and($graphData[0]->parents)->toBe(['b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3'])
-        ->and($graphData[0]->branch)->toBe('main')
-        ->and($graphData[1]->sha)->toBe('b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3')
-        ->and($graphData[1]->lane)->toBe(0)
-        ->and($graphData[2]->sha)->toBe('c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4')
-        ->and($graphData[2]->lane)->toBe(0)
-        ->and($graphData[2]->parents)->toBeEmpty();
+    expect($rows)->toHaveCount(3)
+        ->and($rows[0]->sha)->toBe('a1')
+        ->and($rows[0]->parents)->toBe(['b1'])
+        ->and($rows[0]->refs)->toBe(['HEAD -> main', 'origin/main'])
+        ->and($rows[0]->graphCells)->toBe(['*'])
+        ->and($rows[0]->continuationCells)->toBe([])
+        ->and($rows[2]->parents)->toBe([]);
 });
 
-test('getGraphData handles branch and merge with multiple lanes', function () {
+test('getHistoryRows parses merge graph with continuation lines', function () {
+    $output = implode("\n", [
+        historyLine('*   ', 'm1', 'p1 p2', 'John Doe', '1 hour ago', 'Merge branch feature', 'HEAD -> main'),
+        '|\\  ',
+        historyLine('* | ', 'p1', 'b0', 'John Doe', '2 hours ago', 'Main commit'),
+        historyLine('| * ', 'p2', 'b0', 'Jane Doe', '3 hours ago', 'Feature commit', 'feature'),
+        '|/  ',
+        historyLine('* ', 'b0', '', 'John Doe', '4 hours ago', 'Initial commit'),
+    ]);
+
     Process::fake([
-        "git log --all --format='%H|||%P|||%an|||%ar|||%s|||%D' -n 200" => Process::result(
-            output: implode("\n", [
-                'a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2|||b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3 d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5|||John Doe|||1 hour ago|||Merge branch feature|||HEAD -> main',
-                'b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3|||c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4|||John Doe|||2 hours ago|||Main commit|||',
-                'd4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5|||c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4|||Jane Doe|||3 hours ago|||Feature commit|||feature',
-                'c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4||||||John Doe|||4 hours ago|||Initial commit|||',
-            ])
-        ),
+        historyCommand(100, 0) => Process::result(output: $output),
     ]);
 
     $service = new GraphService($this->testRepoPath);
-    $graphData = $service->getGraphData();
+    $rows = $service->getHistoryRows(limit: 100, skip: 0);
 
-    expect($graphData)->toHaveCount(4)
-        ->and($graphData[0]->sha)->toBe('a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2')
-        ->and($graphData[0]->message)->toBe('Merge branch feature')
-        ->and($graphData[0]->parents)->toHaveCount(2)
-        ->and($graphData[0]->parents[0])->toBe('b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3')
-        ->and($graphData[0]->parents[1])->toBe('d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5')
-        ->and($graphData[1]->sha)->toBe('b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3')
-        ->and($graphData[2]->sha)->toBe('d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5')
-        ->and($graphData[2]->branch)->toBe('feature');
+    expect($rows)->toHaveCount(4)
+        ->and($rows[0]->sha)->toBe('m1')
+        ->and($rows[0]->parents)->toBe(['p1', 'p2'])
+        ->and($rows[0]->continuationCells)->toHaveCount(1)
+        ->and($rows[0]->continuationCells[0])->toBe(['|', '\\'])
+        ->and($rows[2]->graphCells)->toBe(['|', ' ', '*'])
+        ->and($rows[2]->refs)->toBe(['feature'])
+        ->and($rows[2]->continuationCells)->toHaveCount(1)
+        ->and($rows[2]->continuationCells[0])->toBe(['|', '/']);
 });
 
-test('getGraphData respects limit parameter', function () {
+test('getHistoryRows parses octopus merge refs and parent list', function () {
+    $output = implode("\n", [
+        historyLine('*   ', 'o1', 'p1 p2 p3', 'John Doe', 'now', 'Octopus merge', 'HEAD -> main, tag: v2.0.0, origin/main'),
+        historyLine('*   ', 'p1', 'b0', 'John Doe', '1 minute ago', 'Base main'),
+    ]);
+
     Process::fake([
-        "git log --all --format='%H|||%P|||%an|||%ar|||%s|||%D' -n 50" => Process::result(
-            output: implode("\n", [
-                'a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2|||b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3|||John Doe|||1 hour ago|||Commit 1|||HEAD -> main',
-                'b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3||||||John Doe|||2 hours ago|||Commit 2|||',
-            ])
-        ),
+        historyCommand(100, 0) => Process::result(output: $output),
     ]);
 
     $service = new GraphService($this->testRepoPath);
-    $graphData = $service->getGraphData(50);
+    $rows = $service->getHistoryRows(limit: 100, skip: 0);
 
-    expect($graphData)->toHaveCount(2);
+    expect($rows)->toHaveCount(2)
+        ->and($rows[0]->parents)->toBe(['p1', 'p2', 'p3'])
+        ->and($rows[0]->refs)->toBe(['HEAD -> main', 'tag: v2.0.0', 'origin/main']);
 });
 
-test('getGraphData extracts refs correctly', function () {
+test('getHistoryRows supports all scope and skip values', function () {
     Process::fake([
-        "git log --all --format='%H|||%P|||%an|||%ar|||%s|||%D' -n 200" => Process::result(
-            output: 'a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2||||||John Doe|||1 hour ago|||Tagged commit|||HEAD -> main, tag: v1.0.0, origin/main'
-        ),
+        historyCommand(50, 20, 'all') => Process::result(output: historyLine('* ', 'a1', '', 'John Doe', 'now', 'Commit')),
     ]);
 
     $service = new GraphService($this->testRepoPath);
-    $graphData = $service->getGraphData();
+    $rows = $service->getHistoryRows(limit: 50, skip: 20, scope: 'all');
+
+    expect($rows)->toHaveCount(1)
+        ->and($rows[0]->sha)->toBe('a1');
+
+    Process::assertRan(historyCommand(50, 20, 'all'));
+});
+
+test('getGraphData remains compatible with new history parser', function () {
+    Process::fake([
+        historyCommand(200, 0, 'all') => Process::result(output: historyLine('* ', 'a1', 'b1', 'John Doe', 'now', 'Commit', 'HEAD -> main')),
+    ]);
+
+    $service = new GraphService($this->testRepoPath);
+    $graphData = $service->getGraphData(200);
 
     expect($graphData)->toHaveCount(1)
-        ->and($graphData[0]->refs)->toHaveCount(3)
-        ->and($graphData[0]->refs[0])->toBe('HEAD -> main')
-        ->and($graphData[0]->refs[1])->toBe('tag: v1.0.0')
-        ->and($graphData[0]->refs[2])->toBe('origin/main');
-});
-
-test('getGraphData assigns different lanes for diverging branches', function () {
-    Process::fake([
-        "git log --all --format='%H|||%P|||%an|||%ar|||%s|||%D' -n 200" => Process::result(
-            output: implode("\n", [
-                'a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2|||c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4|||John Doe|||1 hour ago|||Main branch commit|||HEAD -> main',
-                'b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3|||c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4|||Jane Doe|||2 hours ago|||Feature branch commit|||feature',
-                'c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4||||||John Doe|||3 hours ago|||Initial commit|||',
-            ])
-        ),
-    ]);
-
-    $service = new GraphService($this->testRepoPath);
-    $graphData = $service->getGraphData();
-
-    expect($graphData)->toHaveCount(3)
-        ->and($graphData[0]->lane)->toBe(0)
-        ->and($graphData[1]->lane)->toBeGreaterThanOrEqual(0)
-        ->and($graphData[2]->lane)->toBeGreaterThanOrEqual(0);
+        ->and($graphData[0]->sha)->toBe('a1')
+        ->and($graphData[0]->parents)->toBe(['b1'])
+        ->and($graphData[0]->branch)->toBe('main')
+        ->and($graphData[0]->lane)->toBe(0);
 });

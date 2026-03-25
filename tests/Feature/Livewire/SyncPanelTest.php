@@ -19,7 +19,7 @@ beforeEach(function () {
 
 test('component mounts with repo path', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
     ]);
 
     Livewire::test(SyncPanel::class, ['repoPath' => $this->testRepoPath])
@@ -30,7 +30,7 @@ test('component mounts with repo path', function () {
 
 test('push operation succeeds', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         "git push 'origin' 'main'" => Process::result("To github.com:user/repo.git\n   abc123..def456  main -> main"),
     ]);
 
@@ -45,7 +45,7 @@ test('push operation succeeds', function () {
 
 test('push operation fails with error message', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         "git push 'origin' 'main'" => Process::result('error: failed to push some refs', errorOutput: 'error: failed to push some refs', exitCode: 1),
     ]);
 
@@ -57,7 +57,7 @@ test('push operation fails with error message', function () {
 
 test('pull operation succeeds', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         "git pull 'origin' 'main'" => Process::result("From github.com:user/repo\n * branch            main       -> FETCH_HEAD\nUpdating abc123..def456\nFast-forward"),
     ]);
 
@@ -72,7 +72,7 @@ test('pull operation succeeds', function () {
 
 test('pull operation fails with error message', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         "git pull 'origin' 'main'" => Process::result('error: Your local changes would be overwritten', errorOutput: 'error: Your local changes would be overwritten', exitCode: 1),
     ]);
 
@@ -84,7 +84,7 @@ test('pull operation fails with error message', function () {
 
 test('fetch operation succeeds', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         "git fetch 'origin'" => Process::result("From github.com:user/repo\n   abc123..def456  main       -> origin/main"),
     ]);
 
@@ -99,7 +99,7 @@ test('fetch operation succeeds', function () {
 
 test('fetch all operation succeeds', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         'git fetch --all' => Process::result("Fetching origin\nFetching upstream"),
     ]);
 
@@ -114,7 +114,7 @@ test('fetch all operation succeeds', function () {
 
 test('force push with lease succeeds', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         "git push --force-with-lease 'origin' 'main'" => Process::result("To github.com:user/repo.git\n + abc123...def456 main -> main (forced update)"),
     ]);
 
@@ -129,7 +129,7 @@ test('force push with lease succeeds', function () {
 
 test('operations set isOperationRunning flag', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         "git push 'origin' 'main'" => Process::result('Success'),
     ]);
 
@@ -141,7 +141,7 @@ test('operations set isOperationRunning flag', function () {
 
 test('operations store output in operationOutput', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         "git push 'origin' 'main'" => Process::result("To github.com:user/repo.git\n   abc123..def456  main -> main"),
     ]);
 
@@ -152,7 +152,7 @@ test('operations store output in operationOutput', function () {
 
 test('detached HEAD prevents push and pull operations', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusDetachedHead()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusDetachedHead()),
     ]);
 
     Livewire::test(SyncPanel::class, ['repoPath' => $this->testRepoPath])

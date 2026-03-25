@@ -1,9 +1,10 @@
 {
-  "active_plan": null,
-  "started_at": null,
+  "active_plan": "/Users/philipp.grimm/workspace/gitty/.sisyphus/plans/startup-optimization.md",
+  "started_at": "2026-03-12T16:39:18.698Z",
   "session_ids": [
-    "ses_3891e76c9ffenhV65PGj0TlLyg"
+    "ses_31d154a97ffeJHoO9ytI5Qu9CH"
   ],
-  "plan_name": null,
-  "agent": null
+  "plan_name": "startup-optimization",
+  "agent": "atlas",
+  "worktree_path": "/Users/philipp.grimm/workspace/gitty-startup-opt"
 }

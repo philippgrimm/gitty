@@ -16,7 +16,7 @@ beforeEach(function () {
 
 test('component mounts with repo path and initializes properties', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
     ]);
 
     Livewire::test(CommitPanel::class, ['repoPath' => $this->testRepoPath])
@@ -29,7 +29,7 @@ test('component mounts with repo path and initializes properties', function () {
 
 test('component counts staged files correctly', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithMixedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithMixedChanges()),
     ]);
 
     $component = Livewire::test(CommitPanel::class, ['repoPath' => $this->testRepoPath]);
@@ -40,7 +40,7 @@ test('component counts staged files correctly', function () {
 
 test('component commits with message', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
         "git commit -m 'feat: add new feature'" => Process::result(''),
     ]);
 
@@ -56,7 +56,7 @@ test('component commits with message', function () {
 
 test('component commits and pushes', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
         "git commit -m 'feat: add new feature'" => Process::result(''),
         'git push' => Process::result(''),
     ]);
@@ -74,7 +74,7 @@ test('component commits and pushes', function () {
 
 test('component amends commit', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
         "git commit --amend -m 'feat: updated feature'" => Process::result(''),
     ]);
 
@@ -91,7 +91,7 @@ test('component amends commit', function () {
 
 test('component toggles amend and loads last commit message', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
         'git log -1 --pretty=%B' => Process::result("feat: previous commit\n"),
     ]);
 
@@ -105,7 +105,7 @@ test('component toggles amend and loads last commit message', function () {
 
 test('component clears message when toggling amend off', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
         'git log -1 --pretty=%B' => Process::result("feat: previous commit\n"),
     ]);
 
@@ -120,7 +120,7 @@ test('component clears message when toggling amend off', function () {
 
 test('component refreshes staged count on status-updated event', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
     ]);
 
     $component = Livewire::test(CommitPanel::class, ['repoPath' => $this->testRepoPath])
@@ -133,7 +133,7 @@ test('component refreshes staged count on status-updated event', function () {
 
 test('component handles commit failure with error message', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
         "git commit -m 'feat: add feature'" => function () {
             return Process::result('error: commit failed', exitCode: 1);
         },
@@ -148,7 +148,7 @@ test('component handles commit failure with error message', function () {
 
 test('component does not commit with empty message', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
     ]);
 
     Livewire::test(CommitPanel::class, ['repoPath' => $this->testRepoPath])
@@ -158,7 +158,7 @@ test('component does not commit with empty message', function () {
 
 test('component prefills commit message on feature branch with ticket', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusOnFeatureBranch()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusOnFeatureBranch()),
     ]);
 
     Livewire::test(CommitPanel::class, ['repoPath' => $this->testRepoPath])
@@ -168,7 +168,7 @@ test('component prefills commit message on feature branch with ticket', function
 
 test('component prefills commit message on bugfix branch with ticket', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusOnBugfixBranch()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusOnBugfixBranch()),
     ]);
 
     Livewire::test(CommitPanel::class, ['repoPath' => $this->testRepoPath])
@@ -178,7 +178,7 @@ test('component prefills commit message on bugfix branch with ticket', function 
 
 test('component does not prefill on feature branch without ticket number', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusOnFeatureBranchNoTicket()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusOnFeatureBranchNoTicket()),
     ]);
 
     Livewire::test(CommitPanel::class, ['repoPath' => $this->testRepoPath])
@@ -188,7 +188,7 @@ test('component does not prefill on feature branch without ticket number', funct
 
 test('component re-prefills commit message after successful commit on feature branch', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusOnFeatureBranch()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusOnFeatureBranch()),
         'git commit -m *' => Process::result(''),
     ]);
 
@@ -202,7 +202,7 @@ test('component re-prefills commit message after successful commit on feature br
 
 test('component re-prefills commit message after commit and push on feature branch', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusOnFeatureBranch()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusOnFeatureBranch()),
         'git commit -m *' => Process::result(''),
         'git push' => Process::result(''),
     ]);
@@ -217,7 +217,7 @@ test('component re-prefills commit message after commit and push on feature bran
 
 test('component restores prefill when toggling amend off on feature branch', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusOnFeatureBranch()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusOnFeatureBranch()),
         'git log -1 --pretty=%B' => Process::result("fix: previous commit\n"),
     ]);
 
@@ -233,7 +233,7 @@ test('component restores prefill when toggling amend off on feature branch', fun
 
 test('component does not overwrite user-typed message on branch switch', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusOnFeatureBranch()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusOnFeatureBranch()),
         'git log --oneline -n 10' => Process::result(GitOutputFixtures::logOneline()),
     ]);
 
@@ -246,7 +246,7 @@ test('component does not overwrite user-typed message on branch switch', functio
 
 test('component loads commit history on mount', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
         'git log --oneline -n 10' => Process::result(GitOutputFixtures::logOneline()),
     ]);
 
@@ -259,7 +259,7 @@ test('component loads commit history on mount', function () {
 
 test('commit history contains max 10 entries', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
         'git log --oneline -n 10' => Process::result(GitOutputFixtures::logOneline()),
     ]);
 
@@ -270,7 +270,7 @@ test('commit history contains max 10 entries', function () {
 
 test('commit history refreshes after successful commit', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
         'git log --oneline -n 10' => Process::result(GitOutputFixtures::logOneline()),
         'git commit -m *' => Process::result(''),
     ]);
@@ -287,7 +287,7 @@ test('commit history refreshes after successful commit', function () {
 
 test('commit history handles empty repo gracefully', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
         'git log --oneline -n 10' => fn () => Process::result('', exitCode: 128),
     ]);
 

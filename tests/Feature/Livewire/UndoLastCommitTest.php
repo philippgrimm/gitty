@@ -58,7 +58,7 @@ test('isLastCommitMerge returns false for regular commits', function () {
 
 test('promptUndoLastCommit blocks merge commits', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
         'git rev-parse HEAD^2 2>/dev/null' => Process::result('abc123'),
     ]);
 
@@ -70,7 +70,7 @@ test('promptUndoLastCommit blocks merge commits', function () {
 
 test('promptUndoLastCommit shows confirmation for regular commits', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
         'git rev-parse HEAD^2 2>/dev/null' => Process::result('', exitCode: 128),
         'git rev-list --left-right --count *' => Process::result("0\t1\n"),
     ]);
@@ -82,7 +82,7 @@ test('promptUndoLastCommit shows confirmation for regular commits', function () 
 
 test('confirmUndoLastCommit executes undo and dispatches events', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
         'git reset --soft HEAD~1' => Process::result(''),
         'git log -1 --pretty=%B' => Process::result("feat: previous commit\n"),
     ]);
@@ -97,7 +97,7 @@ test('confirmUndoLastCommit executes undo and dispatches events', function () {
 
 test('command palette has undo last commit entry', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
     ]);
 
     Livewire::test(CommandPalette::class, ['repoPath' => $this->testRepoPath])

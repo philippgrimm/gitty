@@ -18,7 +18,7 @@ beforeEach(function () {
 
 test('staging panel dispatches status-updated with payload after stageFile', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithMixedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithMixedChanges()),
         'git add README.md' => Process::result(''),
     ]);
 
@@ -31,7 +31,7 @@ test('staging panel dispatches status-updated with payload after stageFile', fun
 
 test('staging panel dispatches status-updated with payload after unstageFile', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
         'git reset HEAD README.md' => Process::result(''),
     ]);
 
@@ -44,7 +44,7 @@ test('staging panel dispatches status-updated with payload after unstageFile', f
 
 test('staging panel dispatches status-updated with payload after stageAll', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithUnstagedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithUnstagedChanges()),
         'git add .' => Process::result(''),
     ]);
 
@@ -57,7 +57,7 @@ test('staging panel dispatches status-updated with payload after stageAll', func
 
 test('staging panel dispatches status-updated with payload after unstageAll', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
         'git reset HEAD' => Process::result(''),
     ]);
 
@@ -70,7 +70,7 @@ test('staging panel dispatches status-updated with payload after unstageAll', fu
 
 test('commit panel receives staged count from event params', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
     ]);
 
     $component = Livewire::test(CommitPanel::class, ['repoPath' => $this->testRepoPath])
@@ -83,7 +83,7 @@ test('commit panel receives staged count from event params', function () {
 
 test('sync panel receives ahead-behind from event params', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
     ]);
 
     $component = Livewire::test(SyncPanel::class, ['repoPath' => $this->testRepoPath])
@@ -96,7 +96,7 @@ test('sync panel receives ahead-behind from event params', function () {
 
 test('staging panel handles refresh-staging event', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithMixedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithMixedChanges()),
     ]);
 
     Livewire::test(StagingPanel::class, ['repoPath' => $this->testRepoPath])

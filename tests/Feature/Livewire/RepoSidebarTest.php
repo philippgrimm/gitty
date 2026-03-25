@@ -16,7 +16,7 @@ beforeEach(function () {
 
 test('component mounts with repo path and loads sidebar data', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchList()),
         'git remote -v' => Process::result(GitOutputFixtures::remoteList()),
         "git tag -l --sort=-creatordate --format='%(refname:short)|||%(objectname:short)|||%(creatordate:relative)|||%(contents:subject)'" => Process::result("v1.0.0|||a1b2c3d|||2 days ago|||Release 1.0\nv2.0.0|||d4e5f6g|||1 day ago|||Release 2.0"),
@@ -32,7 +32,7 @@ test('component mounts with repo path and loads sidebar data', function () {
 
 test('component displays local branches only', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchList()),
         'git remote -v' => Process::result(GitOutputFixtures::remoteList()),
         "git tag -l --sort=-creatordate --format='%(refname:short)|||%(objectname:short)|||%(creatordate:relative)|||%(contents:subject)'" => Process::result(''),
@@ -54,7 +54,7 @@ test('component displays local branches only', function () {
 
 test('component displays remotes with URLs', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchList()),
         'git remote -v' => Process::result(GitOutputFixtures::remoteList()),
         "git tag -l --sort=-creatordate --format='%(refname:short)|||%(objectname:short)|||%(creatordate:relative)|||%(contents:subject)'" => Process::result(''),
@@ -77,7 +77,7 @@ test('component displays remotes with URLs', function () {
 
 test('component displays tags with SHAs', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchList()),
         'git remote -v' => Process::result(GitOutputFixtures::remoteList()),
         "git tag -l --sort=-creatordate --format='%(refname:short)|||%(objectname:short)|||%(creatordate:relative)|||%(contents:subject)'" => Process::result("v1.0.0|||a1b2c3d|||2 days ago|||Release 1.0\nv2.0.0|||d4e5f6g|||1 day ago|||Release 2.0"),
@@ -95,7 +95,7 @@ test('component displays tags with SHAs', function () {
 
 test('component displays stashes', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchList()),
         'git remote -v' => Process::result(GitOutputFixtures::remoteList()),
         "git tag -l --sort=-creatordate --format='%(refname:short)|||%(objectname:short)|||%(creatordate:relative)|||%(contents:subject)'" => Process::result(''),
@@ -119,7 +119,7 @@ test('component displays stashes', function () {
 
 test('component switches branch and dispatches event', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchList()),
         'git remote -v' => Process::result(GitOutputFixtures::remoteList()),
         "git tag -l --sort=-creatordate --format='%(refname:short)|||%(objectname:short)|||%(creatordate:relative)|||%(contents:subject)'" => Process::result(''),
@@ -136,7 +136,7 @@ test('component switches branch and dispatches event', function () {
 
 test('applyStash calls git stash apply and dispatches status-updated', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         'git branch *' => Process::result("* main\n"),
         'git remote -v' => Process::result(''),
         'git tag *' => Process::result(''),
@@ -154,7 +154,7 @@ test('applyStash calls git stash apply and dispatches status-updated', function 
 
 test('popStash calls git stash pop and dispatches status-updated', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         'git branch *' => Process::result("* main\n"),
         'git remote -v' => Process::result(''),
         'git tag *' => Process::result(''),
@@ -172,7 +172,7 @@ test('popStash calls git stash pop and dispatches status-updated', function () {
 
 test('dropStash calls git stash drop and dispatches status-updated', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         'git branch *' => Process::result("* main\n"),
         'git remote -v' => Process::result(''),
         'git tag *' => Process::result(''),
@@ -189,7 +189,7 @@ test('dropStash calls git stash drop and dispatches status-updated', function ()
 
 test('applyStash and popStash dispatch refresh-staging event', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         'git branch *' => Process::result("* main\n"),
         'git remote -v' => Process::result(''),
         'git tag *' => Process::result(''),
@@ -209,7 +209,7 @@ test('applyStash and popStash dispatch refresh-staging event', function () {
 
 test('stash actions handle errors and dispatch show-error event', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         'git branch *' => Process::result("* main\n"),
         'git remote -v' => Process::result(''),
         'git tag *' => Process::result(''),
@@ -226,7 +226,7 @@ test('stash actions handle errors and dispatch show-error event', function () {
 
 test('handleStashCreated listener refreshes sidebar', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         'git branch *' => Process::result("* main\n"),
         'git remote -v' => Process::result(''),
         'git tag *' => Process::result(''),
@@ -246,7 +246,7 @@ test('handleStashCreated listener refreshes sidebar', function () {
 
 test('switchBranch catches dirty tree error and shows auto-stash modal', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchList()),
         'git remote -v' => Process::result(GitOutputFixtures::remoteList()),
         "git tag -l --sort=-creatordate --format='%(refname:short)|||%(objectname:short)|||%(creatordate:relative)|||%(contents:subject)'" => Process::result(''),
@@ -268,7 +268,7 @@ test('switchBranch catches dirty tree error and shows auto-stash modal', functio
 
 test('switchBranch catches non-dirty errors and shows error toast', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchList()),
         'git remote -v' => Process::result(GitOutputFixtures::remoteList()),
         "git tag -l --sort=-creatordate --format='%(refname:short)|||%(objectname:short)|||%(creatordate:relative)|||%(contents:subject)'" => Process::result(''),
@@ -290,7 +290,7 @@ test('switchBranch catches non-dirty errors and shows error toast', function () 
 
 test('confirmAutoStash performs full stash-switch-restore flow', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         'git branch -a -vv' => Process::result(GitOutputFixtures::branchList()),
         'git remote -v' => Process::result(GitOutputFixtures::remoteList()),
         "git tag -l --sort=-creatordate --format='%(refname:short)|||%(objectname:short)|||%(creatordate:relative)|||%(contents:subject)'" => Process::result(''),

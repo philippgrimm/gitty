@@ -16,7 +16,7 @@ beforeEach(function () {
 
 test('component mounts with repo path and loads status', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithMixedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithMixedChanges()),
     ]);
 
     Livewire::test(StagingPanel::class, ['repoPath' => $this->testRepoPath])
@@ -29,7 +29,7 @@ test('component mounts with repo path and loads status', function () {
 
 test('component separates files into unstaged, staged, and untracked', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithMixedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithMixedChanges()),
     ]);
 
     $component = Livewire::test(StagingPanel::class, ['repoPath' => $this->testRepoPath]);
@@ -46,7 +46,7 @@ test('component separates files into unstaged, staged, and untracked', function 
 
 test('component stages a file', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithUnstagedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithUnstagedChanges()),
         "git add 'README.md'" => Process::result(''),
     ]);
 
@@ -59,7 +59,7 @@ test('component stages a file', function () {
 
 test('component unstages a file', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
         "git reset HEAD 'README.md'" => Process::result(''),
     ]);
 
@@ -72,7 +72,7 @@ test('component unstages a file', function () {
 
 test('component stages all files', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithUnstagedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithUnstagedChanges()),
         'git add .' => Process::result(''),
     ]);
 
@@ -85,7 +85,7 @@ test('component stages all files', function () {
 
 test('component unstages all files', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
         'git reset HEAD' => Process::result(''),
     ]);
 
@@ -98,7 +98,7 @@ test('component unstages all files', function () {
 
 test('component discards a file', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithUnstagedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithUnstagedChanges()),
         "git checkout -- 'README.md'" => Process::result(''),
     ]);
 
@@ -111,7 +111,7 @@ test('component discards a file', function () {
 
 test('component discards all files', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithUnstagedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithUnstagedChanges()),
         'git checkout -- .' => Process::result(''),
     ]);
 
@@ -124,7 +124,7 @@ test('component discards all files', function () {
 
 test('component dispatches file-selected event when file is clicked', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithMixedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithMixedChanges()),
     ]);
 
     Livewire::test(StagingPanel::class, ['repoPath' => $this->testRepoPath])
@@ -134,7 +134,7 @@ test('component dispatches file-selected event when file is clicked', function (
 
 test('component shows empty state when no changes', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
     ]);
 
     Livewire::test(StagingPanel::class, ['repoPath' => $this->testRepoPath])
@@ -143,19 +143,19 @@ test('component shows empty state when no changes', function () {
 
 test('component refreshes status on demand', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithMixedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithMixedChanges()),
     ]);
 
     Livewire::test(StagingPanel::class, ['repoPath' => $this->testRepoPath])
         ->call('refreshStatus')
         ->assertSee('README.md');
 
-    Process::assertRan('git status --porcelain=v2 --branch');
+    Process::assertRan('git status --porcelain=v2 --branch -uall');
 });
 
 test('staging panel renders smaller 8px status dots', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithMixedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithMixedChanges()),
     ]);
 
     Livewire::test(StagingPanel::class, ['repoPath' => $this->testRepoPath])
@@ -165,7 +165,7 @@ test('staging panel renders smaller 8px status dots', function () {
 
 test('component stages selected files', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithUnstagedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithUnstagedChanges()),
         'git add *' => Process::result(''),
     ]);
 
@@ -178,7 +178,7 @@ test('component stages selected files', function () {
 
 test('component unstages selected files', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
         'git reset HEAD -- *' => Process::result(''),
     ]);
 
@@ -191,7 +191,7 @@ test('component unstages selected files', function () {
 
 test('component discards selected files', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithUnstagedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithUnstagedChanges()),
         'git checkout -- *' => Process::result(''),
     ]);
 
@@ -204,7 +204,7 @@ test('component discards selected files', function () {
 
 test('component stashes selected files', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithUnstagedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithUnstagedChanges()),
         'git stash push *' => Process::result(''),
         'git rev-parse --abbrev-ref HEAD' => Process::result("main\n"),
     ]);
@@ -219,7 +219,7 @@ test('component stashes selected files', function () {
 
 test('component stashes all files', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithUnstagedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithUnstagedChanges()),
         'git stash push *' => Process::result(''),
         'git rev-parse --abbrev-ref HEAD' => Process::result("main\n"),
     ]);
@@ -234,7 +234,7 @@ test('component stashes all files', function () {
 
 test('bulk methods handle empty array gracefully', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithUnstagedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithUnstagedChanges()),
     ]);
 
     Livewire::test(StagingPanel::class, ['repoPath' => $this->testRepoPath])
@@ -254,7 +254,7 @@ test('bulk methods handle empty array gracefully', function () {
         ->assertOk();
 
     // Only git status should run (from mount), no git add/reset/checkout/stash commands
-    Process::assertRan('git status --porcelain=v2 --branch');
+    Process::assertRan('git status --porcelain=v2 --branch -uall');
     Process::assertDidntRun(fn ($process) => str_contains($process->command, 'git add'));
     Process::assertDidntRun(fn ($process) => str_contains($process->command, 'git reset'));
     Process::assertDidntRun(fn ($process) => str_contains($process->command, 'git checkout'));

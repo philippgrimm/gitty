@@ -20,7 +20,7 @@ beforeEach(function () {
 
 test('commit stores message in history', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
         "git commit -m 'feat: add new feature'" => Process::result('[main 1234567890abcdef1234567890abcdef12345678] feat: add new feature'),
         'git log --oneline -n 10' => Process::result(GitOutputFixtures::logOneline()),
     ]);
@@ -37,7 +37,7 @@ test('commit stores message in history', function () {
 
 test('cycling up loads previous message', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
         'git log --oneline -n 10' => Process::result(GitOutputFixtures::logOneline()),
     ]);
 
@@ -60,7 +60,7 @@ test('cycling up loads previous message', function () {
 
 test('cycling down returns to draft', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
         'git log --oneline -n 10' => Process::result(GitOutputFixtures::logOneline()),
     ]);
 
@@ -111,7 +111,7 @@ test('duplicate messages deduplicated', function () {
 
 test('selecting from dropdown fills textarea', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
         'git log --oneline -n 10' => Process::result(GitOutputFixtures::logOneline()),
     ]);
 
@@ -126,7 +126,7 @@ test('selecting from dropdown fills textarea', function () {
 
 test('commit and push stores message in history', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
         "git commit -m 'feat: add feature'" => Process::result('[main 1234567890abcdef1234567890abcdef12345678] feat: add feature'),
         'git push' => Process::result(''),
         'git log --oneline -n 10' => Process::result(GitOutputFixtures::logOneline()),
@@ -144,7 +144,7 @@ test('commit and push stores message in history', function () {
 
 test('history index resets after commit', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
         "git commit -m 'feat: new commit'" => Process::result('[main 1234567890abcdef1234567890abcdef12345678] feat: new commit'),
         'git log --oneline -n 10' => Process::result(GitOutputFixtures::logOneline()),
     ]);
@@ -164,7 +164,7 @@ test('history index resets after commit', function () {
 
 test('stored history loads on mount', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithStagedChanges()),
         'git log --oneline -n 10' => Process::result(GitOutputFixtures::logOneline()),
     ]);
 

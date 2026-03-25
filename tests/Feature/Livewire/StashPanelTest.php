@@ -16,7 +16,7 @@ beforeEach(function () {
 
 test('stashes are loaded on mount via repo sidebar', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         'git branch *' => Process::result("* main\n"),
         'git remote -v' => Process::result(''),
         'git tag *' => Process::result(''),
@@ -36,7 +36,7 @@ test('stashes are loaded on mount via repo sidebar', function () {
 
 test('empty stash list returns empty array', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         'git branch *' => Process::result("* main\n"),
         'git remote -v' => Process::result(''),
         'git tag *' => Process::result(''),
@@ -52,7 +52,7 @@ test('empty stash list returns empty array', function () {
 
 test('apply stash dispatches status-updated and refresh-staging', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         'git branch *' => Process::result("* main\n"),
         'git remote -v' => Process::result(''),
         'git tag *' => Process::result(''),
@@ -70,7 +70,7 @@ test('apply stash dispatches status-updated and refresh-staging', function () {
 
 test('pop stash dispatches status-updated and refresh-staging', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         'git branch *' => Process::result("* main\n"),
         'git remote -v' => Process::result(''),
         'git tag *' => Process::result(''),
@@ -88,7 +88,7 @@ test('pop stash dispatches status-updated and refresh-staging', function () {
 
 test('drop stash dispatches status-updated', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         'git branch *' => Process::result("* main\n"),
         'git remote -v' => Process::result(''),
         'git tag *' => Process::result(''),
@@ -105,7 +105,7 @@ test('drop stash dispatches status-updated', function () {
 
 test('stash apply error dispatches show-error event', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         'git branch *' => Process::result("* main\n"),
         'git remote -v' => Process::result(''),
         'git tag *' => Process::result(''),
@@ -122,7 +122,7 @@ test('stash apply error dispatches show-error event', function () {
 
 test('stash data contains expected keys from stash list', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         'git branch *' => Process::result("* main\n"),
         'git remote -v' => Process::result(''),
         'git tag *' => Process::result(''),
@@ -142,7 +142,7 @@ test('stash data contains expected keys from stash list', function () {
 
 test('stash-created event refreshes sidebar stash list', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         'git branch *' => Process::result("* main\n"),
         'git remote -v' => Process::result(''),
         'git tag *' => Process::result(''),
@@ -156,7 +156,7 @@ test('stash-created event refreshes sidebar stash list', function () {
 
 test('pop stash runs git stash pop with correct index', function () {
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
         'git branch *' => Process::result("* main\n"),
         'git remote -v' => Process::result(''),
         'git tag *' => Process::result(''),

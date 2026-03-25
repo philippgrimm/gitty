@@ -79,20 +79,10 @@ document.addEventListener('DOMContentLoaded', highlightDiffContent);
 document.addEventListener('livewire:navigated', highlightDiffContent);
 
 // Hook into Livewire's morphdom to re-highlight after component updates
-if (typeof Livewire !== 'undefined') {
-    Livewire.hook('morph.updated', ({ el }) => {
-        if (el.closest('.diff-container') || el.classList?.contains('diff-container')) {
-            // Use requestAnimationFrame to ensure DOM is settled
-            requestAnimationFrame(highlightDiffContent);
-        }
-    });
-}
-
-// Also listen for the custom event that Livewire dispatches
 document.addEventListener('livewire:init', () => {
     Livewire.hook('morph.updated', ({ el }) => {
         if (el.closest('.diff-container') || el.classList?.contains('diff-container')) {
             requestAnimationFrame(highlightDiffContent);
         }
     });
-});
+}, { once: true });

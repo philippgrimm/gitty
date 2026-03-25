@@ -54,6 +54,18 @@
     --color-sky: #0EA5E9;
     --color-lavender: #6366F1;
     
+    /* Graph Lane Colors — warm retro */
+    --graph-lane-0: #4040B0;
+    --graph-lane-1: #E05800;
+    --graph-lane-2: #1E8C0A;
+    --graph-lane-3: #0D9488;
+    --graph-lane-4: #7C3AED;
+    --graph-lane-5: #C2185B;
+    --graph-lane-6: #0288D1;
+    --graph-lane-7: #F57C00;
+    --graph-halo: #DED9D0;
+    --graph-dot-bg: #DED9D0;
+    
     /* Shadows - warm tones */
     --shadow-sm: 0 1px 2px rgba(44, 48, 64, 0.08);
     --shadow-md: 0 4px 12px rgba(44, 48, 64, 0.10);
@@ -103,6 +115,18 @@
     --color-teal: #40E0D0;
     --color-sky: #60D0FF;
     --color-lavender: #8090FF;
+    
+    /* Graph Lane Colors — neon phosphor */
+    --graph-lane-0: #00C3FF;
+    --graph-lane-1: #FF8040;
+    --graph-lane-2: #50FF50;
+    --graph-lane-3: #40E0D0;
+    --graph-lane-4: #B080FF;
+    --graph-lane-5: #FF4060;
+    --graph-lane-6: #60D0FF;
+    --graph-lane-7: #FFB020;
+    --graph-halo: #1A1E28;
+    --graph-dot-bg: #1A1E28;
     
     /* Shadows */
     --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
@@ -1014,4 +1038,83 @@
 /* Commit Split Button Group — seamless bevel join */
 .dark .commit-button-group [data-flux-button].\!border-l {
     border-left-color: rgba(74, 80, 128, 0.6) !important;
+}
+
+/* ================================================================
+   Git Graph — Lane Colors & Neon Glow
+   ================================================================ */
+
+.graph-lane {
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    filter: drop-shadow(0 0 2px var(--lane-glow, transparent));
+}
+
+.graph-halo {
+    fill: none;
+    stroke: var(--graph-halo);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.graph-lane-0 { stroke: var(--graph-lane-0); --lane-glow: var(--graph-lane-0); }
+.graph-lane-1 { stroke: var(--graph-lane-1); --lane-glow: var(--graph-lane-1); }
+.graph-lane-2 { stroke: var(--graph-lane-2); --lane-glow: var(--graph-lane-2); }
+.graph-lane-3 { stroke: var(--graph-lane-3); --lane-glow: var(--graph-lane-3); }
+.graph-lane-4 { stroke: var(--graph-lane-4); --lane-glow: var(--graph-lane-4); }
+.graph-lane-5 { stroke: var(--graph-lane-5); --lane-glow: var(--graph-lane-5); }
+.graph-lane-6 { stroke: var(--graph-lane-6); --lane-glow: var(--graph-lane-6); }
+.graph-lane-7 { stroke: var(--graph-lane-7); --lane-glow: var(--graph-lane-7); }
+
+.graph-dot-0 { fill: var(--graph-lane-0); stroke: var(--graph-dot-bg); --lane-glow: var(--graph-lane-0); }
+.graph-dot-1 { fill: var(--graph-lane-1); stroke: var(--graph-dot-bg); --lane-glow: var(--graph-lane-1); }
+.graph-dot-2 { fill: var(--graph-lane-2); stroke: var(--graph-dot-bg); --lane-glow: var(--graph-lane-2); }
+.graph-dot-3 { fill: var(--graph-lane-3); stroke: var(--graph-dot-bg); --lane-glow: var(--graph-lane-3); }
+.graph-dot-4 { fill: var(--graph-lane-4); stroke: var(--graph-dot-bg); --lane-glow: var(--graph-lane-4); }
+.graph-dot-5 { fill: var(--graph-lane-5); stroke: var(--graph-dot-bg); --lane-glow: var(--graph-lane-5); }
+.graph-dot-6 { fill: var(--graph-lane-6); stroke: var(--graph-dot-bg); --lane-glow: var(--graph-lane-6); }
+.graph-dot-7 { fill: var(--graph-lane-7); stroke: var(--graph-dot-bg); --lane-glow: var(--graph-lane-7); }
+
+.graph-dot-outline-0 { fill: var(--graph-dot-bg); stroke: var(--graph-lane-0); --lane-glow: var(--graph-lane-0); }
+.graph-dot-outline-1 { fill: var(--graph-dot-bg); stroke: var(--graph-lane-1); --lane-glow: var(--graph-lane-1); }
+.graph-dot-outline-2 { fill: var(--graph-dot-bg); stroke: var(--graph-lane-2); --lane-glow: var(--graph-lane-2); }
+.graph-dot-outline-3 { fill: var(--graph-dot-bg); stroke: var(--graph-lane-3); --lane-glow: var(--graph-lane-3); }
+.graph-dot-outline-4 { fill: var(--graph-dot-bg); stroke: var(--graph-lane-4); --lane-glow: var(--graph-lane-4); }
+.graph-dot-outline-5 { fill: var(--graph-dot-bg); stroke: var(--graph-lane-5); --lane-glow: var(--graph-lane-5); }
+.graph-dot-outline-6 { fill: var(--graph-dot-bg); stroke: var(--graph-lane-6); --lane-glow: var(--graph-lane-6); }
+.graph-dot-outline-7 { fill: var(--graph-dot-bg); stroke: var(--graph-lane-7); --lane-glow: var(--graph-lane-7); }
+
+.graph-dot,
+.graph-dot-outline {
+    filter: drop-shadow(0 0 1.5px var(--lane-glow, transparent));
+}
+
+.ref-badge-head {
+    color: var(--color-peach);
+    background-color: color-mix(in srgb, var(--color-peach) 13%, transparent);
+}
+
+.ref-badge-tag {
+    color: var(--color-mauve);
+    background-color: color-mix(in srgb, var(--color-mauve) 13%, transparent);
+}
+
+.ref-badge-remote {
+    color: var(--color-teal);
+    background-color: color-mix(in srgb, var(--color-teal) 13%, transparent);
+}
+
+.ref-badge-branch {
+    color: var(--color-green);
+    background-color: color-mix(in srgb, var(--color-green) 13%, transparent);
+}
+
+.dark .graph-lane {
+    filter: url(#neon-glow);
+}
+
+.dark .graph-dot,
+.dark .graph-dot-outline {
+    filter: url(#neon-glow-dot);
 }

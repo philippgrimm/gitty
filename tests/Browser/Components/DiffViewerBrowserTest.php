@@ -21,7 +21,7 @@ test('diff viewer shows empty state when no file selected', function () {
     ]);
 
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
     ]);
 
     $page = visit('/');
@@ -41,7 +41,7 @@ test('diff viewer displays file changes when available', function () {
     ]);
 
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusWithMixedChanges()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusWithMixedChanges()),
         'git diff README.md' => Process::result(GitOutputFixtures::diffUnstaged()),
     ]);
 
@@ -62,7 +62,7 @@ test('diff viewer shows clean state for files without changes', function () {
     ]);
 
     Process::fake([
-        'git status --porcelain=v2 --branch' => Process::result(GitOutputFixtures::statusClean()),
+        'git status --porcelain=v2 --branch -uall' => Process::result(GitOutputFixtures::statusClean()),
     ]);
 
     $page = visit('/');
